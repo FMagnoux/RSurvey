@@ -13,11 +13,16 @@ class QuestionController extends SuperController
     public function __construct() {
         parent::__construct();
         require_once "./Model/Question.php";
-        $entity = new Question();
+        $this->entity = new Question();
     }
 
     public function create() {
         $this->page = "user/create";
         $this->view();
+    }
+
+    public function listQuestions() {
+        require_once './Model/Pagination.php';
+        $this->entity->getPaginatedList(10, 1);
     }
 }

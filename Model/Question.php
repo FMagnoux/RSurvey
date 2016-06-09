@@ -16,6 +16,7 @@ class Question extends SQL
     private $bQuestionClose;
     private $iUsrId;
     private $iZoneId;
+    private $table = "Question";
 
     /**
      * @return mixed
@@ -143,7 +144,19 @@ class Question extends SQL
         return $this;
     }
 
-
-
+    /**
+     * Liste paginée des questions
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @return array<Question>
+     */
+    public function getPaginatedList($iMaxItems, $iCurrentPage) {
+        $pagination = new Pagination();
+        return $pagination->getData($iMaxItems, $iCurrentPage, array(
+            "columns" => '*',
+            "table" => $this->table,
+            null
+        ));
+    }
 
 }

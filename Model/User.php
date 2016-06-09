@@ -6,7 +6,7 @@
  * Date: 09/06/2016
  * Time: 10:38
  */
-class User extends SQL
+class User
 {
     private $iUsrId;
     private $sUsrPseudo;
