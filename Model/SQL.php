@@ -15,7 +15,7 @@ abstract class SQL
      */
     public function __construct() {
         try {
-            $this->db = new PDO('mysql:host=localhost;dbname=rsurvey;charset=utf8', 'root', '');
+            $this->db = new PDO('mysql:host=localhost;dbname=rsurvey;charset=utf8', 'root', 'mysql');
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
