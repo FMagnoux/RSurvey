@@ -6,7 +6,7 @@
  * Date: 09/06/2016
  * Time: 11:18
  */
-class Question
+class Question extends SQL
 {
 
     private $iQuestionId;

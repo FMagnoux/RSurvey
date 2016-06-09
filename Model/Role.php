@@ -6,7 +6,7 @@
  * Date: 09/06/2016
  * Time: 11:15
  */
-class Role
+class Role extends SQL
 {
     private $iRoleId;
     private $sRoleLibel;
