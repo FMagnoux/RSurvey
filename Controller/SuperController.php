@@ -37,4 +37,8 @@ class SuperController
         }
         require_once './View/commun/default.php';
     }
+    
+    public function setJsonData() {
+        header('Content-Type: application/json; charset=utf-8');
+    }
 }

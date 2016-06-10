@@ -6,11 +6,12 @@
  * Date: 09/06/2016
  * Time: 16:32
  */
-class Pagination extends SQL
+class Pagination extends SQL implements JsonSerializable
 {
-    private $currentPage;
-    private $nbPages;
-    private $nbLines;
+    private $iCurrentPage;
+    private $iNbPages;
+    private $iNbLines;
+    private $aData;
     
     /**
      * Compter le nombre de lignes
@@ -19,7 +20,7 @@ class Pagination extends SQL
      * @param array $values
      * @return int
      */
-    function getNbLines($table, $where, $values) {
+    function getiNbLines($table, $where, $values) {
         return parent::select(array(
             "columns" => 'COUNT(*) AS nb',
             "table" => $table,
@@ -44,33 +45,29 @@ class Pagination extends SQL
      * @param int $page Page courante
      * @param type $config Configuration de la requête SQL
      * @param type $values Valeur des conditions de la requête SQL
-     * @return array Données paginées
      */
-    public function getData($max, $page, $config, $values = null) {
+    public function setPagination($max, $page, $config, $values = null) {
 
         // Contr�ler la page courante
-        $this->currentPage = $this->controlCurrentPage($page);
+        $this->iCurrentPage = $this->controliCurrentPage($page);
 
         // Connaitre la position actuelle
-        $position = $this->currentPage * $max - $max;
+        $position = $this->iCurrentPage * $max - $max;
 
         // Connaitre le nombre de lignes dans la table
-        $this->nbLines = $this->getNbLines($config["table"], $config["where"], $values);
+        $this->iNbLines = $this->getiNbLines($config["table"], $config["where"], $values);
 
         // Extraire les donn�es voulues
-        if ($this->nbLines >= $position) {
+        if ($this->iNbLines >= $position) {
             $config["limit"] = $position . "," . $max;
-            $data = $this->getPaginatedData($config, $values);
+            $this->aData = $this->getPaginatedData($config, $values);
         } else {
-            //$data = $this->getPaginatedData($select, $table, $where, 0, $max);
             $config["limit"] = "0," . $max;
-            $data = $this->getPaginatedData($config, $values);
+            $this->aData = $this->getPaginatedData($config, $values);
         }
 
         // Savoir combien il y a de pages
-        $this->nbPages = ceil($this->nbLines / $max);
-
-        return $data;
+        $this->iNbPages = ceil($this->iNbLines / $max);
     }
 
     /**
@@ -78,10 +75,44 @@ class Pagination extends SQL
      * @param int $page
      * @return int
      */
-    private function controlCurrentPage($page) {
+    private function controliCurrentPage($page) {
         $page = intval($page);
         if ($page <= 0)
             return 1;
         return $page;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'iCurrentPage' => $this->iCurrentPage,
+            'iNbPages' => $this->iNbPages,
+            'iNbLines' => $this->iNbLines,
+            'aData' => $this->aData
+        ];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAData()
+    {
+        return $this->aData;
+    }
+
+    /**
+     * @param mixed $aData
+     */
+    public function setAData($aData)
+    {
+        $this->aData = $aData;
+        return this;
     }
 }

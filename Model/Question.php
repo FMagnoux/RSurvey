@@ -6,7 +6,7 @@
  * Date: 09/06/2016
  * Time: 11:18
  */
-class Question extends SQL
+class Question extends SQL implements JsonSerializable
 {
 
     private $iQuestionId;
@@ -144,6 +144,13 @@ class Question extends SQL
         return $this;
     }
 
+    public function desactivateQuestion($id) {
+        $query = $this->db->prepare("UPDATE ".$this->table." SET question_active = 0 WHERE question_id = :id");
+        return $query->execute(array(
+           "id" => $id 
+        ));
+    }
+
     /**
      * Liste paginée des questions
      * @param $iMaxItems
@@ -151,12 +158,64 @@ class Question extends SQL
      * @return array<Question>
      */
     public function getPaginatedList($iMaxItems, $iCurrentPage) {
+        require_once './Model/Pagination.php';
         $pagination = new Pagination();
-        return $pagination->getData($iMaxItems, $iCurrentPage, array(
+        $pagination->setPagination($iMaxItems, $iCurrentPage, array(
             "columns" => '*',
             "table" => $this->table,
             null
         ));
+        $pagination->setAData($this->toObjects($pagination->getAData()));
+        return $pagination;
     }
 
+    /**
+     * Convertir un tableau en une liste de questions
+     * @param $items
+     * @return array
+     */
+    public function toObjects($items) {
+        $objects = array();
+        foreach($items as $a) {
+            array_push($objects, $this->toObject($a));
+        }
+        return $objects;
+    }
+
+    /**
+     * Convertir un tableau en un objet Question
+     * @param $array
+     * @return $this
+     */
+    public function toObject($array) {
+        return (new Question())
+            ->setIQuestionId($array["question_id"])
+            ->setSQuestionLibel($array["question_libel"])
+            ->setDQuestionDate($array["question_date"])
+            ->setBQuestionActive($array["question_active"])
+            ->setBQuestionClose($array["question_close"])
+            ->setIUsrId($array["usr_id"])
+            ->setIZoneId($array["zone_id"])
+        ;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'iQuestionId' => $this->iQuestionId,
+            'sQuestionLibel' => $this->sQuestionLibel,
+            'dQuestionDate' => $this->dQuestionDate,
+            'bQuestionActive' => $this->bQuestionActive,
+            'bQuestionClose' => $this->bQuestionClose,
+            'iUsrId' => $this->iUsrId,
+            'iZoneId' => $this->iZoneId,
+        ];
+    }
 }

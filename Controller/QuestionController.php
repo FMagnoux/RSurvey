@@ -21,8 +21,19 @@ class QuestionController extends SuperController
         $this->view();
     }
 
+    /**
+     * Liste de questions paginées
+     */
     public function listQuestions() {
-        require_once './Model/Pagination.php';
-        $this->entity->getPaginatedList(10, 1);
+        $this->setJsonData();
+        echo json_encode($this->entity->getPaginatedList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+    }
+    
+    public function desactivateQuestion() {
+        if(empty($_POST["id"])) {
+           return false;
+        }
+        $id = intval($_POST["id"]);
+        return $this->entity->desactivateQuestion($id);
     }
 }
