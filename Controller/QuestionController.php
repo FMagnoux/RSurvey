@@ -26,14 +26,12 @@ class QuestionController extends SuperController
      */
     public function listQuestions() {
         $this->setJsonData();
-        echo json_encode($this->entity->getPaginatedList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+        echo json_encode($this->entity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
     }
     
     public function desactivateQuestion() {
-        if(empty($_POST["id"])) {
-           return false;
-        }
-        $id = intval($_POST["id"]);
+        $id = $this->checkId();
+        if($id == 0) return false;
         return $this->entity->desactivateQuestion($id);
     }
 }

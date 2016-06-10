@@ -6,12 +6,13 @@
  * Date: 09/06/2016
  * Time: 11:31
  */
-class Subdivision extends SQL
+class Subdivision extends SQL implements JsonSerializable
 {
     private $iSubId;
     private $sSubLibel;
     private $bSubActive;
-    private $iZoneId;
+    private $oZoneId;
+    private $sTable = "Subdivision";
 
     /**
      * @return mixed
@@ -70,18 +71,77 @@ class Subdivision extends SQL
     /**
      * @return mixed
      */
-    public function getIZoneId()
+    public function getoZoneId()
     {
-        return $this->iZoneId;
+        return $this->oZoneId;
     }
 
     /**
-     * @param mixed $iZoneId
+     * @param mixed $oZoneId
      * @return Subdivision
      */
-    public function setIZoneId($iZoneId)
+    public function setoZoneId($oZoneId)
     {
-        $this->iZoneId = $iZoneId;
+        $this->oZoneId = $oZoneId;
         return $this;
+    }
+
+    public function activateDesactivate($iId, $iActive) {
+        $query = $this->db->prepare("UPDATE ".$this->sTable." SET sub_active = :active WHERE sub_id = :id");
+        return $query->execute(array(
+            "id" => $iId,
+            "active" => $iActive
+        ));
+    }
+
+    /**
+     * Liste paginée des subdivisions
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @return array<Subdivision>
+     */
+    public function getPaginatedZoneList($iMaxItems, $iCurrentPage) {
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
+            "columns" => '*',
+            "table" => $this->sTable,
+            "join" => array(
+                "table" => "Zone",
+                "key" => "zone_id",
+                "foreignKey" => "zone_id"
+            )
+        ));
+    }
+
+    /**
+     * Convertir un tableau en un objet Question
+     * @param $array
+     * @return $this
+     */
+    public function toObject($array) {
+        $oZone = new Zone();
+        $oZone = $oZone->toObject($array);
+        return (new Subdivision())
+            ->setISubId($array["sub_id"])
+            ->setSSubLibel($array["sub_libel"])
+            ->setBSubActive($array["sub_active"])
+            ->setoZoneId($oZone)
+        ;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'iSubId' => $this->iSubId,
+            'sSubLibel' => $this->sSubLibel,
+            'bSubActive' => $this->bSubActive,
+            'oZoneId' => $this->oZoneId
+        ];
     }
 }

@@ -14,8 +14,8 @@ class Question extends SQL implements JsonSerializable
     private $dQuestionDate;
     private $bQuestionActive;
     private $bQuestionClose;
-    private $iUsrId;
-    private $iZoneId;
+    private $oUsrId;
+    private $oZoneId;
     private $table = "Question";
 
     /**
@@ -111,36 +111,36 @@ class Question extends SQL implements JsonSerializable
     /**
      * @return mixed
      */
-    public function getIUsrId()
+    public function getoUsrId()
     {
-        return $this->iUsrId;
+        return $this->oUsrId;
     }
 
     /**
-     * @param mixed $iUsrId
+     * @param mixed $oUsrId
      * @return $this
      */
-    public function setIUsrId($iUsrId)
+    public function setoUsrId($oUsrId)
     {
-        $this->iUsrId = $iUsrId;
+        $this->oUsrId = $oUsrId;
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getIZoneId()
+    public function getoZoneId()
     {
-        return $this->iZoneId;
+        return $this->oZoneId;
     }
 
     /**
-     * @param mixed $iZoneId
+     * @param mixed $oZoneId
      * @return $this
      */
-    public function setIZoneId($iZoneId)
+    public function setoZoneId($oZoneId)
     {
-        $this->iZoneId = $iZoneId;
+        $this->oZoneId = $oZoneId;
         return $this;
     }
 
@@ -157,29 +157,12 @@ class Question extends SQL implements JsonSerializable
      * @param $iCurrentPage
      * @return array<Question>
      */
-    public function getPaginatedList($iMaxItems, $iCurrentPage) {
-        require_once './Model/Pagination.php';
-        $pagination = new Pagination();
-        $pagination->setPagination($iMaxItems, $iCurrentPage, array(
+    public function getPaginatedQuestionList($iMaxItems, $iCurrentPage) {
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
             "columns" => '*',
             "table" => $this->table,
             null
         ));
-        $pagination->setAData($this->toObjects($pagination->getAData()));
-        return $pagination;
-    }
-
-    /**
-     * Convertir un tableau en une liste de questions
-     * @param $items
-     * @return array
-     */
-    public function toObjects($items) {
-        $objects = array();
-        foreach($items as $a) {
-            array_push($objects, $this->toObject($a));
-        }
-        return $objects;
     }
 
     /**
@@ -194,8 +177,8 @@ class Question extends SQL implements JsonSerializable
             ->setDQuestionDate($array["question_date"])
             ->setBQuestionActive($array["question_active"])
             ->setBQuestionClose($array["question_close"])
-            ->setIUsrId($array["usr_id"])
-            ->setIZoneId($array["zone_id"])
+            ->setoUsrId($array["usr_id"])
+            ->setoZoneId($array["zone_id"])
         ;
     }
 
@@ -214,8 +197,8 @@ class Question extends SQL implements JsonSerializable
             'dQuestionDate' => $this->dQuestionDate,
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,
-            'iUsrId' => $this->iUsrId,
-            'iZoneId' => $this->iZoneId,
+            'oUsrId' => $this->oUsrId,
+            'oZoneId' => $this->oZoneId,
         ];
     }
 }

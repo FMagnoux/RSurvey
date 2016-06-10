@@ -91,4 +91,32 @@ abstract class SQL
         var_dump($columns);*/
         return $req->execute($columns);
     }
+
+    /**
+     * Convertir un tableau en une liste de questions
+     * @param $items
+     * @return array
+     */
+    public function toObjects($items) {
+        $objects = array();
+        foreach($items as $a) {
+            array_push($objects, $this->toObject($a));
+        }
+        return $objects;
+    }
+
+    /**
+     * Liste paginée
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @param $aParams
+     * @return array<Question>
+     */
+    public function getPaginatedList($iMaxItems, $iCurrentPage, $aParams) {
+        require_once './Model/Pagination.php';
+        $pagination = new Pagination();
+        $pagination->setPagination($iMaxItems, $iCurrentPage, $aParams);
+        $pagination->setAData($this->toObjects($pagination->getAData()));
+        return $pagination;
+    }
 }

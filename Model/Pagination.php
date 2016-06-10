@@ -58,12 +58,17 @@ class Pagination extends SQL implements JsonSerializable
         $this->iNbLines = $this->getiNbLines($config["table"], $config["where"], $values);
 
         // Extraire les donn�es voulues
-        if ($this->iNbLines >= $position) {
+        if ($this->iNbLines > $position) {
             $config["limit"] = $position . "," . $max;
             $this->aData = $this->getPaginatedData($config, $values);
         } else {
             $config["limit"] = "0," . $max;
             $this->aData = $this->getPaginatedData($config, $values);
+        }
+
+        // Faire en sorte que le résultat soit un tableau contenant les items même dans le cas où il n'y a qu'un item par page
+        if($config["limit"] == 1) {
+            $this->aData = array($this->aData);
         }
 
         // Savoir combien il y a de pages

@@ -6,11 +6,12 @@
  * Date: 09/06/2016
  * Time: 11:34
  */
-class Zone extends SQL
+class Zone extends SQL implements JsonSerializable
 {
     private $iZoneId;
     private $sZoneLibel;
     private $bZoneActive;
+    private $sTable= "Zone";
 
     /**
      * @return mixed
@@ -64,5 +65,47 @@ class Zone extends SQL
     {
         $this->bZoneActive = $bZoneActive;
         return $this;
+    }
+
+    /**
+     * Liste paginée des zones
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @return array<Question>
+     */
+    public function getPaginatedZoneList($iMaxItems, $iCurrentPage) {
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
+            "columns" => '*',
+            "table" => $this->sTable
+        ));
+    }
+
+    /**
+     * Convertir un tableau en un objet Question
+     * @param $array
+     * @return $this
+     */
+    public function toObject($array) {
+        return (new Zone())
+            ->setIZoneId($array["zone_id"])
+            ->setSZoneLibel($array["zone_libel"])
+            ->setBZoneActive($array["zone_active"])
+        ;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'iZoneId' => $this->iZoneId,
+            'sZoneLibel' => $this->sZoneLibel,
+            'bZoneActive' => $this->bZoneActive,
+        ];
     }
 }

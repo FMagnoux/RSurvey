@@ -41,4 +41,13 @@ class SuperController
     public function setJsonData() {
         header('Content-Type: application/json; charset=utf-8');
     }
+    
+    public function checkId() {
+        if(empty($_POST["id"])) {
+            return false;
+        }
+        $id = intval($_POST["id"]);
+        if($id > 0) return $id;
+        return 0;
+    }
 }
