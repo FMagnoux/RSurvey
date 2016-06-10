@@ -1,0 +1,76 @@
+
+/*HOMEPAGE */
+
+.homepage-landing-section {
+  position: relative;
+  height: calc(100vh - 64px);
+  width: auto;
+  background: url(../media/img/background.png);
+  background-size: cover;
+}
+
+.homepage-slogan {
+  font-size: 60px;
+  padding-top: 160px;
+}
+
+.homepage-sub-slogan {
+  font-size: 18px;
+  padding-top: 18px;
+}
+
+#homepage-fab {
+  position: absolute;
+  right: 50%;
+  bottom: 26px;
+  z-index: 3;
+  margin-right: -24px;
+}
+.actionButton {
+  margin-top: 70px;
+}
+.logo-font {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  line-height: 1;
+  color: white;
+  font-weight: 500;
+}
+
+@media(max-width:900px){
+  .homepage-slogan {
+  font-size: 26px;
+  margin: 0 16px;
+  padding-top: 150px;
+}
+
+}
+
+.homepage-rubber {
+  position: relative;
+height: 250px;
+  background: url(../media/img/homepage-rubber.png);
+  background-size: cover;
+  text-align: center;
+  padding-top: 18px;
+}
+
+.rubber-slogan {
+  font-size: 46px;
+  padding-top: 80px;
+}
+
+
+
+.homepage-french-map {
+  height: 400px;
+}
+
+.homepage-responsive {
+  height: 290px;
+}
+
+.container-image-responsive{
+  text-align: center;
+  padding-left: 260px;
+  margin-top: 64px;
+}
