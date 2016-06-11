@@ -1,0 +1,115 @@
+-- phpMyAdmin SQL Dump
+-- version 4.1.14
+-- http://www.phpmyadmin.net
+--
+-- Client :  127.0.0.1
+-- Généré le :  Sam 11 Juin 2016 à 11:31
+-- Version du serveur :  5.6.17
+-- Version de PHP :  5.5.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Base de données :  `rsurvey`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `choix`
+--
+
+CREATE TABLE IF NOT EXISTS `choix` (
+  `choix_id` int(11) NOT NULL AUTO_INCREMENT,
+  `choix_libel` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `question_id` int(11) NOT NULL,
+  PRIMARY KEY (`choix_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='table des choix' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `question`
+--
+
+CREATE TABLE IF NOT EXISTS `question` (
+  `question_id` int(11) NOT NULL AUTO_INCREMENT,
+  `question_libel` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `question_date` datetime NOT NULL,
+  `question_active` tinyint(1) NOT NULL DEFAULT '1',
+  `question_close` tinyint(1) NOT NULL DEFAULT '0',
+  `usr_id` int(11) NOT NULL,
+  `zone_id` int(11) NOT NULL,
+  PRIMARY KEY (`question_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des sondages' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `reponse`
+--
+
+CREATE TABLE IF NOT EXISTS `reponse` (
+  `reponse_id` int(11) NOT NULL AUTO_INCREMENT,
+  `reponse_votes` int(11) NOT NULL DEFAULT '0',
+  `reponse_subcode` int(11) NOT NULL,
+  `choix_id` int(11) NOT NULL,
+  PRIMARY KEY (`reponse_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `role`
+--
+
+CREATE TABLE IF NOT EXISTS `role` (
+  `role_id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_libel` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des role utilisateurs' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `subdivision`
+--
+
+CREATE TABLE IF NOT EXISTS `subdivision` (
+  `sub_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sub_libel` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `sub_active` tinyint(1) NOT NULL DEFAULT '1',
+  `zone_id` int(11) NOT NULL,
+  PRIMARY KEY (`sub_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des subdivisions' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `user`
+--
+
+CREATE TABLE IF NOT EXISTS `user` (
+  `usr_id` int(11) NOT NULL AUTO_INCREMENT,
+  `usr_pseudo` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `usr_mail` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `usr_password` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
+  `usr_token` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `usr_active` tinyint(1) NOT NULL DEFAULT '0',
+  `role_id` int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`usr_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table utilisateur' AUTO_INCREMENT=5 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `zone`
+--
+
+CREATE TABLE IF NOT EXISTS `zone` (
+  `zone_id` int(11) NOT NULL AUTO_INCREMENT,
+  `zone_libel` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `zone_active` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`zone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des zones' AUTO_INCREMENT=1 ;

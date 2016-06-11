@@ -6,7 +6,10 @@
  * Date: 09/06/2016
  * Time: 10:38
  */
-class User
+
+require_once ("SQL.php");
+class User extends SQL
+
 {
     private $iUsrId;
     private $sUsrPseudo;
@@ -140,6 +143,55 @@ class User
     {
         $this->iRoleId = $iRoleId;
         return $this;
+    }
+
+    /**
+     * @param $sUsrEmail
+     * @return bool
+     */
+    public function checkEmail($sUsrEmail){
+        $requete = $this->db->prepare('select usr_mail from User where usr_mail = :usr_mail');
+        $requete->execute (array(
+            ':usr_mail'=>$sUsrEmail,
+        ));
+        $results = $requete->fetchAll();
+        if (empty($results)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * @param $sUsrPseudo
+     * @return bool
+     */
+    public function checkPseudo($sUsrPseudo){
+        $requete = $this->db->prepare('select usr_pseudo from User where usr_pseudo = :usr_pseudo');
+        $requete->execute (array(
+            ':usr_pseudo'=>$sUsrPseudo,
+        ));
+        $results = $requete->fetchAll();
+        if (empty($results)){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function signinUser(){
+        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password)values(:usr_pseudo , :usr_mail , :usr_password)') ;
+        return $requete->execute (array(
+            ':usr_pseudo'=>$this->getSUsrPseudo(),
+            ':usr_mail'=>$this->getSUsrMail(),
+            ':usr_password'=>$this->getSUsrPassword(),
+        ));
+
     }
     
 }
