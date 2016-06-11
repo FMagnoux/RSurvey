@@ -90,4 +90,25 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($userController->createUser());
     }
 
+    public function test_loginUser(){
+        $_POST['sUsrMail'] = "TESTRFD@gmail.com";
+        $_POST['sUsrPassword'] = "azerty";
+
+        $userController = new UserController();
+
+        $this->assertTrue($userController->loginUser());
+
+        $_POST['sUsrMail'] = "";
+        $_POST['sUsrPassword'] = "azerty";
+
+        $this->assertFalse($userController->loginUser());
+
+        $_POST['sUsrMail'] = "TESTRFD@gmail.com";
+        $_POST['sUsrPassword'] = "";
+
+        $this->assertFalse($userController->loginUser());
+
+
+    }
+
 }
