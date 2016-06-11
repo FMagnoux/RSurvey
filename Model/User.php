@@ -193,5 +193,20 @@ class User extends SQL
         ));
 
     }
+
+    public function loginUser(){
+        $requete = $this->db->prepare('select usr_id from User where usr_mail = :usr_mail and usr_password = :usr_password');
+        $requete->execute (array(
+            ':usr_mail'=>$this->getSUsrMail(),
+            ':usr_password'=>$this->getSUsrPassword(),
+        ));
+        $results = $requete->fetchAll();
+        if (empty($results)){
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
     
 }

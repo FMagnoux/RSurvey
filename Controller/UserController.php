@@ -25,8 +25,8 @@ class UserController extends SuperController
 
         if ($this->checkEmail() && $this->checkPseudo() && $this->checkPassword(false)){
             $this->oEntity->setSUsrPseudo($_POST['sUsrPseudo'])
-                         ->setSUsrMail($_POST['sUsrMail'])
-                         ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
+                ->setSUsrMail($_POST['sUsrMail'])
+                ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
             return $this->oEntity->signinUser();
         }
         else {
@@ -35,11 +35,29 @@ class UserController extends SuperController
 
     }
 
+    public function loginUser(){
+        if($this->checkPassword() && $this->filterEmail($_POST['sUsrMail'])){
+            $this->oEntity->setSUsrMail($_POST['sUsrMail'])
+                ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
+            if ($this->oEntity->loginUser()){
+                $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
+                return true;
+            }
+            else {
+                return false;
+            }
+
+        }
+        else {
+            return false;
+        }
+    }
+
     /**
      * @return bool
      */
     public function checkEmail(){
-        if (isset($_POST['sUsrMail'])){
+        if (isset($_POST['sUsrMail']) && !empty($_POST['sUsrMail'])){
             $sUsrMail = $_POST['sUsrMail'];
             if ($this->filterEmail($sUsrMail)){
                 if($this->oEntity->checkEmail($sUsrMail)){
@@ -60,12 +78,18 @@ class UserController extends SuperController
     }
 
     public function filterEmail($sUsrMail){
-        if (filter_var($sUsrMail,FILTER_VALIDATE_EMAIL)){
-            return true;
+        if(!empty($sUsrMail)){
+            if (filter_var($sUsrMail,FILTER_VALIDATE_EMAIL)){
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else {
             return false;
         }
+
     }
 
     /**
