@@ -4,7 +4,7 @@ if (isset($_GET["ctrl"]) && isset($_GET["action"])) {
     $ctrl = htmlspecialchars($_GET["ctrl"]);
     $action = htmlspecialchars($_GET["action"]);
 } else {
-    $ctrl = "super";
+    $ctrl = "Super";
     $action = "home";
 }
 require_once "./Model/SQL.php";

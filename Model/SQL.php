@@ -15,7 +15,15 @@ abstract class SQL
      */
     public function __construct() {
         try {
-            $this->db = new PDO('mysql:host=localhost;dbname=rsurvey;charset=utf8', 'root', 'mysql');
+            $engine = 'mysql';
+            $host = '127.0.0.1';
+            $port ='8889';
+            $database ='rsurvey';
+            $user = 'root';
+            $password = 'root';
+            $dns = $engine.':port='.$port.';dbname='.$database.";host=".$host;
+            $this->db = new PDO($dns, $user, $password);
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
