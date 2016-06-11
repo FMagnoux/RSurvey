@@ -179,8 +179,11 @@ class User extends SQL
         }
     }
 
+    /**
+     * @return bool
+     */
     public function signinUser(){
-        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password)values(:usr_pseudo , :usr_mail , :usr_password') ;
+        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password)values(:usr_pseudo , :usr_mail , :usr_password)') ;
         return $requete->execute (array(
             ':usr_pseudo'=>$this->getSUsrPseudo(),
             ':usr_mail'=>$this->getSUsrMail(),

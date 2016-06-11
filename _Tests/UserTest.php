@@ -13,6 +13,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 {
     public function test_filterEmailController()
     {
+        // Test le retour du filtre PHP pour l'email
         $userController = new UserController();
 
         $this->assertTrue($userController->filterEmail('TESTRFD@gmail.com'));
@@ -22,10 +23,12 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     public function test_checkEmailController()
     {
+        // Test la présence d'un email en base
         $userController = new UserController();
         $_POST['sUsrMail'] = 'TESTRFD@gmail.com';
 
-        //$this->assertFalse($userController->checkEmail());
+        // Activer le test si l'adresse ci dessus n'est pas créer en base OK dans les deux cas
+        // $this->assertFalse($userController->checkEmail());
 
 
         $_POST['sUsrMail'] = 'FloDavRomUPMC@gmail.com';
@@ -35,7 +38,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     public function test_createUser(){
 
-        // Avec tout les champs
+        // Test l'insertion avec tout les champs
         $_POST['sUsrMail'] = 'TESTRFD@gmail.com';
         $_POST['sUsrPseudo'] = "Florent";
         $_POST['sUsrPassword'] = "azerty";
@@ -77,7 +80,6 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($userController->createUser());
 
         // Sans Confirm Mot de passe
-
         $_POST['sUsrMail'] = 'TESTRFD@gmail.com';
         $_POST['sUsrPseudo'] = "Florent";
         $_POST['sUsrPassword'] = "azerty";

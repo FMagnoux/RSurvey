@@ -18,6 +18,9 @@ class UserController extends SuperController
         $this->oEntity = new User();
     }
 
+    /**
+     * @return bool
+     */
     public function createUser() {
 
         if ($this->checkEmail() && $this->checkPseudo() && $this->checkPassword(false)){
@@ -32,6 +35,9 @@ class UserController extends SuperController
 
     }
 
+    /**
+     * @return bool
+     */
     public function checkEmail(){
         if (isset($_POST['sUsrMail'])){
             $sUsrMail = $_POST['sUsrMail'];
@@ -62,8 +68,11 @@ class UserController extends SuperController
         }
     }
 
+    /**
+     * @return bool
+     */
     public function checkPseudo(){
-        if (isset($_POST['sUsrPseudo'])){
+        if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo'])){
             $sUsrPseudo = $_POST['sUsrPseudo'];
             if($this->oEntity->checkPseudo($sUsrPseudo)){
                 return true;
@@ -78,9 +87,13 @@ class UserController extends SuperController
         }
     }
 
+    /**
+     * @param bool $bLogin
+     * @return bool
+     */
     public function checkPassword($bLogin = true){
         if($bLogin){
-            if(isset($_POST['sUsrPassword'])){
+            if(isset($_POST['sUsrPassword']) && !empty($_POST['sUsrPassword'])){
                 return true;
             }
             else {
@@ -89,7 +102,7 @@ class UserController extends SuperController
         }
         else {
             // Vérifie correspondance password et confirm
-            if(isset($_POST['sUsrPassword']) && isset($_POST['sUsrConfirmPassword'])){
+            if(isset($_POST['sUsrPassword']) && !empty($_POST['sUsrPassword']) && isset($_POST['sUsrConfirmPassword']) && !empty($_POST['sUsrConfirmPassword'])){
                 $sUsrPassword = $_POST['sUsrPassword'];
                 $sUsrConfirmPassword = $_POST['sUsrConfirmPassword'];
                 if($sUsrPassword === $sUsrConfirmPassword){
@@ -106,6 +119,10 @@ class UserController extends SuperController
 
     }
 
+    /**
+     * @param $sPassword
+     * @return string
+     */
     public function cryptPassword($sPassword){
         return sha1($sPassword.self::$sCleSalage);
     }
