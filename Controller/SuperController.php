@@ -42,12 +42,23 @@ class SuperController
         header('Content-Type: application/json; charset=utf-8');
     }
     
-    public function checkId() {
+    public function checkPostId() {
         if(empty($_POST["id"])) {
-            return false;
+            return 0;
         }
-        $id = intval($_POST["id"]);
+        return $this->checkId($_POST["id"]);
+    }
+    
+    public function checkId($id) {
+        $id = intval($id);
         if($id > 0) return $id;
         return 0;
+    }
+
+    public function checkGetId() {
+        if(empty($_GET["id"])) {
+            return 0;
+        }
+        return $this->checkId($_GET["id"]);
     }
 }

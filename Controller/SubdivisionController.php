@@ -26,13 +26,13 @@ class SubdivisionController extends SuperController
     }
 
     public function desactivateSubdivision() {
-        $id = $this->checkId();
+        $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 0);
     }
     
     public function activateSubdivision() {
-        $id = $this->checkId();
+        $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 1);
     }

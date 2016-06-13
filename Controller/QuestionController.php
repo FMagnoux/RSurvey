@@ -8,12 +8,12 @@
  */
 class QuestionController extends SuperController
 {
-    private $entity;
+    private $oEntity;
 
     public function __construct() {
         parent::__construct();
         require_once "./Model/Question.php";
-        $this->entity = new Question();
+        $this->oEntity = new Question();
     }
 
     public function create() {
@@ -26,12 +26,27 @@ class QuestionController extends SuperController
      */
     public function listQuestions() {
         $this->setJsonData();
-        echo json_encode($this->entity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
     }
-    
-    public function desactivateQuestion() {
-        $id = $this->checkId();
+
+    /**
+     * Liste des questions d'un utilisateur
+     * @return bool
+     */
+    public function listQuestionsByIdUser() {
+        $id = $this->checkGetId();
         if($id == 0) return false;
-        return $this->entity->desactivateQuestion($id);
+        $this->setJsonData();
+        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1, $id));
+    }
+
+    /**
+     * Désactiver la question d'un user
+     * @return bool
+     */
+    public function desactivateQuestion() {
+        $id = $this->checkPostId();
+        if($id == 0) return false;
+        return $this->oEntity->desactivateQuestion($id);
     }
 }

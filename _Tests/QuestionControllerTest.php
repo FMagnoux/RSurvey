@@ -20,4 +20,10 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
         $questionController->desactivateQuestion();
         $this->assertTrue($questionController->desactivateQuestion());
     }
+
+    public function test_listQuestionsByIdUser() {
+        $_GET["id"] = 2;
+        $questionController = new QuestionController();
+        $questionController->listQuestionsByIdUser();
+    }
 }

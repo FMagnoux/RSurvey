@@ -157,12 +157,17 @@ class Question extends SQL implements JsonSerializable
      * @param $iCurrentPage
      * @return array<Question>
      */
-    public function getPaginatedQuestionList($iMaxItems, $iCurrentPage) {
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
+    public function getPaginatedQuestionList($iMaxItems, $iCurrentPage, $iId = null) {
+        $values = null;
+        $aConfig = array(
             "columns" => '*',
             "table" => $this->table,
-            null
-        ));
+        );
+        if(!empty($iId)) {
+            $aConfig["where"] = "usr_id = :id";
+            $values = array("id" => $iId);
+        }
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
 
     /**
