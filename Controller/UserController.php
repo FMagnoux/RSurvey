@@ -11,6 +11,27 @@ class UserController extends SuperController
     private $oEntity;
     private static $sCleSalage = "=9Y[Ec9i";
 
+    const SUCCESS = "success";
+    const ERROR = "error";
+
+    const ERROR_PSEUDO = "Le pseudo indiqué est déjà utilisé par un autre utilisateur.";
+    const ERROR_EMPTYPSEUDO = "Le pseudo n'est pas renseigné.";
+
+    const ERROR_MAIL = "L'adresse email indiquée est déjà utilisée par un autre utilisateur.";
+    const ERROR_FILTERMAIL = "L'adresse email indiquée ne respecte pas le bon format d'email.";
+    const ERROR_EMPTYMAIL = "L'adresse email n'est pas renseignée.";
+
+    const ERROR_LOGIN = "Adresse email ou pseudo incorrect.";
+
+    const ERROR_CHECKPASSWORD = "Les deux mots de passe ne sont pas identiques.";
+    const ERROR_EMPTYPASSWORD = "Les mots de passe ne sont pas renseignés.";
+
+    const SUCCESS_LOGIN = "Vous êtes authentifié.";
+    const SUCCESS_SIGNIN = "Vous allez recevoir un email de confirmation pour valider votre compte.";
+
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+
+
     public function __construct() {
         parent::__construct();
         require_once "./Model/User.php";
@@ -22,34 +43,59 @@ class UserController extends SuperController
      */
     public function createUser() {
 
-        if ($this->checkEmail() && $this->checkPseudo() && $this->checkPassword(false)){
-            $this->oEntity->setSUsrPseudo($_POST['sUsrPseudo'])
-                ->setSUsrMail($_POST['sUsrMail'])
-                ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
-            return $this->oEntity->signinUser();
-        }
-        else {
-            return false;
-        }
-
-    }
-
-    public function loginUser(){
-        if($this->checkPassword() && $this->filterEmail($_POST['sUsrMail'])){
-            $this->oEntity->setSUsrMail($_POST['sUsrMail'])
-                ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
-            if ($this->oEntity->loginUser()){
-                $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
-                return true;
+        if ($this->checkEmail()){
+            if ($this->checkPseudo()) {
+                if ($this->checkPassword(false)){
+                    $this->oEntity->setSUsrPseudo($_POST['sUsrPseudo'])
+                        ->setSUsrMail($_POST['sUsrMail'])
+                        ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
+                    if($this->oEntity->signinUser()){
+                        $returnjson = array(self::SUCCESS,self::SUCCESS_SIGNIN);
+                        return json_encode($returnjson);
+                    }
+                    else {
+                        $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                        return json_encode($returnjson);
+                    }
+                }
+                else {
+                    return $this->checkPassword();
+                }
             }
             else {
-                return false;
+                return $this->checkPseudo();
             }
-
         }
         else {
-            return false;
+            return $this->checkEmail();
         }
+    }
+
+    public function loginUser()
+    {
+        if ($this->checkPassword()){
+            if($this->filterEmail($_POST['sUsrMail'])) {
+                $this->oEntity->setSUsrMail($_POST['sUsrMail'])
+                    ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
+                if ($this->oEntity->loginUser()){
+                    $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
+                    $returnjson = array(self::SUCCESS,self::SUCCESS_LOGIN);
+                    return json_encode($returnjson);
+                }
+                else {
+                    $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                    return json_encode($returnjson);
+                }
+            }
+            else {
+                return $this->filterEmail($_POST['sUsrMail']);
+            }
+        }
+
+        else {
+            return $this->checkPassword();
+        }
+
     }
 
     /**
@@ -63,16 +109,17 @@ class UserController extends SuperController
                     return true;
                 }
                 else {
-                    return false;
+                    return $this->oEntity->checkEmail($sUsrMail);
                 }
             }
             else {
-                return false;
+                return $this->filterEmail($sUsrMail);
             }
 
         }
         else {
-            return false;
+            $returnjson = array(self::ERROR,self::ERROR_EMPTYMAIL);
+            return json_encode($returnjson);
         }
     }
 
@@ -82,7 +129,8 @@ class UserController extends SuperController
                 return true;
             }
             else {
-                return false;
+                $returnjson = array(self::ERROR,self::ERROR_FILTERMAIL);
+                return json_encode($returnjson);
             }
         }
         else {
@@ -101,12 +149,14 @@ class UserController extends SuperController
                 return true;
             }
             else {
-                return false;
+                $returnjson = array(self::ERROR,self::ERROR_PSEUDO);
+                return json_encode($returnjson);
             }
 
         }
         else {
-            return false;
+            $returnjson = array(self::ERROR,self::ERROR_EMPTYPSEUDO);
+            return json_encode($returnjson);
         }
     }
 
@@ -120,7 +170,8 @@ class UserController extends SuperController
                 return true;
             }
             else {
-                return false;
+                $returnjson = array(self::ERROR,self::ERROR_EMPTYPASSWORD);
+                return json_encode($returnjson);
             }
         }
         else {
@@ -132,11 +183,13 @@ class UserController extends SuperController
                     return true;
                 }
                 else {
-                    return false;
+                    $returnjson = array(self::ERROR,self::ERROR_CHECKPASSWORD);
+                    return json_encode($returnjson);
                 }
             }
             else {
-                return false;
+                $returnjson = array(self::ERROR,self::ERROR_EMPTYPASSWORD);
+                return json_encode($returnjson);
             }
         }
 
