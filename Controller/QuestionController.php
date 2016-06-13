@@ -6,7 +6,6 @@
  * Date: 09/06/2016
  * Time: 12:21
  */
-require_once ("../Controller/ChoixController.php");
 class QuestionController extends SuperController
 {
     private $oEntity;
