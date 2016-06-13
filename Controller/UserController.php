@@ -291,7 +291,8 @@ class UserController extends SuperController
     public function generateNewPassword() {
         // Vérifier que tous les champs requis soient renseignés
         if(empty($_POST["submit"]) || empty($_POST['sUsrPassword']) || empty($_POST['sUsrConfirmPassword']) || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword'] || empty($_GET["token"]) || empty($_GET["id"])) return false;
-        $id = intval($_GET["id"]);
+        $id = $this->decrypt($_GET["id"]);
+        $id = intval($id);
         if($id <= 0) return false;
         // Vérifier que le token en BDD est le même que celui dans l'url
         $token = $this->oEntity->getTokenById($id);

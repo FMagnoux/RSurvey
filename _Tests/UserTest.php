@@ -133,12 +133,24 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     public function test_generateNewPassword() {
         $_POST["submit"] = true;
-        $_POST['sUsrPassword'] = "1234Aa";
-        $_POST['sUsrConfirmPassword'] = "1234Aa";
-        $_GET["token"] = "168305f47f3231c1438e0d32e2c3b0bf";
-        $_GET["id"] = 2;
+        $_POST['sUsrPassword'] = "546Aa";
+        $_POST['sUsrConfirmPassword'] = "546Aa";
+        $_GET["token"] = "85e13c46273aaad5cb984145149e57ec";
+        $_GET["id"] = "B0Jla3Ts0uMx8fAZzjniiQ%3D%3D";
         $userController = new UserController();
         $this->assertTrue($userController->generateNewPassword());
+    }
+
+    public function test_crypt() {
+        $string = "2";
+
+        $userController = new UserController();
+
+        $crypt = $userController->encrypt($string);
+        $decrypt = $userController->decrypt($crypt);
+
+        var_dump($crypt);
+        var_dump($decrypt);
     }
 
 }
