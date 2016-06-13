@@ -6,14 +6,102 @@
  * Date: 09/06/2016
  * Time: 12:21
  */
+require_once ("../Controller/ChoixController.php");
 class QuestionController extends SuperController
 {
-    private $entity;
+    private $oEntity;
+
+    const SUCCESS = "success";
+    const ERROR = "error";
+
+    const ERROR_EMPTYQUESTION = "Vous n'avez pas renseigné de question.";
+    const ERROR_QUESTIONLENGHT = "La question renseignée dépasse les 100 caractères.";
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    const ERROR_EMPTYZONE = "Vous n'avez pas renseigné de zone pour ce sondage.";
+
+    const ERROR_EMPTYCHOIX = "Deux choix sont requis pour créer un sondage";
 
     public function __construct() {
         parent::__construct();
         require_once "./Model/Question.php";
-        $this->entity = new Question();
+        $this->oEntity = new Question();
+    }
+
+    public function createQuestion(){
+        if($this->checkQuestion()){
+            if(count($_POST['aQuestionChoix']) >= 2){
+                $oChoixController = new ChoixController();
+                if($oChoixController->checkTabChoix($_POST['aQuestionChoix'])){
+                    $this->oEntity->setSQuestionLibel($_POST['sQuestionLibel'])
+                        ->setDQuestionDate(new DateTime("NOW"))
+                        ->setoUsrId($_SESSION['iIdUser'])
+                        ->setoZoneId($_POST['iIdZone']);
+                    $bLastQuestion = $this->oEntity->createQuestion();
+                    if(!$bLastQuestion){
+                        $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                        return json_encode($returnjson);
+                    }
+                    else {
+                        if($oChoixController->createChoix($_POST['aQuestionChoix'],$bLastQuestion)){
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
+                    }
+
+                }
+                else {
+                    return $oChoixController->checkTabChoix($_POST['aQuestionChoix']);
+                }
+            }
+            else {
+                $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
+                return json_encode($returnjson);
+            }
+
+
+        }
+        else {
+            return $this->checkQuestion();
+        }
+
+
+    }
+
+    public function checkQuestion(){
+        if(isset($_POST['sQuestionLibel']) && !empty($_POST['sQuestionLibel'])){
+            if($this->checkLenQuestion($_POST['sQuestionLibel'])){
+                return true;
+            }
+            else {
+                return $this->checkLenQuestion($_POST['sQuestionLibel']);
+            }
+        }
+        else {
+            $returnjson = array(self::ERROR,self::ERROR_EMPTYQUESTION);
+            return json_encode($returnjson);
+        }
+    }
+
+    public function checkLenQuestion($sQuestionLibel){
+        if(strlen($sQuestionLibel)>100){
+            $returnjson = array(self::ERROR,self::ERROR_QUESTIONLENGHT);
+            return json_encode($returnjson);
+        }
+        else {
+            return true;
+        }
+    }
+
+    public function checkZoneId(){
+        if(isset($_POST['iIdZone']) && !empty($_POST['iIdZone'])){
+            return true;
+        }
+        else {
+            $returnjson = array(self::ERROR,self::ERROR_EMPTYZONE);
+            return json_encode($returnjson);
+        }
     }
 
     public function create() {
@@ -26,12 +114,12 @@ class QuestionController extends SuperController
      */
     public function listQuestions() {
         $this->setJsonData();
-        echo json_encode($this->entity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
     }
     
     public function desactivateQuestion() {
         $id = $this->checkId();
         if($id == 0) return false;
-        return $this->entity->desactivateQuestion($id);
+        return $this->oEntity->desactivateQuestion($id);
     }
 }

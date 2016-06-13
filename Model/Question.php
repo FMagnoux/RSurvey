@@ -144,6 +144,23 @@ class Question extends SQL implements JsonSerializable
         return $this;
     }
 
+    public function createQuestion(){
+        $bStatutRequete = false;
+        $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , zone_id)values(:question_libel , :question_date , :usr_id , :zone_id)') ;
+        if ($requete->execute (array(
+            ':question_libel'=>$this->getSQuestionLibel(),
+            ':question_date'=>$this->getDQuestionDate()->format('Y-m-d H:i:s'),
+            ':usr_id'=>$this->getoUsrId(),
+            ':zone_id'=>$this->getoZoneId(),
+        ))){
+            $bStatutRequete = true;
+            return $this->db->lastInsertId();
+        }
+        else {
+            return $bStatutRequete;
+        }
+    }
+    
     public function desactivateQuestion($id) {
         $query = $this->db->prepare("UPDATE ".$this->table." SET question_active = 0 WHERE question_id = :id");
         return $query->execute(array(

@@ -64,6 +64,14 @@ class Choix extends SQL
         $this->iQuestionId = $iQuestionId;
         return $this;
     }
+
+    public function createChoix(){
+        $requete = $this->db->prepare('insert into Choix (choix_libel, question_id)values(:choix_libel, :question_id)') ;
+        return $requete->execute (array(
+            ':choix_libel'=>$this->getSChoixLibel(),
+            ':question_id'=>$this->getIQuestionId(),
+        ));
+    }
     
     
 }
