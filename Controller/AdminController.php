@@ -13,14 +13,11 @@ class AdminController extends SuperController
     function __construct()
     {
         parent::__construct();
-        if(empty($_SESSION["iIdUser"])) {
-            return;
-        }
-
+        // Vérifier que l'on soit bien connecté avec le bon rôle
+        if(empty($_SESSION["iIdUser"]) || !empty($_SESSION["iRoleId"])) return;
         require_once './Model/User.php';
         $this->oEntity = new User();
-        $this->oEntity->setIUsrId($_SESSION["iIdUser"]);
-        $this->oEntity->getUserRoleById($_SESSION["iIdUser"]);
+        $_SESSION["iRoleId"] = $this->oEntity->getUserRoleById($_SESSION["iIdUser"]);
     }
 
     public function home() {

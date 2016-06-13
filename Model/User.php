@@ -294,9 +294,9 @@ class User extends SQL implements JsonSerializable
      * @return User
      */
     public function getUserRoleById($iId) {
-         return $this->setIRoleId(parent::select(
+         return parent::select(
             array(
-                "columns" => "usr_role",
+                "columns" => "role_id",
                 "table" => $this->sTable,
                 "where" => "usr_id = :id",
                 "fetch" => true
@@ -304,7 +304,7 @@ class User extends SQL implements JsonSerializable
             array(
                 "id" => $iId
             )
-        )["usr_role"]);
+        )["role_id"];
     }
 
     /**
