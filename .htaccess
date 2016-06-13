@@ -15,3 +15,4 @@ RewriteRule ^list-zones/page-([0-9]+)\.json$ index.php?ctrl=subdivision&action=l
 #User
 RewriteRule ^list-users.json$ index.php?ctrl=user&action=listUsers [L]
 RewriteRule ^list-users/page-([0-9]+)\.json$ index.php?ctrl=user&action=listUsers&page=$1 [L]
+RewriteRule ^mot-de-passe-oublie/([a-z0-9A-Z\-]+)\/([a-z0-9A-Z\-]+)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]

@@ -9,6 +9,7 @@
 class SuperController
 {
     protected $page;
+    const URLKEY = "9wdg22i2WU2tCButPLHN736aK68vgDv5";
 
     function __construct() {
 
@@ -49,9 +50,9 @@ class SuperController
         return $this->checkId($_POST["id"]);
     }
     
-    public function checkId($iId) {
-        $iId = intval($iId);
-        if($iId > 0) return $iId;
+    public function checkId($id) {
+        $id = intval($id);
+        if($id > 0) return $id;
         return 0;
     }
 
@@ -60,5 +61,25 @@ class SuperController
             return 0;
         }
         return $this->checkId($_GET["id"]);
+    }
+
+    /**
+     * Chiffrer une chaine de caractères
+     * @param $text
+     * @return string
+     */
+    function encrypt($sText)
+    {
+        return urlencode(trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::URLKEY, $sText, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB), MCRYPT_RAND)))));
+    }
+
+    /**
+     * Déchiffrer une chaine de caractères
+     * @param $text
+     * @return string
+     */
+    function decrypt($sText)
+    {
+        return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::URLKEY, base64_decode(urldecode($sText)), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB), MCRYPT_RAND)));
     }
 }
