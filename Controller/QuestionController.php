@@ -21,12 +21,26 @@ class QuestionController extends SuperController
 
     const ERROR_EMPTYCHOIX = "Deux choix sont requis pour créer un sondage";
 
+    const SUCESS_CLOSEQUESTION = "Le sondage est maintenant terminé.";
+
     public function __construct() {
         parent::__construct();
         require_once "./Model/Question.php";
         $this->oEntity = new Question();
     }
 
+    public function closeQuestion(){
+        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
+        $this->oEntity->setBQuestionClose(1);
+        if($this->oEntity->closeQuestion()){
+            $returnjson = array(self::SUCCESS,self::SUCESS_CLOSEQUESTION);
+            return json_encode($returnjson);
+        }
+        else {
+            $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+            return json_encode($returnjson);
+        }
+    }
     public function createQuestion(){
         if($this->checkQuestion()){
             if(count($_POST['aQuestionChoix']) >= 2){
