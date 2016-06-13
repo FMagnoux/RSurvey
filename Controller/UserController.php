@@ -258,4 +258,53 @@ class UserController extends SuperController
         }
     }
 
+    /**
+     * Envoi d'un mail lorsque l'utilisateur oublie son mot de passe
+     * @return bool
+     */
+    public function forgottenPassword() {
+        if($this->filterEmail($_POST["sMail"]) !== true) {
+            return false;
+        }
+        // Vérifier que le mail renvoie une id
+        $id = $this->oEntity->getIdByEmail($_POST["sMail"]);
+        if(empty($id)) return false;
+        // Génrer le token
+        $sToken = $this->generateToken();
+        if(!$this->oEntity->setTokenById($sToken, $id)) return false;
+        // Envoyer le mail
+        require_once './Model/Mail.php';
+        $mail = new Mail(
+            "R Survey",
+            "no-reply@r-survey.com",
+            $_POST["sMail"],
+            "Réinitialisation du mot de passe",
+            "<p><a href='http://r-survey.com/mot-de-passe-oublie/".$id."/".$sToken."'>Cliquez ici</a> pour réinitialiser votre mot de passe</p>");
+        $mail->sendMail();
+        return true;
+    }
+
+    /**
+     * Générer un nouveau mot de passe pour un utilisateur
+     * @return bool
+     */
+    public function generateNewPassword() {
+        // Vérifier que tous les champs requis soient renseignés
+        if(empty($_POST["submit"]) || empty($_POST['sUsrPassword']) || empty($_POST['sUsrConfirmPassword']) || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword'] || empty($_GET["token"]) || empty($_GET["id"])) return false;
+        $id = intval($_GET["id"]);
+        if($id <= 0) return false;
+        // Vérifier que le token en BDD est le même que celui dans l'url
+        $token = $this->oEntity->getTokenById($id);
+        if(empty($token) || $token != $_GET["token"]) return false;
+        // Changer le mot de passe et le token
+        return $this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken());        
+    }
+
+    /**
+     * Générer un token
+     * @return string
+     */
+    public function generateToken() {
+        return md5(uniqid(rand(10, 1000), true));
+    }
 }

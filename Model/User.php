@@ -227,6 +227,68 @@ class User extends SQL implements JsonSerializable
     }
 
     /**
+     * Changer le token d'un utilisateur en fonction de son adresse mail
+     * @param $sToken
+     * @param $sMail
+     * @return bool
+     */
+    public function setTokenById($sToken, $sMail) {
+        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token WHERE usr_id = :mail");
+        return $query->execute(array(
+            "token" => $sToken,
+            "mail" => $sMail
+        ));
+    }
+
+    public function getTokenById($iId) {
+        return parent::select(
+            array(
+                "columns" => "usr_token",
+                "table" => $this->sTable,
+                "where" => "usr_id = :id",
+                "fetch" => true
+            ),
+            array(
+                "id" => $iId
+            )
+        )["usr_token"];
+    }
+    
+    /**
+     * Mettre à jour le mot de passe dun user
+     * @param $iId
+     * @param $sPassword
+     * @param $sToken
+     * @return bool
+     */
+    public function setPasswordById($iId, $sPassword, $sToken) {
+        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token, usr_password = :password WHERE usr_id = :id");
+        return $query->execute(array(
+            "token" => $sToken,
+            "id" => $iId,
+            "password" => $sPassword
+        ));
+    }
+
+    /**
+     * Retourner l'id correspond à un mail
+     * @return array
+     */
+    public function getIdByEmail($sMail) {
+        return parent::select(
+            array(
+                "columns" => "usr_id",
+                "table" => $this->sTable,
+                "where" => "usr_mail = :mail",
+                "fetch" => true
+          ),
+            array(
+                "mail" => $sMail    
+            )
+        )["usr_id"];
+    }
+
+    /**
      * Liste paginée des users
      * @param $iMaxItems
      * @param $iCurrentPage
