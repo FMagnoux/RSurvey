@@ -116,10 +116,28 @@ class QuestionController extends SuperController
         $this->setJsonData();
         echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
     }
-    
+
+    /**
+     * Liste des questions d'un utilisateur
+     * @return bool
+     */
+    public function listQuestionsByIdUser() {
+        $iId = $this->checkGetId();
+        if($iId == 0) return false;
+        $this->setJsonData();
+        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1, $iId));
+    }
+
+    /**
+     * Désactiver la question d'un user
+     * @return bool
+     */
     public function desactivateQuestion() {
         $id = $this->checkId();
         if($id == 0) return false;
         return $this->oEntity->desactivateQuestion($id);
+        $iId = $this->checkPostId();
+        if($iId == 0) return false;
+        return $this->oEntity->desactivateQuestion($iId);
     }
 }

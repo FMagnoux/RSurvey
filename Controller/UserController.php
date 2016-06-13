@@ -219,7 +219,7 @@ class UserController extends SuperController
      * @return bool
      */
     public function desactivateUser() {
-        $id = $this->checkId();
+        $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 0);
     }
@@ -229,7 +229,7 @@ class UserController extends SuperController
      * @return bool
      */
     public function activateUser() {
-        $id = $this->checkId();
+        $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 1);
     }

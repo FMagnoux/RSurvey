@@ -14,15 +14,17 @@ chdir("../");
 
 class QuestionControllerTest extends PHPUnit_Framework_TestCase
 {
-    public function test_desactivateQuestion() {
+    public function test_desactivateQuestion()
+    {
         $_POST["id"] = 1;
         $questionController = new QuestionController();
         $questionController->desactivateQuestion();
         $this->assertTrue($questionController->desactivateQuestion());
     }
 
-    public function test_createQuestion(){
-        $_POST['aQuestionChoix'] = array("choix1","choix2");
+    public function test_createQuestion()
+    {
+        $_POST['aQuestionChoix'] = array("choix1", "choix2");
         $_POST['sQuestionLibel'] = "Pain au chocolat ou chocolatine ?";
         $_POST['iIdZone'] = 1;
         $_SESSION['iIdUser'] = 1;
@@ -30,4 +32,11 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
         $oQuestionController = new QuestionController();
         $this->assertTrue($oQuestionController->createQuestion());
     }
+    public function test_listQuestionsByIdUser()
+    {
+        $_GET["id"] = 2;
+        $questionController = new QuestionController();
+        $questionController->listQuestionsByIdUser();
+    }
 }
+
