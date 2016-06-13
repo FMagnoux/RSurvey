@@ -49,9 +49,9 @@ class SuperController
         return $this->checkId($_POST["id"]);
     }
     
-    public function checkId($id) {
-        $id = intval($id);
-        if($id > 0) return $id;
+    public function checkId($iId) {
+        $iId = intval($iId);
+        if($iId > 0) return $iId;
         return 0;
     }
 

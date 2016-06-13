@@ -34,10 +34,10 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function listQuestionsByIdUser() {
-        $id = $this->checkGetId();
-        if($id == 0) return false;
+        $iId = $this->checkGetId();
+        if($iId == 0) return false;
         $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1, $id));
+        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1, $iId));
     }
 
     /**
@@ -45,8 +45,8 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function desactivateQuestion() {
-        $id = $this->checkPostId();
-        if($id == 0) return false;
-        return $this->oEntity->desactivateQuestion($id);
+        $iId = $this->checkPostId();
+        if($iId == 0) return false;
+        return $this->oEntity->desactivateQuestion($iId);
     }
 }
