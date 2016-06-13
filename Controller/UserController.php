@@ -46,9 +46,9 @@ class UserController extends SuperController
         if ($this->checkEmail()){
             if ($this->checkPseudo()) {
                 if ($this->checkPassword(false)){
-                    $this->oEntity->setSUsrPseudo($_POST['sUsrPseudo'])
-                        ->setSUsrMail($_POST['sUsrMail'])
-                        ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
+                    $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
+                        ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
+                        ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])));
                     if($this->oEntity->signinUser()){
                         $returnjson = array(self::SUCCESS,self::SUCCESS_SIGNIN);
                         return json_encode($returnjson);
