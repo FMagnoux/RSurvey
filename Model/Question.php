@@ -144,6 +144,14 @@ class Question extends SQL implements JsonSerializable
         return $this;
     }
 
+    public function closeQuestion(){
+        $requete = $this->db->prepare('update Question set question_close = :question_close where question_id = :question_id') ;
+        return $requete->execute (array(
+            ':question_close'=>$this->getBQuestionClose(),
+            ':question_id'=>$this->getIQuestionId(),
+        ));
+    }
+
     public function createQuestion(){
         $bStatutRequete = false;
         $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , zone_id)values(:question_libel , :question_date , :usr_id , :zone_id)') ;
