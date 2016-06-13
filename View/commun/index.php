@@ -9,23 +9,23 @@
          <main class="mdl-layout__content">
             <div class="page-content">
                <div class="homepage-landing-section mdl-typography--text-center">
-                  <div class="logo-font homepage-slogan">Ecoutez la voix de la rÈgion</div>
-                  <div class="logo-font homepage-sub-slogan">R Survey vous permet de crÈer des sondages et d'avoir les rÈsultats rÈgions par rÈgions.</div>
-                  <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800">Ècrire un sondage</button>
+                  <div class="logo-font homepage-slogan">Ecoutez la voix de la r√©gion</div>
+                  <div class="logo-font homepage-sub-slogan">R Survey vous permet de cr√©er des sondages et d'avoir les r√©sultats r√©gions par r√©gions.</div>
+                  <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800">Ecrire un sondage</button>
                   <button id="homepage-fab" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--blue-800"><i class="material-icons">expand_more</i></button>
                </div>
                <div class="mdl-grid">
                   <div class="mdl-cell mdl-cell--4-col mdl-card__supporting-text mdl-cell--2-offset-desktop ">
-                     <h3 class="mdl-typography--display-1-color-contrast">Une nouvelle gÈnÈration de sondages</h3>
+                     <h3 class="mdl-typography--display-1-color-contrast">Une nouvelle g√©n√©ration de sondages</h3>
                      <p>
                         Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
                      </p>
                   </div>
                   <div class="mdl-cell mdl-cell--6-col">
-                     <img class="homepage-french-map" src="media/img/homepage-french-map.png"  alt="Carte de France">
+                     <img class="homepage-french-map" src="./ressources/media/img/homepage-french-map.png"  alt="Carte de France">
                   </div>
                   <div class=" container-image-responsive mdl-cell mdl-cell--6-col">
-                     <img class="homepage-responsive" src=" media/img/homepage-responsive.png" alt="Responsive">
+                     <img class="homepage-responsive" src=" ./ressources/media/img/homepage-responsive.png" alt="Responsive">
                   </div>
                   <div class="mdl-cell mdl-cell--4-col mdl-card__supporting-text no-padding ">
                      <h3 class="mdl-typography--display-1-color-contrast">Fonctionne sur toutes les plateformes </h3>
@@ -36,14 +36,14 @@
                   <div class="mdl-cell mdl-cell--2-col"></div>
                </div>
                <div class="mdl-color-text--white homepage-rubber">
-                 <div class="rubber-font rubber-slogan">DÈj‡ 1522 sondages en circulations</div>
-                 <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800">Ècrire un sondage</button>
+                 <div class="rubber-font rubber-slogan">D√©j√† 1522 sondages en circulations</div>
+                 <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800">Ecrire un sondage</button>
 
                </div>
                <div class="mdl-grid">
                   <div id="contact" class="mdl-cell mdl-cell--8-col mdl-card__supporting-text mdl-cell--2-offset-desktop">
                      <h3 class="mdl-typography--display-1-color-contrast">Une question ?</h3>
-                     <p>Nous sommes ‡ votre disposition si vous avez une question.</p>
+                     <p>Nous sommes √† votre disposition si vous avez une question.</p>
                      <form action="#">
 
                      <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label">
@@ -68,7 +68,7 @@
                 <div class="mdl-logo">Rsurvey</div>
                 <ul class="mdl-mini-footer__link-list">
                   <li><a href="#">Aide</a></li>
-                  <li><a href="#">Mentions lÈgales</a></li>
+                  <li><a href="#">Mentions l√©gales</a></li>
                 </ul>
               </div>
             </footer>
