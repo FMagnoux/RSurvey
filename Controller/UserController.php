@@ -33,6 +33,8 @@ class UserController extends SuperController
 
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
 
+    //private static $sSender = "R Survey";
+    //private static $sFrom = "no-reply@r-survey.com";
 
     public function __construct() {
         parent::__construct();
@@ -291,15 +293,20 @@ class UserController extends SuperController
      */
     public function generateNewPassword() {
         // Vérifier que tous les champs requis soient renseignés
-        if(empty($_POST["submit"]) || empty($_POST['sUsrPassword']) || empty($_POST['sUsrConfirmPassword']) || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword'] || empty($_GET["token"]) || empty($_GET["id"])) return false;
-        $id = $this->decrypt($_GET["id"]);
-        $id = intval($id);
-        if($id <= 0) return false;
-        // Vérifier que le token en BDD est le même que celui dans l'url
-        $token = $this->oEntity->getTokenById($id);
-        if(empty($token) || $token != $_GET["token"]) return false;
-        // Changer le mot de passe et le token
-        return $this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken());        
+        if(empty($_POST["submit"])
+            || empty($_POST['sUsrPassword'])
+            || empty($_POST['sUsrConfirmPassword'])
+            || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
+            || empty($_GET["token"])
+            || empty($_GET["id"])) return false;
+        if(!$this->checkToken()){
+            return false;
+        }
+        else {
+            $id = $this->checkToken();
+            // Changer le mot de passe et le token
+            return $this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken());
+        }
     }
 
     /**
@@ -308,5 +315,15 @@ class UserController extends SuperController
      */
     public function generateToken() {
         return md5(uniqid(rand(10, 1000), true));
+    }
+
+    public function checkToken(){
+        $id = $this->decrypt($_GET["id"]);
+        $id = intval($id);
+        if($id <= 0) return false;
+        // Vérifier que le token en BDD est le même que celui dans l'url
+        $token = $this->oEntity->getTokenById($id);
+        if(empty($token) || $token != $_GET["token"]) return false;
+        return $id;
     }
 }
