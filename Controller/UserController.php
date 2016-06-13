@@ -6,7 +6,6 @@
  * Date: 09/06/2016
  * Time: 14:18
  */
-require_once ("../Controller/SuperController.php");
 class UserController extends SuperController
 {
     private $oEntity;
@@ -14,7 +13,7 @@ class UserController extends SuperController
 
     public function __construct() {
         parent::__construct();
-        require_once "../Model/User.php";
+        require_once "./Model/User.php";
         $this->oEntity = new User();
     }
 
@@ -149,6 +148,34 @@ class UserController extends SuperController
      */
     public function cryptPassword($sPassword){
         return sha1($sPassword.self::$sCleSalage);
+    }
+
+    /**
+     * Liste de users paginés
+     */
+    public function listUsers() {
+        $this->setJsonData();
+        echo json_encode($this->oEntity->getPaginatedUserList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+    }
+
+    /**
+     * Désactiver un utilisateur
+     * @return bool
+     */
+    public function desactivateUser() {
+        $id = $this->checkId();
+        if($id == 0) return false;
+        return $this->oEntity->activateDesactivate($id, 0);
+    }
+
+    /**
+     * Activer un utilisateur
+     * @return bool
+     */
+    public function activateUser() {
+        $id = $this->checkId();
+        if($id == 0) return false;
+        return $this->oEntity->activateDesactivate($id, 1);
     }
 
 }

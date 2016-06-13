@@ -11,3 +11,6 @@ RewriteRule ^desactivate-question$ index.php?ctrl=question&action=desactivateQue
 # Zone
 RewriteRule ^list-zones.json$ index.php?ctrl=subdivision&action=listSubdivisions [L]
 RewriteRule ^list-zones/page-([0-9]+)\.json$ index.php?ctrl=subdivision&action=listSubdivisions&page=$1 [L]
+#User
+RewriteRule ^list-users.json$ index.php?ctrl=user&action=listUsers [L]
+RewriteRule ^list-users/page-([0-9]+)\.json$ index.php?ctrl=user&action=listUsers&page=$1 [L]

@@ -7,8 +7,7 @@
  * Time: 10:38
  */
 
-require_once ("SQL.php");
-class User extends SQL
+class User extends SQL implements JsonSerializable
 
 {
     private $iUsrId;
@@ -18,6 +17,7 @@ class User extends SQL
     private $sUsrToken;
     private $bUsrActive;
     private $iRoleId;
+    private $sTable = "User";
 
     /**
      * @return mixed
@@ -207,6 +207,65 @@ class User extends SQL
         else {
             return true;
         }
+    }
+
+    public function activateDesactivate($iId, $iActive) {
+        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_active = :active WHERE usr_id = :id");
+        return $query->execute(array(
+            "id" => $iId,
+            "active" => $iActive
+        ));
+    }
+
+    /**
+     * Liste paginée des users
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @return array<User>
+     */
+    public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
+            "columns" => '*',
+            "table" => $this->sTable,
+            null
+        ));
+    }
+
+    /**
+     * Convertir un tableau en un objet Question
+     * @param $array
+     * @return $this
+     */
+    public function toObject($array) {
+        return (new User())
+            ->setIUsrId($array["usr_id"])
+            ->setSUsrPseudo($array["usr_pseudo"])
+            ->setSUsrMail($array["usr_mail"])
+            ->setSUsrPassword($array["usr_password"])
+            ->setSUsrToken($array["usr_token"])
+            ->setBUsrActive($array["usr_active"])
+            ->setIRoleId($array["role_id"])
+            ;
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    function jsonSerialize()
+    {
+        return [
+            'iUsrId' => $this->iUsrId,
+            'sUsrPseudo' => $this->sUsrPseudo,
+            'sUsrMail' => $this->sUsrMail,
+            'sUsrPassword' => $this->sUsrPassword,
+            'sUsrToken' => $this->sUsrToken,
+            'bUsrActive' => $this->bUsrActive,
+            'iRoleId' => $this->iRoleId,
+        ];
     }
     
 }
