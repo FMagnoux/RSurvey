@@ -29,6 +29,8 @@ class UserController extends SuperController
     const SUCCESS_LOGIN = "Vous êtes authentifié.";
     const SUCCESS_SIGNIN = "Vous allez recevoir un email de confirmation pour valider votre compte.";
 
+    const SUCCESS_UPDATE = "Votre profil a bien été mis à jour.";
+
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
 
 
@@ -229,6 +231,31 @@ class UserController extends SuperController
         $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 1);
+    }
+
+    public function updateUser(){
+        if($this->checkEmail()){
+            if ($this->checkPassword(false)){
+                $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
+                    ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
+                    ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
+                    ->setIUsrId($_SESSION['iIdUser']);
+                if ($this->oEntity->updateUser()){
+                    $returnjson = array(self::SUCCESS,self::SUCCESS_UPDATE);
+                    return json_encode($returnjson);
+                }
+                else {
+                    $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                    return json_encode($returnjson);
+                }
+            }
+            else {
+                $this->checkPassword(false);
+            }
+        }
+        else {
+            return $this->checkEmail();
+        }
     }
 
 }
