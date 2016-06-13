@@ -136,7 +136,8 @@ class UserController extends SuperController
             }
         }
         else {
-            return false;
+            $returnjson = array(self::ERROR,self::ERROR_EMPTYMAIL);
+            return json_encode($returnjson);
         }
 
     }
