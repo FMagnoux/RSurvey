@@ -209,6 +209,15 @@ class User extends SQL implements JsonSerializable
         }
     }
 
+    public function updateUser(){
+        $requete = $this->db->prepare('update User set usr_mail = :usr_mail , usr_password = :usr_password where usr_id = :usr_id');
+        return $requete->execute (array(
+            ':usr_mail'=>$this->getSUsrMail(),
+            ':usr_password'=>$this->getSUsrPassword(),
+            ':usr_id'=>$this->getIUsrId(),
+        ));
+    }
+
     public function activateDesactivate($iId, $iActive) {
         $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_active = :active WHERE usr_id = :id");
         return $query->execute(array(
