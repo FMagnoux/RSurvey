@@ -72,6 +72,14 @@ class Choix extends SQL
             ':question_id'=>$this->getIQuestionId(),
         ));
     }
-    
-    
+
+    public function desactiveChoix(){
+        $requete = $this->db->prepare('update Choix set choix_active = :choix_active where choix_id = :choix_id') ;
+        $requete->execute (array(
+            ':choix_id'=>$this->getIChoixId(),
+        ));
+
+    }
+
+
 }
