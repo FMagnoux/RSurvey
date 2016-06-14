@@ -14,3 +14,4 @@ $(document).ready(function() {
   $('#signup').click(function(event) {event.preventDefault();showDialog({ title: "<span class='mdl-color-text--blue-800'>Créer un compte</span>", text:contentSignup, negative:false, positive: { title: 'Créer un compte', onClick: function (e) { alert('Action performed!'); } } });});
 
 });
+  
