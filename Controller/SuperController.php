@@ -82,4 +82,19 @@ class SuperController
     {
         return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::URLKEY, base64_decode(urldecode($sText)), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB), MCRYPT_RAND)));
     }
+
+    /**
+     * Insérer du js ou du css dans la page
+     * @param $aFiles Tableau contenant la référence des fichiers
+     * @param $aFileNames Tableau contenant les noms des fichiers
+     * @param $sPre Chaine à mettre avant le fichier
+     * @param $sPost Chaine à mettre après le fichier
+     */
+    public function insertFiles($aFiles, $aFileNames, $sPre, $sPost) {
+        if(!empty($aFiles[$this->page])) {
+            foreach ($aFiles[$this->page] as $a) {
+                echo $sPre . $aFileNames[$a] . $sPost;
+            }
+        }
+    }
 }
