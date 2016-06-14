@@ -9,8 +9,7 @@
       <link rel="stylesheet" href="ressources/css/material.min.css">
       <link rel="stylesheet" href="ressources/css/jquery-modal-mdl.css">
       <link rel="stylesheet" href="ressources/css/main.css">
-      <link rel="stylesheet" href="ressources/css/home.css">
-      <?php $this->insertFiles($aCss, $aCssFileNames, "<link rel=\"stylesheet\" href=\"./ressources/ressources/css/", ".css\">"); ?>
+      <?php $this->insertFiles($aCss, $aCssFileNames, "<link rel=\"stylesheet\" href=\"./ressources/css/", ".css\">"); ?>
 
       <link rel="shortcut icon" type="image/x-icon" href="ressources/media/img/logov1.ico" />
       <link rel="icon" type="image/x-icon" href="ressources/media/img/logov1.ico" />

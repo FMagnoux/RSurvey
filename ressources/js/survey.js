@@ -2,7 +2,7 @@
 console.log("I'm survey !");
 
 function createMap(mapPosition,mapContent) {
-  var dataAjax = "data/"+mapContent+".geojson";
+  var dataAjax = "ressources/data/"+mapContent+".geojson";
   var map = L.map(mapPosition,{
     dragging:false,
     touchZoom:true,
