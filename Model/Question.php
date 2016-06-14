@@ -18,6 +18,7 @@ class Question extends SQL implements JsonSerializable
     private $oZoneId;
     private $table = "Question";
 
+    private static $active = 1;
     /**
      * @return mixed
      */
@@ -150,6 +151,81 @@ class Question extends SQL implements JsonSerializable
             ':question_close'=>$this->getBQuestionClose(),
             ':question_id'=>$this->getIQuestionId(),
         ));
+    }
+
+    public function getQuestionFull(){
+        $requete = $this->db->prepare('
+        select 
+         q.question_id ,
+         q.question_libel , 
+         q.question_date ,
+         q.question_close ,
+         u.usr_pseudo ,  
+         c.choix_id ,
+         c.choix_libel ,
+         r.reponse_id ,
+         r.reponse_votes , 
+         r.reponse_subcode ,
+         z.zone_libel , 
+         s.sub_libel
+        from 
+         Question q 
+        inner join Choix c 
+          on c.question_id = q.question_id
+        inner join Reponse r
+          on r.choix_id = c.choix_id
+        inner join User u 
+          on u.usr_id = q.usr_id
+        inner join Zone z 
+          on z.zone_id = q.zone_id
+        inner join Subdivision s 
+          on s.zone_id = z.zone_id
+        where 
+           q.question_id = :question_id
+        and 
+           q.question_active = :question_active
+         ') ;
+        $requete->execute (array(
+            ':question_id'=>$this->getIQuestionId(),
+            ':question_active'=>self::$active
+        ));
+        $results = $requete->fetchAll();
+        if(empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                $oQuestion = new  Question();
+                $oUser = new User();
+                $oChoix = new Choix();
+                $oReponse = new Reponse();
+                $oZone = new Zone();
+                $oSubdivision = new Subdivision();
+
+                $oQuestion->setIQuestionId($result['question_id']);
+                $oQuestion->setSQuestionLibel($result['question_libel']);
+                $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
+                $oQuestion->setBQuestionClose($result['question_close']);
+                $oQuestion->setoZoneId($result['zone_id']);
+
+                $oUser->setSUsrPseudo($result['usr_pseudo']);
+
+                $oChoix->setIChoixId($result['choix_id']);
+                $oChoix->setSChoixLibel($result['choix_libel']);
+
+                $oReponse->setIReponseId($result['response_id']);
+                $oReponse->setIReponseVotes($result['reponse_votes']);
+                $oReponse->setIReponseSubcode($result['reponse_subcode']);
+
+                $oZone->setSZoneLibel($result['zone_libel']);
+
+                $oSubdivision->setSSubLibel($result['sub_libel']);
+
+                $aTabObjectQuestion = array($oQuestion,$oUser,$oChoix,$oReponse,$oZone,$oSubdivision);
+                return $aTabObjectQuestion;
+            }
+        }
+
     }
 
     public function createQuestion(){

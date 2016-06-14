@@ -20,6 +20,8 @@ class QuestionController extends SuperController
 
     const ERROR_EMPTYCHOIX = "Deux choix sont requis pour créer un sondage";
 
+    const ERROR_QUESTIONKO = "Aucun résultat n'a été trouvé.";
+
     const SUCESS_CLOSEQUESTION = "Le sondage est maintenant terminé.";
 
     public function __construct() {
@@ -40,6 +42,19 @@ class QuestionController extends SuperController
             return json_encode($returnjson);
         }
     }
+
+    public function getQuestionFull(){
+        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
+        $aTabQuestion =  $this->oEntity->getQuestionFull();
+        if(!$aTabQuestion){
+            $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
+            return json_encode($returnjson);
+        }
+        else {
+            return json_encode($aTabQuestion);
+        }
+    }
+
     public function createQuestion(){
         if($this->checkQuestion()){
             if(count($_POST['aQuestionChoix']) >= 2){
