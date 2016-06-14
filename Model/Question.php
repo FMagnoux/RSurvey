@@ -219,7 +219,6 @@ class Question extends SQL implements JsonSerializable
             return false;
         }
         else {
-            $aTabObjectQuestion = array();
             foreach ($results as $result){
                 $oQuestion = new Question();
                 require_once './Model/User.php';
@@ -263,8 +262,9 @@ class Question extends SQL implements JsonSerializable
                 array_push($aTabObjectQuestion,$oReponse);
 
 
+                $aTabObjectQuestion = array($oQuestion,$oChoix,$oReponse);
+                return $aTabObjectQuestion;
             }
-            return $aTabObjectQuestion;
         }
 
     }
@@ -360,7 +360,7 @@ class Question extends SQL implements JsonSerializable
             'dQuestionDate' => $this->dQuestionDate,
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,
-            'oUsrId' => $this->oUsr,
+            'oUsrId' => $this->oUsrId,
             'oSub' => $this->oSub,
         ];
     }
