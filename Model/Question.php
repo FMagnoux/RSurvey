@@ -14,11 +14,12 @@ class Question extends SQL implements JsonSerializable
     private $dQuestionDate;
     private $bQuestionActive;
     private $bQuestionClose;
-    private $oUsrId;
-    private $oZoneId;
+    private $oUsr;
+    private $oSub;
     private $table = "Question";
 
     private static $active = 1;
+
     /**
      * @return mixed
      */
@@ -29,7 +30,7 @@ class Question extends SQL implements JsonSerializable
 
     /**
      * @param mixed $iQuestionId
-     * @return $this
+     * @return Question
      */
     public function setIQuestionId($iQuestionId)
     {
@@ -47,7 +48,7 @@ class Question extends SQL implements JsonSerializable
 
     /**
      * @param mixed $sQuestionLibel
-     * @return $this
+     * @return Question
      */
     public function setSQuestionLibel($sQuestionLibel)
     {
@@ -65,7 +66,7 @@ class Question extends SQL implements JsonSerializable
 
     /**
      * @param mixed $dQuestionDate
-     * @return $this
+     * @return Question
      */
     public function setDQuestionDate($dQuestionDate)
     {
@@ -83,7 +84,7 @@ class Question extends SQL implements JsonSerializable
 
     /**
      * @param mixed $bQuestionActive
-     * @return $this
+     * @return Question
      */
     public function setBQuestionActive($bQuestionActive)
     {
@@ -101,7 +102,7 @@ class Question extends SQL implements JsonSerializable
 
     /**
      * @param mixed $bQuestionClose
-     * @return $this
+     * @return Question
      */
     public function setBQuestionClose($bQuestionClose)
     {
@@ -112,38 +113,60 @@ class Question extends SQL implements JsonSerializable
     /**
      * @return mixed
      */
-    public function getoUsrId()
+    public function getOUsr()
     {
-        return $this->oUsrId;
+        return $this->oUsr;
     }
 
     /**
-     * @param mixed $oUsrId
-     * @return $this
+     * @param mixed $oUsr
+     * @return Question
      */
-    public function setoUsrId($oUsrId)
+    public function setOUsr($oUsr)
     {
-        $this->oUsrId = $oUsrId;
+        $this->oUsr = $oUsr;
         return $this;
     }
 
     /**
      * @return mixed
      */
-    public function getoZoneId()
+    public function getOSub()
     {
-        return $this->oZoneId;
+        return $this->oSub;
     }
 
     /**
-     * @param mixed $oZoneId
-     * @return $this
+     * @param mixed $oSub
+     * @return Question
      */
-    public function setoZoneId($oZoneId)
+    public function setOSub($oSub)
     {
-        $this->oZoneId = $oZoneId;
+        $this->oSub = $oSub;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * @param string $table
+     * @return Question
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+        return $this;
+    }
+    /**
+     * @return mixed
+     */
+
 
     public function closeQuestion(){
         $requete = $this->db->prepare('update Question set question_close = :question_close where question_id = :question_id') ;
@@ -166,8 +189,10 @@ class Question extends SQL implements JsonSerializable
          r.reponse_id ,
          r.reponse_votes , 
          r.reponse_subcode ,
+         z.zone_id ,
          z.zone_libel , 
-         s.sub_libel
+         s.sub_libel ,
+         s.sub_id
         from 
          Question q 
         inner join Choix c 
@@ -176,10 +201,10 @@ class Question extends SQL implements JsonSerializable
           on r.choix_id = c.choix_id
         inner join User u 
           on u.usr_id = q.usr_id
-        inner join Zone z 
-          on z.zone_id = q.zone_id
         inner join Subdivision s 
-          on s.zone_id = z.zone_id
+          on s.sub_id = q.sub_id
+        inner join Zone z 
+          on z.zone_id = s.zone_id
         where 
            q.question_id = :question_id
         and 
@@ -202,13 +227,21 @@ class Question extends SQL implements JsonSerializable
                 $oZone = new Zone();
                 $oSubdivision = new Subdivision();
 
+                $oUser->setSUsrPseudo($result['usr_pseudo']);
+
+                $oZone->setSZoneLibel($result['zone_libel']);
+                $oZone->setIZoneId($result['zone_id']);
+
+                $oSubdivision->setSSubLibel($result['sub_libel']);
+                $oSubdivision->setISubId($result['sub_id']);
+                $oSubdivision->setoZoneId($oZone);
+
                 $oQuestion->setIQuestionId($result['question_id']);
                 $oQuestion->setSQuestionLibel($result['question_libel']);
                 $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
                 $oQuestion->setBQuestionClose($result['question_close']);
-                $oQuestion->setoZoneId($result['zone_id']);
-
-                $oUser->setSUsrPseudo($result['usr_pseudo']);
+                $oQuestion->setOSub($oSubdivision);
+                $oQuestion->setOUsr($oUser);
 
                 $oChoix->setIChoixId($result['choix_id']);
                 $oChoix->setSChoixLibel($result['choix_libel']);
@@ -217,11 +250,7 @@ class Question extends SQL implements JsonSerializable
                 $oReponse->setIReponseVotes($result['reponse_votes']);
                 $oReponse->setIReponseSubcode($result['reponse_subcode']);
 
-                $oZone->setSZoneLibel($result['zone_libel']);
-
-                $oSubdivision->setSSubLibel($result['sub_libel']);
-
-                $aTabObjectQuestion = array($oQuestion,$oUser,$oChoix,$oReponse,$oZone,$oSubdivision);
+                $aTabObjectQuestion = array($oQuestion,$oChoix,$oReponse);
                 return $aTabObjectQuestion;
             }
         }
@@ -234,8 +263,8 @@ class Question extends SQL implements JsonSerializable
         if ($requete->execute (array(
             ':question_libel'=>$this->getSQuestionLibel(),
             ':question_date'=>$this->getDQuestionDate()->format('Y-m-d H:i:s'),
-            ':usr_id'=>$this->getoUsrId(),
-            ':zone_id'=>$this->getoZoneId(),
+            ':usr_id'=>$this->getOUsr()->getIUsrId(),
+            ':sub_id'=>$this->getOSub()->getISubId(),
         ))){
             $bStatutRequete = true;
             return $this->db->lastInsertId();
