@@ -4,6 +4,8 @@
 Options +FollowSymlinks
 RewriteEngine On
 
+#Accueil
+RewriteRule ^$ index.php?ctrl=Super&action=home [L]
 # Question
 RewriteRule ^([a-zA-Z0-9\%-]*)$ index.php?ctrl=Question&action=getQuestionFull&iIdQuestion=$1 [L]
 RewriteRule ^list-questions.json$ index.php?ctrl=question&action=listQuestions [L]
