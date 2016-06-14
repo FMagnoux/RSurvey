@@ -220,11 +220,16 @@ class Question extends SQL implements JsonSerializable
         }
         else {
             foreach ($results as $result){
-                $oQuestion = new  Question();
+                $oQuestion = new Question();
+                require_once './Model/User.php';
                 $oUser = new User();
+                require_once './Model/Choix.php';
                 $oChoix = new Choix();
+                require_once './Model/Reponse.php';
                 $oReponse = new Reponse();
+                require_once './Model/Zone.php';
                 $oZone = new Zone();
+                require_once './Model/Subdivision.php';
                 $oSubdivision = new Subdivision();
 
                 $oUser->setSUsrPseudo($result['usr_pseudo']);
@@ -312,8 +317,8 @@ class Question extends SQL implements JsonSerializable
             ->setDQuestionDate($array["question_date"])
             ->setBQuestionActive($array["question_active"])
             ->setBQuestionClose($array["question_close"])
-            ->setoUsrId($array["usr_id"])
-            ->setoZoneId($array["zone_id"])
+            ->setoUsr($array["usr_id"])
+            ->setoSub($array["zone_id"])
         ;
     }
 
@@ -333,7 +338,7 @@ class Question extends SQL implements JsonSerializable
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,
             'oUsrId' => $this->oUsrId,
-            'oZoneId' => $this->oZoneId,
+            'oSub' => $this->oSub,
         ];
     }
 }

@@ -42,22 +42,27 @@ class QuestionController extends SuperController
             return json_encode($returnjson);
         }
     }
+    
+    public function showQuestion() {
+        $this->page = "user/survey";
+        return $this->view();
+    }
 
     public function getQuestionFull(){
-        $this->page = "user/survey";
         $id = $this->decrypt($_GET['iIdQuestion']);
         $id = intval($id);
         if($id <= 0) {
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            return $this->view(array("returnjson" => $returnjson));
+            echo json_encode($returnjson);
         }
-        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
+        $this->oEntity->setIQuestionId($id);
         $aTabQuestion =  $this->oEntity->getQuestionFull();
         if(!$aTabQuestion){
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            return $this->view(array("returnjson" => $returnjson));
+            echo json_encode($returnjson);
+            return;
         }
-            return $this->view(array("aTabQuestion" => $aTabQuestion));
+        echo json_encode($aTabQuestion);
     }
 
     public function createQuestion(){
