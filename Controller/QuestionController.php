@@ -6,7 +6,6 @@
  * Date: 09/06/2016
  * Time: 12:21
  */
-require_once ("../Controller/ChoixController.php");
 class QuestionController extends SuperController
 {
     private $oEntity;
@@ -43,17 +42,27 @@ class QuestionController extends SuperController
             return json_encode($returnjson);
         }
     }
+    
+    public function showQuestion() {
+        $this->page = "user/survey";
+        return $this->view();
+    }
 
     public function getQuestionFull(){
-        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
+        $id = $this->decrypt($_GET['iIdQuestion']);
+        $id = intval($id);
+        if($id <= 0) {
+            $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
+            echo json_encode($returnjson);
+        }
+        $this->oEntity->setIQuestionId($id);
         $aTabQuestion =  $this->oEntity->getQuestionFull();
         if(!$aTabQuestion){
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            return json_encode($returnjson);
+            echo json_encode($returnjson);
+            return;
         }
-        else {
-            return json_encode($aTabQuestion);
-        }
+        echo json_encode($aTabQuestion);
     }
 
     public function createQuestion(){
@@ -61,10 +70,17 @@ class QuestionController extends SuperController
             if(count($_POST['aQuestionChoix']) >= 2){
                 $oChoixController = new ChoixController();
                 if($oChoixController->checkTabChoix($_POST['aQuestionChoix'])){
+
+                    $oUser = new User();
+                    $oUser->setIUsrId($_SESSION['iIdUser']);
+
+                    $oSub = new Subdivision();
+                    $oSub->setISubId($_POST['iIdSub']);
+
                     $this->oEntity->setSQuestionLibel($_POST['sQuestionLibel'])
                         ->setDQuestionDate(new DateTime("NOW"))
-                        ->setoUsrId($_SESSION['iIdUser'])
-                        ->setoZoneId($_POST['iIdZone']);
+                        ->setOUsr($oUser)
+                        ->setOSub($oSub);
                     $bLastQuestion = $this->oEntity->createQuestion();
                     if(!$bLastQuestion){
                         $returnjson = array(self::ERROR,self::ERROR_INTERNAL);

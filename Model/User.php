@@ -289,6 +289,25 @@ class User extends SQL implements JsonSerializable
     }
 
     /**
+     * Retourne un objet User contenant le rôle
+     * @param $iId
+     * @return User
+     */
+    public function getUserRoleById($iId) {
+         return parent::select(
+            array(
+                "columns" => "role_id",
+                "table" => $this->sTable,
+                "where" => "usr_id = :id",
+                "fetch" => true
+            ),
+            array(
+                "id" => $iId
+            )
+        )["role_id"];
+    }
+
+    /**
      * Liste paginée des users
      * @param $iMaxItems
      * @param $iCurrentPage
