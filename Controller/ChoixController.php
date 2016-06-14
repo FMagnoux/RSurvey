@@ -23,6 +23,13 @@ class ChoixController extends SuperController
         $this->oEntity = new Choix();
     }
 
+    public function desactiveChoix($aChoix){
+        foreach ($aChoix as $choix){
+            $this->oEntity->setIChoixId($choix);
+            $this->oEntity->desactiveChoix();
+        }
+    }
+
     public function createChoix($aQuestionChoix , $iIdQuestion)
     {
         $bRequete = false;
