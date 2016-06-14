@@ -55,6 +55,9 @@ class Pagination extends SQL implements JsonSerializable
         $position = $this->iCurrentPage * $max - $max;
 
         // Connaitre le nombre de lignes dans la table
+        if(empty($config["where"])) {
+            $config["where"] = null;
+        }
         $this->iNbLines = $this->getiNbLines($config["table"], $config["where"], $values);
 
         // Extraire les donn�es voulues
@@ -118,6 +121,6 @@ class Pagination extends SQL implements JsonSerializable
     public function setAData($aData)
     {
         $this->aData = $aData;
-        return this;
+        //return this;
     }
 }

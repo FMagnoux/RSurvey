@@ -341,7 +341,7 @@ class Question extends SQL implements JsonSerializable
             ->setBQuestionActive($array["question_active"])
             ->setBQuestionClose($array["question_close"])
             ->setoUsr($array["usr_id"])
-            ->setoSub($array["zone_id"])
+            ->setoSub($array["sub_id"])
         ;
     }
 
