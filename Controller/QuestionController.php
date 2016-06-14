@@ -82,6 +82,7 @@ class QuestionController extends SuperController
     }
 
     public function getQuestionFull(){
+        $this->setJsonData();
         $id = $this->decrypt($_GET['iIdQuestion']);
         $id = intval($id);
         if($id <= 0) {
@@ -96,7 +97,6 @@ class QuestionController extends SuperController
             return;
         }
         echo json_encode($aTabQuestion);
-        return $this->view(array("aTabQuestion" => $aTabQuestion));
     }
 
     public function createQuestion(){

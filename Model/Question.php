@@ -256,8 +256,11 @@ class Question extends SQL implements JsonSerializable
                 $oReponse->setIReponseVotes($result['reponse_votes']);
                 $oReponse->setIReponseSubcode($result['reponse_subcode']);
 
-                $aQuestion = array($oQuestion,$oChoix,$oReponse);
-                array_push($aTabObjectQuestion,$aQuestion);
+                $oReponse->setIChoixId($oChoix);
+                $oChoix->setIQuestionId($oQuestion);
+
+
+                array_push($aTabObjectQuestion,$oReponse);
 
 
             }
