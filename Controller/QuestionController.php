@@ -60,10 +60,17 @@ class QuestionController extends SuperController
             if(count($_POST['aQuestionChoix']) >= 2){
                 $oChoixController = new ChoixController();
                 if($oChoixController->checkTabChoix($_POST['aQuestionChoix'])){
+
+                    $oUser = new User();
+                    $oUser->setIUsrId($_SESSION['iIdUser']);
+
+                    $oSub = new Subdivision();
+                    $oSub->setISubId($_POST['iIdSub']);
+
                     $this->oEntity->setSQuestionLibel($_POST['sQuestionLibel'])
                         ->setDQuestionDate(new DateTime("NOW"))
-                        ->setoUsrId($_SESSION['iIdUser'])
-                        ->setoZoneId($_POST['iIdZone']);
+                        ->setOUsr($oUser)
+                        ->setOSub($oSub);
                     $bLastQuestion = $this->oEntity->createQuestion();
                     if(!$bLastQuestion){
                         $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
