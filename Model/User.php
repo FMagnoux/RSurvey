@@ -185,13 +185,23 @@ class User extends SQL implements JsonSerializable
      * @return bool
      */
     public function signinUser(){
-        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password)values(:usr_pseudo , :usr_mail , :usr_password)') ;
-        return $requete->execute (array(
+        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password, usr_token)values(:usr_pseudo , :usr_mail , :usr_password, :usr_token)') ;
+        if(!$requete->execute (array(
             ':usr_pseudo'=>$this->getSUsrPseudo(),
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
-        ));
-
+            ':usr_token' => $this->getSUsrToken()
+        ))) return false;
+        // Récupérer l'id de l'user qui vient d'être ajouté
+        $this->iUsrId = parent::select(
+            array(
+                "columns" => "usr_id",
+                "table" => $this->sTable,
+                "order" => "usr_id desc",
+                "limit" => 1
+            )
+        )["usr_id"];
+        return true;
     }
 
     public function loginUser(){
@@ -232,11 +242,11 @@ class User extends SQL implements JsonSerializable
      * @param $sMail
      * @return bool
      */
-    public function setTokenById($sToken, $sMail) {
+    public function setTokenById($sToken, $iId) {
         $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token WHERE usr_id = :mail");
         return $query->execute(array(
             "token" => $sToken,
-            "mail" => $sMail
+            "mail" => $iId
         ));
     }
 
