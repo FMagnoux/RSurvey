@@ -22,5 +22,5 @@ RewriteRule ^list-users/page-([0-9]+)\.json$ index.php?ctrl=user&action=listUser
 RewriteRule ^mot-de-passe-oublie/([a-zA-Z0-9\%-]*)\/([a-zA-Z0-9\%-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
 
 # Question
-RewriteRule ^([a-zA-Z0-9\%-]*)$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]
-RewriteRule ^([a-zA-Z0-9\%-]*).json$ index.php?ctrl=Question&action=getQuestionFull&iIdQuestion=$1 [L]
+RewriteRule ^(.*)\.html$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]
+RewriteRule ^(.*)\.json$ index.php?ctrl=Question&action=getQuestionFull&iIdQuestion=$1 [L]
