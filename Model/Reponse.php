@@ -133,7 +133,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function getReponseQuestion(){
-        $requete = $this->db->prepare('select reponse_id , reponse_votes , reponse_subcode from Reponse where choix_id = :choix_id') ;
+        $requete = $this->db->prepare('select reponse_id , reponse_votes , reponse_subcode , choix_id from Reponse where choix_id = :choix_id') ;
         $requete->execute (array(
             ':choix_id'=>$this->getIChoixId(),
         ));
@@ -148,6 +148,7 @@ class Reponse extends SQL implements JsonSerializable
                 $oReponse->setIReponseId($result['reponse_id']);
                 $oReponse->setIReponseVotes($result['reponse_votes']);
                 $oReponse->setIReponseSubcode($result['reponse_subcode']);
+                $oReponse->setIChoixId($result['choix_id']);
 
                 array_push($aReponse,$oReponse);
             }
