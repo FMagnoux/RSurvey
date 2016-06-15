@@ -89,14 +89,26 @@ class QuestionController extends SuperController
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
             echo json_encode($returnjson);
         }
+
+        require_once "./Controller/ChoixController.php";
+        require_once "./Controller/ReponseController.php";
+        require_once "./Controller/UserController.php";
+        $oChoixController = new ChoixController();
+        $oReponseController = new ReponseController();
+        $oUserController = new UserController();
+
         $this->oEntity->setIQuestionId($id);
-        $aTabQuestion =  $this->oEntity->getQuestionFull();
-        if(!$aTabQuestion){
-            $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            echo json_encode($returnjson);
-            return;
-        }
-        echo json_encode($aTabQuestion);
+
+        $oQuestion =  $this->oEntity->getQuestion();
+        $oUser = $oUserController->getUser($oQuestion->getOUsr());
+        $aChoix = $oChoixController->getChoixQuestion($oQuestion->getIQuestionId());
+        $aReponse = $oReponseController->getReponseQuestion($aChoix);
+
+        $oQuestion->setOUsr($oUser);
+
+        $returnjson = array($oQuestion,$aChoix,$aReponse);
+        echo json_encode($returnjson);
+        return;
     }
 
     public function createQuestion(){
