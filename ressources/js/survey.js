@@ -15,7 +15,7 @@ function createMap(mapPosition,mapContent) {
   function onEachFeature(feature, layer) {
     if (feature.properties && feature.properties.nom) {
       layer.on('click',function(){
-      
+
         showDialog({
                 title: feature.properties.code,
                 text: "<span>Chocolatine ou Pain au chocolat ?</span><form action='#' class='survey-box'><button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect'>Chocolatine</button> <button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect mdl-color--blue-500'>Pain au chocolat</button> </form>",
