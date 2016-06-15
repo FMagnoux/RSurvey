@@ -2,7 +2,7 @@
 
 /**
  * Created by PhpStorm.
- * User: <b>test12</b>Magnoux
+ * User: <b>test22</b>Magnoux
  * Date: 09/06/2016
  * Time: 15:10
  */
@@ -18,7 +18,7 @@ class UserTest extends PHPUnit_Framework_TestCase
         // Test le retour du filtre PHP pour l'email
         $userController = new UserController();
 
-        $this->assertTrue($userController->filterEmail('test12@gmail.com'));
+        $this->assertTrue($userController->filterEmail('test22@gmail.com'));
         $this->assertFalse($userController->filterEmail(''));
     }
 
@@ -27,7 +27,7 @@ class UserTest extends PHPUnit_Framework_TestCase
     {
         // Test la présence d'un email en base
         $userController = new UserController();
-        $_POST['sUsrMail'] = 'test12@gmail.com';
+        $_POST['sUsrMail'] = 'test22@gmail.com';
 
         // Activer le test si l'adresse ci dessus n'est pas créer en base OK dans les deux cas
         // $this->assertFalse($userController->checkEmail());
@@ -41,8 +41,8 @@ class UserTest extends PHPUnit_Framework_TestCase
     public function test_createUser(){
 
         // Test l'insertion avec tout les champs
-        $_POST['sUsrMail'] = 'test12@gmail.com';
-        $_POST['sUsrPseudo'] = "<b>test12</b>";
+        $_POST['sUsrMail'] = 'test22@gmail.com';
+        $_POST['sUsrPseudo'] = "<b>test22</b>";
         $_POST['sUsrPassword'] = "azerty";
         $_POST['sUsrConfirmPassword'] = "azerty";
 
@@ -62,7 +62,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         // Sans Email
         $_POST['sUsrMail'] = '';
-        $_POST['sUsrPseudo'] = "<b>test12</b>";
+        $_POST['sUsrPseudo'] = "<b>test22</b>";
         $_POST['sUsrPassword'] = "azerty";
         $_POST['sUsrConfirmPassword'] = "azerty";
 
@@ -72,8 +72,8 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         // Sans Mot de passe
 
-        $_POST['sUsrMail'] = 'test12@gmail.com';
-        $_POST['sUsrPseudo'] = "<b>test12</b>";
+        $_POST['sUsrMail'] = 'test22@gmail.com';
+        $_POST['sUsrPseudo'] = "<b>test22</b>";
         $_POST['sUsrPassword'] = "";
         $_POST['sUsrConfirmPassword'] = "azerty";
 
@@ -82,8 +82,8 @@ class UserTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($userController->createUser());
 
         // Sans Confirm Mot de passe
-        $_POST['sUsrMail'] = 'test12@gmail.com';
-        $_POST['sUsrPseudo'] = "<b>test12</b>";
+        $_POST['sUsrMail'] = 'test22@gmail.com';
+        $_POST['sUsrPseudo'] = "<b>test22</b>";
         $_POST['sUsrPassword'] = "azerty";
         $_POST['sUsrConfirmPassword'] = "";
 
@@ -93,7 +93,7 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     public function test_loginUser(){
-        $_POST['sUsrMail'] = "test12@gmail.com";
+        $_POST['sUsrMail'] = "test22@gmail.com";
         $_POST['sUsrPassword'] = "azerty";
 
         $userController = new UserController();
@@ -105,7 +105,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($userController->loginUser());
 
-        $_POST['sUsrMail'] = "test12@gmail.com";
+        $_POST['sUsrMail'] = "test22@gmail.com";
         $_POST['sUsrPassword'] = "";
 
         $this->assertFalse($userController->loginUser());
@@ -127,7 +127,7 @@ class UserTest extends PHPUnit_Framework_TestCase
 
     public function test_forgottenPassword() {
         $userController = new UserController();
-        $_POST["sMail"] = "test12@gmail.com";
+        $_POST["sMail"] = "test22@gmail.com";
         $this->assertTrue($userController->forgottenPassword());
     }
 

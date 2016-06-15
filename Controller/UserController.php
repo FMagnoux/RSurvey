@@ -20,11 +20,16 @@ class UserController extends SuperController
     const ERROR_MAIL = "L'adresse email indiquée est déjà utilisée par un autre utilisateur.";
     const ERROR_FILTERMAIL = "L'adresse email indiquée ne respecte pas le bon format d'email.";
     const ERROR_EMPTYMAIL = "L'adresse email n'est pas renseignée.";
+    const ERROR_NOTEXISTMAIL = "L'email que vous avez renseigné n'existe pas.";
+    const ERROR_SENDMAIL = "Votre compte a été créé mais un problème est survenu lors de l'envoi de l'email de confirmation. Veuillez contacter un administrateur.";
+    const SUCCESS_MAILSENT = "Suivez les instructions indiqués dans l'e-mail qui vous a été envoyé.";
 
     const ERROR_LOGIN = "Adresse email ou pseudo incorrect.";
+    const SUCCESS_USERCONFIRMED = "Votre compte a été activé. Connectez-vous pour créer des sondages.";
+    const SUCCESS_PASSWORDCHANGED = "Votre mot de passe a été mis à jour.";
 
     const ERROR_CHECKPASSWORD = "Les deux mots de passe ne sont pas identiques.";
-    const ERROR_EMPTYPASSWORD = "Les mots de passe ne sont pas renseignés.";
+    const ERROR_EMPTYPASSWORD = "Le mot de passe n'est pas correctement renseigné.";
 
     const SUCCESS_LOGIN = "Vous êtes authentifié.";
     const SUCCESS_SIGNIN = "Vous allez recevoir un email de confirmation pour valider votre compte.";
@@ -34,7 +39,6 @@ class UserController extends SuperController
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
     
     const ERROR_ID = "Le lien a expiré.";
-    const ERROR_NOTEXISTMAIL = "L'email que vous avez renseigné n'existe pas.";
 
     //private static $sSender = "R Survey";
     //private static $sFrom = "no-reply@r-survey.com";
@@ -75,7 +79,13 @@ class UserController extends SuperController
                             $_POST["sMail"],
                             $aMail["subject"],
                             $aMail["message"]);
-                        $oMail->sendMail();
+                        try {
+                            $oMail->sendMail();
+                        }
+                        catch(Exception $e) {
+                            echo json_encode(array(self::ERROR, self::ERROR_SENDMAIL));
+                            return false;
+                        }
                         echo json_encode($returnjson);
                         return true;
                     }
@@ -86,7 +96,7 @@ class UserController extends SuperController
                     }
                 }
                 else {
-                    echo  $this->checkPassword();
+                    echo  $this->checkPassword(false);
                     return false;
                 }
             }
@@ -132,7 +142,7 @@ class UserController extends SuperController
             echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
             return false;
         }
-        echo json_encode(self::SUCCESS, true);
+        echo json_encode(self::SUCCESS, self::SUCCESS_USERCONFIRMED);
         return true;
     }
 
@@ -150,7 +160,7 @@ class UserController extends SuperController
                     return true;
                 }
                 else {
-                    $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                    $returnjson = array(self::ERROR,self::ERROR_LOGIN);
                     echo json_encode($returnjson);
                     return false;
                 }
@@ -178,7 +188,7 @@ class UserController extends SuperController
                     return true;
                 }
                 else {
-                    return $this->oEntity->checkEmail($sUsrMail);
+                    return self::ERROR_MAIL;
                 }
             }
             else {
@@ -215,7 +225,7 @@ class UserController extends SuperController
     public function checkPseudo(){
         if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo'])){
             $sUsrPseudo = $_POST['sUsrPseudo'];
-            if($this->oEntity->checkPseudo($sUsrPseudo)){
+            if($this->oEntity->checkPseudo(htmlspecialchars($sUsrPseudo))){
                 return true;
             }
             else {
@@ -357,8 +367,14 @@ class UserController extends SuperController
             $_POST["sMail"],
             $aMail["subject"],
             $aMail["message"]);
-        $mail->sendMail();
-        echo json_encode(array(self::SUCCESS, true));
+        try {
+            $mail->sendMail();
+        }
+        catch(Exception $e) {
+            echo json_encode(array(self::ERROR, self::ERROR_SENDMAIL));
+            return false;
+        }
+        echo json_encode(array(self::SUCCESS, self::SUCCESS_MAILSENT));
         return true;
     }
 
@@ -401,7 +417,7 @@ class UserController extends SuperController
             echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
             return flase;
         }
-        echo json_encode(array(self::SUCCESS, true));
+        echo json_encode(array(self::SUCCESS, self::SUCCESS_PASSWORDCHANGED));
         return true;
     }
 
@@ -413,6 +429,10 @@ class UserController extends SuperController
         return md5(uniqid(rand(10, 1000), true));
     }
 
+    /**
+     * Vérifier que le token soit bien celui que l'utilisateur a en base de données et que l'id liée au token soit correcte
+     * @return bool|int
+     */
     public function checkToken(){
         $id = $this->decrypt($_GET["id"]);
         $id = intval($id);
