@@ -22,11 +22,14 @@ class UserController extends SuperController
     const ERROR_EMPTYMAIL = "L'adresse email n'est pas renseignée.";
     const ERROR_NOTEXISTMAIL = "L'email que vous avez renseigné n'existe pas.";
     const ERROR_SENDMAIL = "Votre compte a été créé mais un problème est survenu lors de l'envoi de l'email de confirmation. Veuillez contacter un administrateur.";
+    const SUCCESS_MAILSENT = "Suivez les instructions indiqués dans l'e-mail qui vous a été envoyé.";
 
     const ERROR_LOGIN = "Adresse email ou pseudo incorrect.";
+    const SUCCESS_USERCONFIRMED = "Votre compte a été activé. Connectez-vous pour créer des sondages.";
+    const SUCCESS_PASSWORDCHANGED = "Votre mot de passe a été mis à jour.";
 
     const ERROR_CHECKPASSWORD = "Les deux mots de passe ne sont pas identiques.";
-    const ERROR_EMPTYPASSWORD = "Les mots de passe ne sont pas renseignés.";
+    const ERROR_EMPTYPASSWORD = "Le mot de passe n'est pas correctement renseigné.";
 
     const SUCCESS_LOGIN = "Vous êtes authentifié.";
     const SUCCESS_SIGNIN = "Vous allez recevoir un email de confirmation pour valider votre compte.";
@@ -36,9 +39,6 @@ class UserController extends SuperController
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
     
     const ERROR_ID = "Le lien a expiré.";
-    const SUCCESS_MAILSENT = "Suivez les instructions indiqués dans l'e-mail qui vous a été envoyé.";
-    const SUCCESS_USERCONFIRMED = "Votre compte a été activé. Connectez-vous pour créer des sondages.";
-    const SUCCESS_PASSWORDCHANGED = "Votre mot de passe a été mis à jour.";
 
     //private static $sSender = "R Survey";
     //private static $sFrom = "no-reply@r-survey.com";
@@ -58,7 +58,7 @@ class UserController extends SuperController
      * @return bool
      */
     public function createUser() {
-        //$this->setJsonData();
+        $this->setJsonData();
         if ($this->checkEmail() && !is_string($this->checkEmail())){
             if ($this->checkPseudo() && !is_string($this->checkPseudo())) {
                 if ($this->checkPassword(false) && !is_string($this->checkPassword(false))){
@@ -148,7 +148,7 @@ class UserController extends SuperController
 
     public function loginUser()
     {
-        $this->setJsonData();
+        //$this->setJsonData();
         if ($this->checkPassword() && !is_string($this->checkPassword())){
             if($this->filterEmail($_POST['sUsrMail']) && !is_string($this->filterEmail($_POST['sUsrMail']))) {
                 $this->oEntity->setSUsrMail($_POST['sUsrMail'])
@@ -160,7 +160,7 @@ class UserController extends SuperController
                     return true;
                 }
                 else {
-                    $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                    $returnjson = array(self::ERROR,self::ERROR_LOGIN);
                     echo json_encode($returnjson);
                     return false;
                 }
@@ -247,7 +247,6 @@ class UserController extends SuperController
     public function checkPassword($bLogin = true){
         if($bLogin){
             if(isset($_POST['sUsrPassword']) && !empty($_POST['sUsrPassword'])){
-                var_dump("trol1");
                 return true;
             }
             else {
@@ -430,6 +429,10 @@ class UserController extends SuperController
         return md5(uniqid(rand(10, 1000), true));
     }
 
+    /**
+     * Vérifier que le token soit bien celui que l'utilisateur a en base de données et que l'id liée au token soit correcte
+     * @return bool|int
+     */
     public function checkToken(){
         $id = $this->decrypt($_GET["id"]);
         $id = intval($id);
