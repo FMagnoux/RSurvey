@@ -132,7 +132,7 @@ class Choix extends SQL implements JsonSerializable
     {
         return [
             'iChoixId' => $this->iChoixId,
-            'sChoixLibel' => $this->sChoixLibel,
+            'sChoixLibel' => utf8_encode($this->sChoixLibel),
             'iQuestionId' => $this->iQuestionId,
             'bChoixActive' => $this->bChoixActive,
         ];
