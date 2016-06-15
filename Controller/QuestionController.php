@@ -22,7 +22,11 @@ class QuestionController extends SuperController
 
     const ERROR_QUESTIONKO = "Aucun résultat n'a été trouvé.";
 
-    const SUCESS_CLOSEQUESTION = "Le sondage est maintenant terminé.";
+    const SUCCESS_CLOSEQUESTION = "Le sondage est maintenant terminé.";
+    const SUCCESS_UPDATEQUESTION = "Le sondage a été mis à jour.";
+
+    private static $changeyes = 1;
+    private static $nocreate = -1;
 
     public function __construct() {
         parent::__construct();
@@ -30,11 +34,40 @@ class QuestionController extends SuperController
         $this->oEntity = new Question();
     }
 
+    public function updateQuestion(){
+        if($this->checkQuestion()) {
+            $oChoixcontroller = new ChoixController();
+            if ($this->checkChangeQuestion()) {
+                $aChoixCreate = array();
+                foreach ($_POST['aQuestionChoix'] as $aChoix) {
+                    $oChoixcontroller->desactiveChoix($aChoix['iIdChoix']);
+                    array_push($aChoixCreate , $aChoix['sChoixLibel']);
+                }
+                $oChoixcontroller->createChoix($aChoixCreate,$_POST['iIdQuestion']);
+                $returnjson = array(self::SUCCESS,self::SUCCESS_UPDATEQUESTION);
+                return json_encode($returnjson);
+            }
+        }
+        else {
+            return $this->checkQuestion();
+        }
+    }
+
+    public function checkChangeQuestion()
+    {
+        $Question = $this->oEntity->checkChangeQuestion();
+        if($Question == $_POST['sQuestionLibel']){
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
     public function closeQuestion(){
         $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
         $this->oEntity->setBQuestionClose(1);
         if($this->oEntity->closeQuestion()){
-            $returnjson = array(self::SUCCESS,self::SUCESS_CLOSEQUESTION);
+            $returnjson = array(self::SUCCESS,self::SUCCESS_CLOSEQUESTION);
             return json_encode($returnjson);
         }
         else {
@@ -49,20 +82,33 @@ class QuestionController extends SuperController
     }
 
     public function getQuestionFull(){
+        $this->setJsonData();
         $id = $this->decrypt($_GET['iIdQuestion']);
         $id = intval($id);
         if($id <= 0) {
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
             echo json_encode($returnjson);
         }
+
+        require_once "./Controller/ChoixController.php";
+        require_once "./Controller/ReponseController.php";
+        require_once "./Controller/UserController.php";
+        $oChoixController = new ChoixController();
+        $oReponseController = new ReponseController();
+        $oUserController = new UserController();
+
         $this->oEntity->setIQuestionId($id);
-        $aTabQuestion =  $this->oEntity->getQuestionFull();
-        if(!$aTabQuestion){
-            $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            echo json_encode($returnjson);
-            return;
-        }
-        echo json_encode($aTabQuestion);
+
+        $oQuestion =  $this->oEntity->getQuestion();
+        $oUser = $oUserController->getUser($oQuestion->getOUsr());
+        $aChoix = $oChoixController->getChoixQuestion($oQuestion->getIQuestionId());
+        $aReponse = $oReponseController->getReponseQuestion($aChoix);
+
+        $oQuestion->setOUsr($oUser);
+
+        $returnjson = array($oQuestion,$aChoix,$aReponse);
+        echo json_encode($returnjson);
+        return;
     }
 
     public function createQuestion(){

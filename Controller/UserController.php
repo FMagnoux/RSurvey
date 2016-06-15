@@ -42,6 +42,11 @@ class UserController extends SuperController
         $this->oEntity = new User();
     }
 
+    public function getUser($iIdUser){
+        $this->oEntity->setIUsrId($iIdUser);
+        return $this->oEntity->getUser();
+    }
+
     /**
      * @return bool
      */
@@ -52,9 +57,20 @@ class UserController extends SuperController
                 if ($this->checkPassword(false)){
                     $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
                         ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
-                        ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])));
+                        ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
+                        ->setSUsrToken($this->generateToken())    
+                    ;
                     if($this->oEntity->signinUser()){
                         $returnjson = array(self::SUCCESS,self::SUCCESS_SIGNIN);
+                        require_once './Model/Mail.php';
+                        $sString = $this->mailInscription($this->encrypt($this->oEntity->getIUsrId()), $this->oEntity->getSUsrToken());
+                        $oMail = new Mail(
+                            "R Survey",
+                            "no-reply@r-survey.com",
+                            $_POST["sMail"],
+                            "Réinitialisation du mot de passe",
+                            $sString);
+                        $oMail->sendMail();
                         return json_encode($returnjson);
                     }
                     else {
@@ -73,6 +89,29 @@ class UserController extends SuperController
         else {
             return $this->checkEmail();
         }
+    }
+
+    /**
+     * Générer le text du mail d'inscription
+     * @param $sId
+     * @param $sToken
+     * @return string
+     */
+    private function mailInscription($sId, $sToken) {
+        $sString = "";
+        require_once "./View/user/mailInscription.php";
+        return $sString;
+    }
+
+    /**
+     * Confirmer l'user une fois qu'il a cliqué sur le lien dans son mail 
+     * @return bool
+     */
+    public function confirmUser() {
+        $id = $this->checkToken();
+        if(!$id) return false;
+        if(!$this->oEntity->activateDesactivate($id, 1)) return false;
+        return $this->oEntity->setTokenById($this->generateToken(), $id);
     }
 
     public function loginUser()
