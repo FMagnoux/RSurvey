@@ -34,6 +34,33 @@ class QuestionController extends SuperController
         $this->oEntity = new Question();
     }
 
+    public function getNextPreviousQuestion(){
+
+        $oQuestion = $this->oEntity->getNextPreviousQuestion($_POST['next']);
+
+        require_once "./Controller/ChoixController.php";
+        require_once "./Controller/ReponseController.php";
+        require_once "./Controller/UserController.php";
+
+        $oChoixController = new ChoixController();
+        $oReponseController = new ReponseController();
+
+        $oUserController = new UserController();
+        $oUser = $oUserController->getUser($oQuestion->getOUsr());
+        $aChoix = $oChoixController->getChoixQuestion($oQuestion->getIQuestionId());
+        $aReponse = $oReponseController->getReponseQuestion($aChoix);
+
+        $oQuestion->setOUsr($oUser);
+
+        $returnjson = array($oQuestion,$aChoix,$aReponse);
+        echo json_encode($returnjson);
+        return;
+
+    }
+
+    /**
+     * @return bool|string
+     */
     public function updateQuestion(){
         if($this->checkQuestion()) {
             $oChoixcontroller = new ChoixController();
@@ -53,6 +80,9 @@ class QuestionController extends SuperController
         }
     }
 
+    /**
+     * @return bool
+     */
     public function checkChangeQuestion()
     {
         $Question = $this->oEntity->checkChangeQuestion();
@@ -63,6 +93,10 @@ class QuestionController extends SuperController
             return true;
         }
     }
+
+    /**
+     * @return string
+     */
     public function closeQuestion(){
         $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
         $this->oEntity->setBQuestionClose(1);
@@ -75,12 +109,18 @@ class QuestionController extends SuperController
             return json_encode($returnjson);
         }
     }
-    
+
+    /**
+     *
+     */
     public function showQuestion() {
         $this->page = "user/survey";
         return $this->view();
     }
 
+    /**
+     *
+     */
     public function getQuestionFull(){
         $this->setJsonData();
         $id = $this->decrypt($_GET['iIdQuestion']);
@@ -93,6 +133,7 @@ class QuestionController extends SuperController
         require_once "./Controller/ChoixController.php";
         require_once "./Controller/ReponseController.php";
         require_once "./Controller/UserController.php";
+
         $oChoixController = new ChoixController();
         $oReponseController = new ReponseController();
         $oUserController = new UserController();
@@ -111,6 +152,9 @@ class QuestionController extends SuperController
         return;
     }
 
+    /**
+     * @return bool|string
+     */
     public function createQuestion(){
         if($this->checkQuestion()){
             if(count($_POST['aQuestionChoix']) >= 2){
@@ -160,6 +204,9 @@ class QuestionController extends SuperController
 
     }
 
+    /**
+     * @return bool|string
+     */
     public function checkQuestion(){
         if(isset($_POST['sQuestionLibel']) && !empty($_POST['sQuestionLibel'])){
             if($this->checkLenQuestion($_POST['sQuestionLibel'])){
@@ -175,6 +222,10 @@ class QuestionController extends SuperController
         }
     }
 
+    /**
+     * @param $sQuestionLibel
+     * @return bool|string
+     */
     public function checkLenQuestion($sQuestionLibel){
         if(strlen($sQuestionLibel)>100){
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONLENGHT);
@@ -185,6 +236,9 @@ class QuestionController extends SuperController
         }
     }
 
+    /**
+     * @return bool|string
+     */
     public function checkZoneId(){
         if(isset($_POST['iIdZone']) && !empty($_POST['iIdZone'])){
             return true;
@@ -195,6 +249,9 @@ class QuestionController extends SuperController
         }
     }
 
+    /**
+     *
+     */
     public function create() {
         $this->page = "user/create";
         $this->view();

@@ -230,6 +230,56 @@ class Question extends SQL implements JsonSerializable
         }
     }
 
+    public function getNextPreviousQuestion($next){
+        $operateur = "";
+        $fonction = "";
+
+        if($next){
+            $operateur = ">";
+            $fonction = "MIN";
+        }
+        else {
+            $operateur = "<";
+            $fonction = "MAX";
+        }
+        $requete = $this->db->prepare('
+        select 
+            question_id ,
+            question_libel ,
+            '.$fonction.'(question_date) ,
+            question_close ,
+            usr_id ,
+            sub_id
+        from Question
+        where
+            question_active = :question_active
+        and
+            question_date '.$operateur.' :question_date 
+         ') ;
+        $requete->execute (array(
+            ':question_active'=>self::$active,
+            ':question_date'=>$this->getDQuestionDate(),
+        ));
+        $results = $requete->fetchAll();
+        if(empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                $oQuestion = new Question();
+                $oQuestion->setIQuestionId($result['question_id']);
+                $oQuestion->setSQuestionLibel($result['question_libel']);
+                $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
+                $oQuestion->setBQuestionClose($result['question_close']);
+                $oQuestion->setOUsr($result['usr_id']);
+                $oQuestion->setOSub($result['sub_id']);
+
+                return $oQuestion;
+            }
+        }
+
+    }
+
     public function createQuestion(){
         $bStatutRequete = false;
         $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , zone_id)values(:question_libel , :question_date , :usr_id , :zone_id)') ;
