@@ -236,12 +236,13 @@ class User extends SQL implements JsonSerializable
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
         ));
-        $results = $requete->fetchAll();
+        $results = $requete->fetch();
         if (empty($results)){
             return false;
         }
         else {
-            return true;
+          $this->setIUsrId($results['usr_id']);
+          return true;
         }
     }
 
@@ -289,7 +290,7 @@ class User extends SQL implements JsonSerializable
             )
         )["usr_token"];
     }
-    
+
     /**
      * Mettre à jour le mot de passe dun user
      * @param $iId
@@ -319,7 +320,7 @@ class User extends SQL implements JsonSerializable
                 "fetch" => true
           ),
             array(
-                "mail" => $sMail    
+                "mail" => $sMail
             )
         )["usr_id"];
     }
@@ -394,5 +395,5 @@ class User extends SQL implements JsonSerializable
             'iRoleId' => $this->iRoleId,
         ];
     }
-    
+
 }

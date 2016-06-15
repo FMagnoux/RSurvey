@@ -24,7 +24,7 @@ class UserController extends SuperController
     const ERROR_SENDMAIL = "Votre compte a été créé mais un problème est survenu lors de l'envoi de l'email de confirmation. Veuillez contacter un administrateur.";
     const SUCCESS_MAILSENT = "Suivez les instructions indiqués dans l'e-mail qui vous a été envoyé.";
 
-    const ERROR_LOGIN = "Adresse email ou pseudo incorrect.";
+    const ERROR_LOGIN = "Adresse email ou mot de passe incorrect.";
     const SUCCESS_USERCONFIRMED = "Votre compte a été activé. Connectez-vous pour créer des sondages.";
     const SUCCESS_PASSWORDCHANGED = "Votre mot de passe a été mis à jour.";
 
@@ -154,6 +154,7 @@ class UserController extends SuperController
                 $this->oEntity->setSUsrMail($_POST['sUsrMail'])
                     ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
                 if ($this->oEntity->loginUser()){
+
                     $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
                     $returnjson = array(self::SUCCESS,self::SUCCESS_LOGIN);
                     echo json_encode($returnjson);
