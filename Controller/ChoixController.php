@@ -30,6 +30,11 @@ class ChoixController extends SuperController
         }
     }
 
+    public function getChoixQuestion($iIdQuestion){
+        $this->oEntity->setIQuestionId($iIdQuestion);
+        return $this->oEntity->getChoixQuestion();
+    }
+
     public function createChoix($aQuestionChoix , $iIdQuestion)
     {
         $bRequete = false;

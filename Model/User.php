@@ -19,6 +19,8 @@ class User extends SQL implements JsonSerializable
     private $iRoleId;
     private $sTable = "User";
 
+    private static $active = 1;
+
     /**
      * @return mixed
      */
@@ -167,6 +169,30 @@ class User extends SQL implements JsonSerializable
      * @param $sUsrPseudo
      * @return bool
      */
+
+    public function getUser(){
+        $requete = $this->db->prepare('select usr_id , usr_pseudo , usr_mail  from User where usr_id = :usr_id and usr_active = :usr_active');
+        $requete->execute (array(
+            ':usr_id'=>$this->getIUsrId(),
+            ':usr_active'=>self::$active,
+        ));
+        $results = $requete->fetchAll();
+        if (empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                $oUser = new User();
+
+                $oUser->setIUsrId($result['usr_id']);
+                $oUser->setSUsrPseudo($result['usr_pseudo']);
+                $oUser->setSUsrMail($result['usr_mail']);
+
+                return $oUser;
+            }
+        }
+    }
+
     public function checkPseudo($sUsrPseudo){
         $requete = $this->db->prepare('select usr_pseudo from User where usr_pseudo = :usr_pseudo');
         $requete->execute (array(
@@ -185,13 +211,23 @@ class User extends SQL implements JsonSerializable
      * @return bool
      */
     public function signinUser(){
-        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password)values(:usr_pseudo , :usr_mail , :usr_password)') ;
-        return $requete->execute (array(
+        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password, usr_token)values(:usr_pseudo , :usr_mail , :usr_password, :usr_token)') ;
+        if(!$requete->execute (array(
             ':usr_pseudo'=>$this->getSUsrPseudo(),
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
-        ));
-
+            ':usr_token' => $this->getSUsrToken()
+        ))) return false;
+        // Récupérer l'id de l'user qui vient d'être ajouté
+        $this->iUsrId = parent::select(
+            array(
+                "columns" => "usr_id",
+                "table" => $this->sTable,
+                "order" => "usr_id desc",
+                "limit" => 1
+            )
+        )["usr_id"];
+        return true;
     }
 
     public function loginUser(){
@@ -232,11 +268,11 @@ class User extends SQL implements JsonSerializable
      * @param $sMail
      * @return bool
      */
-    public function setTokenById($sToken, $sMail) {
+    public function setTokenById($sToken, $iId) {
         $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token WHERE usr_id = :mail");
         return $query->execute(array(
             "token" => $sToken,
-            "mail" => $sMail
+            "mail" => $iId
         ));
     }
 
@@ -313,9 +349,10 @@ class User extends SQL implements JsonSerializable
      * @param $iCurrentPage
      * @return array<User>
      */
+//[{"iUsrId":"9","sUsrPseudo":"FloDavRom","sUsrMail":"FloDavRomUPMC@gmail.com","sUsrPassword":"f65718429da1be42fa9684015aadf5df15de8bb7","sUsrToken":null,"bUsrActive":"1","iRoleId":"2"},
     public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
-            "columns" => '*',
+            "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
             "table" => $this->sTable,
             null
         ));
@@ -328,13 +365,13 @@ class User extends SQL implements JsonSerializable
      */
     public function toObject($array) {
         return (new User())
-            ->setIUsrId($array["usr_id"])
-            ->setSUsrPseudo($array["usr_pseudo"])
-            ->setSUsrMail($array["usr_mail"])
-            ->setSUsrPassword($array["usr_password"])
-            ->setSUsrToken($array["usr_token"])
-            ->setBUsrActive($array["usr_active"])
-            ->setIRoleId($array["role_id"])
+            ->setIUsrId(isset($array["usr_id"]) ? $array["usr_id"] : null)
+            ->setSUsrPseudo(isset($array["usr_pseudo"]) ? $array["usr_pseudo"] : null)
+            ->setSUsrMail(isset($array["usr_mail"]) ? $array["usr_mail"] : null)
+            ->setSUsrPassword(isset($array["usr_password"]) ? $array["usr_password"] : null)
+            ->setSUsrToken(isset($array["usr_token"]) ? $array["usr_token"] : null)
+            ->setBUsrActive(isset($array["usr_active"]) ? $array["usr_active"] : null)
+            ->setIRoleId(isset($array["role_id"]) ? $array["role_id"] : null)
             ;
     }
 
@@ -349,9 +386,9 @@ class User extends SQL implements JsonSerializable
     {
         return [
             'iUsrId' => $this->iUsrId,
-            'sUsrPseudo' => $this->sUsrPseudo,
+            'sUsrPseudo' => utf8_encode($this->sUsrPseudo),
             'sUsrMail' => $this->sUsrMail,
-            'sUsrPassword' => $this->sUsrPassword,
+            'sUsrPassword' => utf8_encode($this->sUsrPassword),
             'sUsrToken' => $this->sUsrToken,
             'bUsrActive' => $this->bUsrActive,
             'iRoleId' => $this->iRoleId,

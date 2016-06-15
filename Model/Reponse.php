@@ -6,7 +6,7 @@
  * Date: 09/06/2016
  * Time: 11:29
  */
-class Reponse extends SQL
+class Reponse extends SQL implements JsonSerializable
 {
     private $iReponseId;
     private $iReponseVotes;
@@ -130,5 +130,39 @@ class Reponse extends SQL
         foreach ($results as $result) {
             return $result['reponse_votes'];
         }
+    }
+
+    public function getReponseQuestion(){
+        $requete = $this->db->prepare('select reponse_id , reponse_votes , reponse_subcode , choix_id from Reponse where choix_id = :choix_id') ;
+        $requete->execute (array(
+            ':choix_id'=>$this->getIChoixId(),
+        ));
+        $results = $requete->fetchAll();
+        if (empty($results)){
+            return false;
+        }
+        else {
+            $aReponse = array();
+            foreach ($results as $result) {
+                $oReponse = new Reponse();
+                $oReponse->setIReponseId($result['reponse_id']);
+                $oReponse->setIReponseVotes($result['reponse_votes']);
+                $oReponse->setIReponseSubcode($result['reponse_subcode']);
+                $oReponse->setIChoixId($result['choix_id']);
+
+                array_push($aReponse,$oReponse);
+            }
+            return $aReponse;
+        }
+    }
+
+    function jsonSerialize()
+    {
+        return [
+            'iReponseId' => $this->iReponseId,
+            'iReponseVotes' => $this->iReponseVotes,
+            'iReponseSubcode' => $this->iReponseSubcode,
+            'iChoixId' => $this->iChoixId,
+        ];
     }
 }

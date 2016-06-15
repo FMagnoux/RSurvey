@@ -4,8 +4,11 @@
 Options +FollowSymlinks
 RewriteEngine On
 
+#Accueil
+RewriteRule ^$ index.php?ctrl=Super&action=home [L]
+#Admin
+RewriteRule ^administration$ index.php?ctrl=Admin&action=home [L]
 # Question
-RewriteRule ^([a-zA-Z0-9\%-]*)$ index.php?ctrl=Question&action=getQuestionFull&iIdQuestion=$1 [L]
 RewriteRule ^list-questions.json$ index.php?ctrl=question&action=listQuestions [L]
 RewriteRule ^list-questions/page-([0-9]+)\.json$ index.php?ctrl=question&action=listQuestions&page=$1 [L]
 RewriteRule ^list-questions/([0-9]+)\/page-([0-9]+)\.json$ index.php?ctrl=question&action=listQuestionsByIdUser&id=$1&page=$2 [L]
@@ -16,6 +19,11 @@ RewriteRule ^list-zones/page-([0-9]+)\.json$ index.php?ctrl=subdivision&action=l
 #User
 RewriteRule ^list-users.json$ index.php?ctrl=user&action=listUsers [L]
 RewriteRule ^list-users/page-([0-9]+)\.json$ index.php?ctrl=user&action=listUsers&page=$1 [L]
-RewriteRule ^mot-de-passe-oublie/([a-zA-Z0-9\%-]*)\/([a-zA-Z0-9\%-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
-#Admin
-RewriteRule ^administration$ index.php?ctrl=Admin&action=home [L]
+RewriteRule ^login.html$ index.php?ctrl=User&action=loginUser [L]
+RewriteRule ^inscription.html$ index.php?ctrl=User&action=createUser [L]
+RewriteRule ^mot-de-passe-oublie/(.*)\/([a-zA-Z0-9\%-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
+RewriteRule ^confirmer-compte/(.*)\/([a-zA-Z0-9\%-]*)$ index.php?ctrl=user&action=confirmUser&id=$1&token=$2 [L]
+
+# Question
+RewriteRule ^(.*)\.html$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]
+RewriteRule ^(.*)\.json$ index.php?ctrl=Question&action=getQuestionFull&iIdQuestion=$1 [L]
