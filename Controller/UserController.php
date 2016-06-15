@@ -37,7 +37,7 @@ class UserController extends SuperController
     const SUCCESS_UPDATE = "Votre profil a bien été mis à jour.";
 
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
-    
+
     const ERROR_ID = "Le lien a expiré.";
 
     //private static $sSender = "R Survey";
@@ -65,7 +65,7 @@ class UserController extends SuperController
                     $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
                         ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
                         ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
-                        ->setSUsrToken($this->generateToken())    
+                        ->setSUsrToken($this->generateToken())
                     ;
                     if($this->oEntity->signinUser()){
                         $returnjson = array(self::SUCCESS,self::SUCCESS_SIGNIN);
@@ -76,7 +76,7 @@ class UserController extends SuperController
                         $oMail = new Mail(
                             $aMail["fromName"],
                             $aMail["from"],
-                            $_POST["sMail"],
+                            $this->oEntity->getSUsrMail(),
                             $aMail["subject"],
                             $aMail["message"]);
                         try {
@@ -124,7 +124,7 @@ class UserController extends SuperController
     }
 
     /**
-     * Confirmer l'user une fois qu'il a cliqué sur le lien dans son mail 
+     * Confirmer l'user une fois qu'il a cliqué sur le lien dans son mail
      * @return bool
      */
     public function confirmUser() {
@@ -183,12 +183,12 @@ class UserController extends SuperController
     public function checkEmail(){
         if (isset($_POST['sUsrMail']) && !empty($_POST['sUsrMail'])){
             $sUsrMail = $_POST['sUsrMail'];
-            if ($this->filterEmail($sUsrMail)){
+            if ($this->filterEmail($sUsrMail) && !is_string($this->filterEmail($sUsrMail))){
                 if($this->oEntity->checkEmail($sUsrMail)){
                     return true;
                 }
                 else {
-                    return self::ERROR_MAIL;
+                    return json_encode(array(self::ERROR, self::ERROR_MAIL));
                 }
             }
             else {
@@ -402,7 +402,7 @@ class UserController extends SuperController
             || empty($_POST['sUsrConfirmPassword'])
             || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
             || empty($_GET["token"])
-            || empty($_GET["id"])) 
+            || empty($_GET["id"]))
         {
             echo json_encode(array(self::ERROR, self::ERROR_CHECKPASSWORD));
             return false;

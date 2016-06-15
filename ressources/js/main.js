@@ -16,15 +16,17 @@ var signupRequest = function(e) {
   $.ajax({
     url: 'inscription.html',
     type: 'POST',
-    dataType: 'default: Intelligent Guess (Other values: xml, json, script, or html)',
+    dataType: 'json',
     data: datas
   })
-  .done(function() {
+  .done(function(e) {
     console.log("success");
+    console.info(e[1]);
+
   })
   .fail(function(e) {
     console.log("error");
-    console.warn(e);
+    console.warn(e.responseText);
   })
   .always(function() {
     console.log("complete");
