@@ -128,21 +128,21 @@ class UserController extends SuperController
      * @return bool
      */
     public function confirmUser() {
-        $this->setJsonData();
+        $this->page = "user/confirmUser";
         $id = $this->checkToken();
         if(!$id) {
-            echo json_encode(array(self::ERROR, self::ERROR_ID));
+            $this->view(array(self::ERROR =>self::ERROR_ID));
             return false;
         }
         if(!$this->oEntity->activateDesactivate($id, 1)) {
-            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            $this->view(array(self::ERROR =>self::ERROR_INTERNAL));
             return false;
         }
         if(!$this->oEntity->setTokenById($this->generateToken(), $id)) {
-            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            $this->view(array(self::ERROR =>self::ERROR_INTERNAL));
             return false;
         }
-        echo json_encode(self::SUCCESS, self::SUCCESS_USERCONFIRMED);
+        $this->view(array(self::SUCCESS =>self::SUCCESS_USERCONFIRMED));
         return true;
     }
 
