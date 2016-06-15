@@ -20,7 +20,7 @@ abstract class SQL
             $port ='3306';
             $database ='rsurvey';
             $user = 'root';
-            $password = '';
+            $password = 'mysql';
             $dns = $engine.':port='.$port.';dbname='.$database.";host=".$host;
             $this->db = new PDO($dns, $user, $password);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -38,12 +38,13 @@ abstract class SQL
     public function select($config, $values = null) {
         $sql = "SELECT " . $config["columns"] . " FROM " . $config["table"];
         if (!empty($config["join"])) {
-            if (count($config["join"]) <= 3) {
-                $sql .= " INNER JOIN " . $config["join"]["table"] . " ON " . $config["join"]["table"] . "." . $config["join"]["key"] . " = " . $config["table"] . "." . $config["join"]["foreignKey"];
-            } else {
+            if (!empty($config["join"][0]) && is_array($config["join"][0])) {
                 foreach ($config["join"] as $elt) {
                     $sql .= " INNER JOIN " . $elt["table"] . " ON " . $elt["table"] . "." . $elt["key"] . " = " . $config["table"] . "." . $elt["foreignKey"];
                 }
+            } else {
+                $sql .= " INNER JOIN " . $config["join"]["table"] . " ON " . $config["join"]["table"] . "." . $config["join"]["key"] . " = " . $config["table"] . "." . $config["join"]["foreignKey"];
+
             }
         }
         if (!empty($config["where"])) {

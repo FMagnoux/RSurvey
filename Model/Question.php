@@ -263,8 +263,20 @@ class Question extends SQL implements JsonSerializable
     public function getPaginatedQuestionList($iMaxItems, $iCurrentPage, $iId = null) {
         $values = null;
         $aConfig = array(
-            "columns" => '*',
+            "columns" => 'question_id, question_libel, question_date, question_active, question_close, '.$this->table.'.usr_id, usr_pseudo, '.$this->table.'.sub_id, sub_libel',
             "table" => $this->table,
+            "join" => array(
+                array(
+                    "table" => "User",
+                    "key" => "usr_id",
+                    "foreignKey" => "usr_id"
+                ),
+                array(
+                    "table" => "Subdivision",
+                    "key" => "sub_id",
+                    "foreignKey" => "sub_id"
+                )
+            )
         );
         if(!empty($iId)) {
             $aConfig["where"] = "usr_id = :id";
@@ -279,14 +291,16 @@ class Question extends SQL implements JsonSerializable
      * @return $this
      */
     public function toObject($array) {
+        require_once "./Model/User.php";
+        require_once "./Model/Subdivision.php";
         return (new Question())
-            ->setIQuestionId($array["question_id"])
-            ->setSQuestionLibel($array["question_libel"])
-            ->setDQuestionDate($array["question_date"])
-            ->setBQuestionActive($array["question_active"])
-            ->setBQuestionClose($array["question_close"])
-            ->setoUsr($array["usr_id"])
-            ->setoSub($array["sub_id"])
+            ->setIQuestionId(isset($array["question_id"]) ? $array["question_id"] : null)
+            ->setSQuestionLibel(isset($array["question_libel"]) ? $array["question_libel"] : null)
+            ->setDQuestionDate(isset($array["question_date"]) ? $array["question_date"] : null)
+            ->setBQuestionActive(isset($array["question_active"]) ? $array["question_active"] : null)
+            ->setBQuestionClose(isset($array["question_close"]) ? $array["question_close"] : null)
+            ->setoUsr(isset($array["usr_id"]) ? (new User())->toObject($array) : null)
+            ->setoSub(isset($array["sub_id"]) ? (new Subdivision())->toObject($array) : null)
         ;
     }
 
@@ -301,7 +315,7 @@ class Question extends SQL implements JsonSerializable
     {
         return [
             'iQuestionId' => $this->iQuestionId,
-            'sQuestionLibel' => $this->sQuestionLibel,
+            'sQuestionLibel' => utf8_encode($this->sQuestionLibel),
             'dQuestionDate' => $this->dQuestionDate,
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,

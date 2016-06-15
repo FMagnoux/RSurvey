@@ -32,6 +32,9 @@ class UserController extends SuperController
     const SUCCESS_UPDATE = "Votre profil a bien été mis à jour.";
 
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    
+    const ERROR_ID = "Le lien a expiré.";
+    const ERROR_NOTEXISTMAIL = "L'email que vous avez renseigné n'existe pas.";
 
     //private static $sSender = "R Survey";
     //private static $sFrom = "no-reply@r-survey.com";
@@ -51,10 +54,10 @@ class UserController extends SuperController
      * @return bool
      */
     public function createUser() {
-
-        if ($this->checkEmail()){
-            if ($this->checkPseudo()) {
-                if ($this->checkPassword(false)){
+        $this->setJsonData();
+        if ($this->checkEmail() && !is_string($this->checkEmail())){
+            if ($this->checkPseudo() && !is_string($this->checkPseudo())) {
+                if ($this->checkPassword(false) && !is_string($this->checkPassword(false))){
                     $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
                         ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
                         ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
@@ -63,31 +66,38 @@ class UserController extends SuperController
                     if($this->oEntity->signinUser()){
                         $returnjson = array(self::SUCCESS,self::SUCCESS_SIGNIN);
                         require_once './Model/Mail.php';
-                        $sString = $this->mailInscription($this->encrypt($this->oEntity->getIUsrId()), $this->oEntity->getSUsrToken());
+                        // Générer le mail
+                        $aMail = $this->mailInscription($this->encrypt($this->oEntity->getIUsrId()), $this->oEntity->getSUsrToken());
+                        // Envoyer le mail
                         $oMail = new Mail(
-                            "R Survey",
-                            "no-reply@r-survey.com",
+                            $aMail["fromName"],
+                            $aMail["from"],
                             $_POST["sMail"],
-                            "Réinitialisation du mot de passe",
-                            $sString);
+                            $aMail["subject"],
+                            $aMail["message"]);
                         $oMail->sendMail();
-                        return json_encode($returnjson);
+                        echo json_encode($returnjson);
+                        return true;
                     }
                     else {
                         $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                        return json_encode($returnjson);
+                        echo json_encode($returnjson);
+                        return false;
                     }
                 }
                 else {
-                    return $this->checkPassword();
+                    echo  $this->checkPassword();
+                    return false;
                 }
             }
             else {
-                return $this->checkPseudo();
+                echo $this->checkPseudo();
+                return false;
             }
         }
         else {
-            return $this->checkEmail();
+            echo $this->checkEmail();
+            return false;
         }
     }
 
@@ -98,9 +108,9 @@ class UserController extends SuperController
      * @return string
      */
     private function mailInscription($sId, $sToken) {
-        $sString = "";
+        $aMail = "";
         require_once "./View/user/mailInscription.php";
-        return $sString;
+        return $aMail;
     }
 
     /**
@@ -108,35 +118,51 @@ class UserController extends SuperController
      * @return bool
      */
     public function confirmUser() {
+        $this->setJsonData();
         $id = $this->checkToken();
-        if(!$id) return false;
-        if(!$this->oEntity->activateDesactivate($id, 1)) return false;
-        return $this->oEntity->setTokenById($this->generateToken(), $id);
+        if(!$id) {
+            echo json_encode(array(self::ERROR, self::ERROR_ID));
+            return false;
+        }
+        if(!$this->oEntity->activateDesactivate($id, 1)) {
+            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            return false;
+        }
+        if(!$this->oEntity->setTokenById($this->generateToken(), $id)) {
+            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            return false;
+        }
+        echo json_encode(self::SUCCESS, true);
+        return true;
     }
 
     public function loginUser()
     {
-        if ($this->checkPassword()){
-            if($this->filterEmail($_POST['sUsrMail'])) {
+        $this->setJsonData();
+        if ($this->checkPassword() && !is_string($this->checkPassword())){
+            if($this->filterEmail($_POST['sUsrMail']) && !is_string($this->filterEmail($_POST['sUsrMail']))) {
                 $this->oEntity->setSUsrMail($_POST['sUsrMail'])
                     ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
                 if ($this->oEntity->loginUser()){
                     $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
                     $returnjson = array(self::SUCCESS,self::SUCCESS_LOGIN);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return true;
                 }
                 else {
                     $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
             else {
-                return $this->filterEmail($_POST['sUsrMail']);
+                echo $this->filterEmail($_POST['sUsrMail']);
+                return false;
             }
         }
-
         else {
-            return $this->checkPassword();
+            echo $this->checkPassword();
+            return false;
         }
 
     }
@@ -276,8 +302,8 @@ class UserController extends SuperController
     }
 
     public function updateUser(){
-        if($this->checkEmail()){
-            if ($this->checkPassword(false)){
+        if($this->checkEmail() && !is_string($this->checkEmail())){
+            if ($this->checkPassword(false) && !is_string($this->checkPassword(false))){
                 $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
                     ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
                     ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
@@ -305,25 +331,47 @@ class UserController extends SuperController
      * @return bool
      */
     public function forgottenPassword() {
+        $this->setJsonData();
         if($this->filterEmail($_POST["sMail"]) !== true) {
             return false;
         }
         // Vérifier que le mail renvoie une id
         $id = $this->oEntity->getIdByEmail($_POST["sMail"]);
-        if(empty($id)) return false;
+        if(empty($id)) {
+            echo json_encode(array(self::ERROR, self::ERROR_NOTEXISTMAIL));
+            return false;
+        }
         // Génrer le token
         $sToken = $this->generateToken();
-        if(!$this->oEntity->setTokenById($sToken, $id)) return false;
+        if(!$this->oEntity->setTokenById($sToken, $id)) {
+            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            return false;
+        }
+        // Générer le mail
+        $aMail = $this->mailForgottenPassword($this->encrypt($id), $sToken);
         // Envoyer le mail
         require_once './Model/Mail.php';
         $mail = new Mail(
-            "R Survey",
-            "no-reply@r-survey.com",
+            $aMail["fromName"],
+            $aMail["from"],
             $_POST["sMail"],
-            "Réinitialisation du mot de passe",
-            "<p><a href='http://r-survey.com/mot-de-passe-oublie/".$id."/".$sToken."'>Cliquez ici</a> pour réinitialiser votre mot de passe</p>");
+            $aMail["subject"],
+            $aMail["message"]);
         $mail->sendMail();
+        echo json_encode(array(self::SUCCESS, true));
         return true;
+    }
+
+    /**
+     * Générer le text du mail d'oublie de mot de passe
+     * @param $sId
+     * @param $sToken
+     * @return string
+     */
+    private function mailForgottenPassword($sId, $sToken) {
+        $aMail = "";
+        require_once "./View/user/mailForgottenPassword.php";
+        return $aMail;
     }
 
     /**
@@ -331,21 +379,30 @@ class UserController extends SuperController
      * @return bool
      */
     public function generateNewPassword() {
+        $this->setJsonData();
         // Vérifier que tous les champs requis soient renseignés
         if(empty($_POST["submit"])
             || empty($_POST['sUsrPassword'])
             || empty($_POST['sUsrConfirmPassword'])
             || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
             || empty($_GET["token"])
-            || empty($_GET["id"])) return false;
-        if(!$this->checkToken()){
+            || empty($_GET["id"])) 
+        {
+            echo json_encode(array(self::ERROR, self::ERROR_CHECKPASSWORD));
             return false;
         }
-        else {
-            $id = $this->checkToken();
-            // Changer le mot de passe et le token
-            return $this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken());
+        if(!$this->checkToken()){
+            echo json_encode(array(self::ERROR, self::ERROR_ID));
+            return false;
         }
+        $id = $this->checkToken();
+        // Changer le mot de passe et le token
+        if(!$this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken())) {
+            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            return flase;
+        }
+        echo json_encode(array(self::SUCCESS, true));
+        return true;
     }
 
     /**
