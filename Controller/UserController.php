@@ -38,7 +38,7 @@ class UserController extends SuperController
 
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
 
-    const ERROR_ID = "Le lien a expiré.";
+    const ERROR_BROKENLINK = "Le lien a expiré.";
 
     //private static $sSender = "R Survey";
     //private static $sFrom = "no-reply@r-survey.com";
@@ -131,7 +131,7 @@ class UserController extends SuperController
         $this->page = "user/confirmUser";
         $id = $this->checkToken();
         if(!$id) {
-            $this->view(array(self::ERROR =>self::ERROR_ID));
+            $this->view(array(self::ERROR =>self::ERROR_BROKENLINK));
             return false;
         }
         if(!$this->oEntity->activateDesactivate($id, 1)) {
@@ -396,27 +396,37 @@ class UserController extends SuperController
      * @return bool
      */
     public function generateNewPassword() {
-        $this->setJsonData();
+        $this->page = "user/generateNewPassword";
         // Vérifier que tous les champs requis soient renseignés
-        if(empty($_POST["submit"])
-            || empty($_POST['sUsrPassword'])
+        if(
+            empty($_GET["token"])
+            || empty($_GET["id"])
+        ) {
+            $this->view(array(self::ERROR => self::ERROR_BROKENLINK));
+            return false;
+        }
+        if(empty($_POST["submit"])) {
+            return $this->view();
+            return false;
+        }
+        if(
+            empty($_POST['sUsrPassword'])
             || empty($_POST['sUsrConfirmPassword'])
             || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
-            || empty($_GET["token"])
-            || empty($_GET["id"]))
+        )
         {
             echo json_encode(array(self::ERROR, self::ERROR_CHECKPASSWORD));
             return false;
         }
-        if(!$this->checkToken()){
-            echo json_encode(array(self::ERROR, self::ERROR_ID));
+        $id = $this->checkToken();
+        if(!$id) {
+            echo json_encode(array(self::ERROR, self::ERROR_BROKENLINK));
             return false;
         }
-        $id = $this->checkToken();
         // Changer le mot de passe et le token
         if(!$this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken())) {
             echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
-            return flase;
+            return false;
         }
         echo json_encode(array(self::SUCCESS, self::SUCCESS_PASSWORDCHANGED));
         return true;
