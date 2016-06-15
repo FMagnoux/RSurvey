@@ -148,7 +148,7 @@ class UserController extends SuperController
 
     public function loginUser()
     {
-        //$this->setJsonData();
+        $this->setJsonData();
         if ($this->checkPassword() && !is_string($this->checkPassword())){
             if($this->filterEmail($_POST['sUsrMail']) && !is_string($this->filterEmail($_POST['sUsrMail']))) {
                 $this->oEntity->setSUsrMail($_POST['sUsrMail'])
