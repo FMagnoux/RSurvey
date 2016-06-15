@@ -176,39 +176,20 @@ class Question extends SQL implements JsonSerializable
         ));
     }
 
-    public function getQuestionFull(){
+    public function getQuestion(){
         $requete = $this->db->prepare('
         select 
-         q.question_id ,
-         q.question_libel , 
-         q.question_date ,
-         q.question_close ,
-         u.usr_pseudo ,  
-         c.choix_id ,
-         c.choix_libel ,
-         r.reponse_id ,
-         r.reponse_votes , 
-         r.reponse_subcode ,
-         z.zone_id ,
-         z.zone_libel , 
-         s.sub_libel ,
-         s.sub_id
-        from 
-         Question q 
-        inner join Choix c 
-          on c.question_id = q.question_id
-        inner join Reponse r
-          on r.choix_id = c.choix_id
-        inner join User u 
-          on u.usr_id = q.usr_id
-        inner join Subdivision s 
-          on s.sub_id = q.sub_id
-        inner join Zone z 
-          on z.zone_id = s.zone_id
-        where 
-           q.question_id = :question_id
+            question_id ,
+            question_libel ,
+            question_date ,
+            question_close ,
+            usr_id ,
+            sub_id
+        from Question
+        where
+            question_active = :question_active
         and 
-           q.question_active = :question_active
+            question_id = :question_id
          ') ;
         $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
@@ -221,52 +202,16 @@ class Question extends SQL implements JsonSerializable
         else {
             foreach ($results as $result){
                 $oQuestion = new Question();
-                require_once './Model/User.php';
-                $oUser = new User();
-                require_once './Model/Choix.php';
-                $oChoix = new Choix();
-                require_once './Model/Reponse.php';
-                $oReponse = new Reponse();
-                require_once './Model/Zone.php';
-                $oZone = new Zone();
-                require_once './Model/Subdivision.php';
-                $oSubdivision = new Subdivision();
-
-                $oUser->setSUsrPseudo($result['usr_pseudo']);
-
-                $oZone->setSZoneLibel($result['zone_libel']);
-                $oZone->setIZoneId($result['zone_id']);
-
-                $oSubdivision->setSSubLibel($result['sub_libel']);
-                $oSubdivision->setISubId($result['sub_id']);
-                $oSubdivision->setoZoneId($oZone);
 
                 $oQuestion->setIQuestionId($result['question_id']);
                 $oQuestion->setSQuestionLibel($result['question_libel']);
                 $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
                 $oQuestion->setBQuestionClose($result['question_close']);
-                $oQuestion->setOSub($oSubdivision);
-                $oQuestion->setOUsr($oUser);
-
-                $oChoix->setIChoixId($result['choix_id']);
-                $oChoix->setSChoixLibel($result['choix_libel']);
-
-                $oReponse->setIReponseId($result['reponse_id']);
-                $oReponse->setIReponseVotes($result['reponse_votes']);
-                $oReponse->setIReponseSubcode($result['reponse_subcode']);
-
-                $oReponse->setIChoixId($oChoix);
-                $oChoix->setIQuestionId($oQuestion);
-
-
-                array_push($aTabObjectQuestion,$oReponse);
-
-
-                $aTabObjectQuestion = array($oQuestion,$oChoix,$oReponse);
-                return $aTabObjectQuestion;
+                $oQuestion->setOUsr($result['usr_id']);
+                $oQuestion->setOSub($result['sub_id']);
+                return $oQuestion;
             }
         }
-
     }
 
     public function checkChangeQuestion(){
@@ -360,7 +305,7 @@ class Question extends SQL implements JsonSerializable
             'dQuestionDate' => $this->dQuestionDate,
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,
-            'oUsrId' => $this->oUsrId,
+            'oUsrId' => $this->oUsr,
             'oSub' => $this->oSub,
         ];
     }

@@ -42,6 +42,11 @@ class UserController extends SuperController
         $this->oEntity = new User();
     }
 
+    public function getUser($iIdUser){
+        $this->oEntity->setIUsrId($iIdUser);
+        return $this->oEntity->getUser();
+    }
+
     /**
      * @return bool
      */

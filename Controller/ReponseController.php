@@ -62,4 +62,13 @@ class ReponseController extends SuperController
         }
 
     }
+
+    public function getReponseQuestion($aChoix){
+        $aReponse = array();
+        foreach ($aChoix as $oChoix){
+            $this->oEntity->setIChoixId($oChoix->getIChoixId());
+            array_push($aReponse,$this->oEntity->getReponseQuestion());
+        }
+        return $aReponse;
+    }
 }

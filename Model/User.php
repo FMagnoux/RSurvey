@@ -19,6 +19,8 @@ class User extends SQL implements JsonSerializable
     private $iRoleId;
     private $sTable = "User";
 
+    private static $active = 1;
+
     /**
      * @return mixed
      */
@@ -167,6 +169,30 @@ class User extends SQL implements JsonSerializable
      * @param $sUsrPseudo
      * @return bool
      */
+
+    public function getUser(){
+        $requete = $this->db->prepare('select usr_id , usr_pseudo , usr_mail  from User where usr_id = :usr_id and usr_active = :usr_active');
+        $requete->execute (array(
+            ':usr_id'=>$this->getIUsrId(),
+            ':usr_active'=>self::$active,
+        ));
+        $results = $requete->fetchAll();
+        if (empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                $oUser = new User();
+
+                $oUser->setIUsrId($result['usr_id']);
+                $oUser->setSUsrPseudo($result['usr_pseudo']);
+                $oUser->setSUsrMail($result['usr_mail']);
+
+                return $oUser;
+            }
+        }
+    }
+
     public function checkPseudo($sUsrPseudo){
         $requete = $this->db->prepare('select usr_pseudo from User where usr_pseudo = :usr_pseudo');
         $requete->execute (array(
