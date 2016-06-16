@@ -186,7 +186,7 @@ class Question extends SQL implements JsonSerializable
 
     public function getQuestion(){
         $requete = $this->db->prepare('
-        select 
+        select
             question_id ,
             question_libel ,
             question_date ,
@@ -196,7 +196,7 @@ class Question extends SQL implements JsonSerializable
         from Question
         where
             question_active = :question_active
-        and 
+        and
             question_id = :question_id
          ') ;
         $requete->execute (array(
@@ -251,7 +251,7 @@ class Question extends SQL implements JsonSerializable
             $fonction = "MAX";
         }
         $requete = $this->db->prepare('
-        select 
+        select
             question_id ,
             question_libel ,
             '.$fonction.'(question_date) ,
@@ -262,7 +262,7 @@ class Question extends SQL implements JsonSerializable
         where
             question_active = :question_active
         and
-            question_date '.$operateur.' :question_date 
+            question_date '.$operateur.' :question_date
          ') ;
         $requete->execute (array(
             ':question_active'=>self::$active,
@@ -289,7 +289,7 @@ class Question extends SQL implements JsonSerializable
     }
     public function createQuestion(){
         $bStatutRequete = false;
-        $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , zone_id)values(:question_libel , :question_date , :usr_id , :zone_id)') ;
+        $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , sub_id)values(:question_libel , :question_date , :usr_id , :sub_id)') ;
         if ($requete->execute (array(
             ':question_libel'=>$this->getSQuestionLibel(),
             ':question_date'=>$this->getDQuestionDate()->format('Y-m-d H:i:s'),
@@ -303,14 +303,14 @@ class Question extends SQL implements JsonSerializable
             return $bStatutRequete;
         }
     }
-    
+
     public function desactivateQuestion($id) {
         $query = $this->db->prepare("UPDATE ".$this->table." SET question_active = 0 WHERE question_id = :id");
         return $query->execute(array(
-           "id" => $id 
+           "id" => $id
         ));
     }
-    
+
     private function getPaginatedQuestionListConfig() {
         return array(
             "columns" => 'question_id, question_libel, question_date, question_active, question_close, '.$this->table.'.usr_id, usr_pseudo, '.$this->table.'.sub_id, sub_libel',
