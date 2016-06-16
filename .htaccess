@@ -28,6 +28,6 @@ RewriteRule ^mot-de-passe-oublie.html$ index.php?ctrl=user&action=forgottenPassw
 RewriteRule ^mot-de-passe-oublie/(.*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
 RewriteRule ^confirmer-compte/(.*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=user&action=confirmUser&id=$1&token=$2 [L]
 
-# Question
-RewriteRule ^(.*)\.html$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]
-RewriteRule ^(.*)\.json$ index.php?ctrl=Question&action=getQuestionFull&iIdQuestion=$1 [L]
+# Lien vers un sondage
+RewriteRule ^([a-zA-Z0-9]*)$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]
+RewriteRule ^([a-zA-Z0-9]*)\.json$ index.php?ctrl=Question&action=getQuestionFull&iIdQuestion=$1 [L]

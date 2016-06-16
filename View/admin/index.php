@@ -11,7 +11,7 @@
                                 Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua nisi cupidatat eu. Nostrud in laboris labore nisi amet do dolor eu fugiat consectetur elit cillum esse.
                             </div>
                             <div class="mdl-card__actions">
-                                <a href="./<?= $this->encrypt($oQuestion->getIQuestionId()) ?>.html" class="mdl-button" target="_blank">Acceder au sondage</a>
+                                <a href="./<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="mdl-button" target="_blank">Acceder au sondage</a>
                                 <a href="#" class="mdl-button">Partager le sondage</a>
                                 <a href="#" class="mdl-button mdl-color-text--red-500 desactivate-survey">Desactiver le sondage</a>
 
