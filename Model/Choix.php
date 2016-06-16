@@ -12,6 +12,7 @@ class Choix extends SQL implements JsonSerializable
     private $sChoixLibel;
     private $iQuestionId;
     private $bChoixActive;
+    private $aReponse;
 
     private static $bActive = 1;
 
@@ -32,6 +33,24 @@ class Choix extends SQL implements JsonSerializable
         $this->bChoixActive = $bChoixActive;
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getAReponse()
+    {
+        return $this->aReponse;
+    }
+
+    /**
+     * @param mixed $aReponse
+     */
+    public function setAReponse($aReponse)
+    {
+        $this->aReponse = $aReponse;
+    }
+    
+    
 
 
 
