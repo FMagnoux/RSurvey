@@ -41,9 +41,13 @@ class ChoixController extends SuperController
 
             // Si il match
             if(array_key_exists($aChoix[$i]->getIChoixId(),$aResultChoix)){
+
+                require_once "./Controller/ReponseController.php";
+                $oReponseController = new ReponseController();
+
                 $this->oEntity->setSChoixLibel($aChoix[$i]->getSChoixLibel());
                 $this->oEntity->setIChoixId($aChoix[$i]->getIChoixId());
-                if(!$this->oEntity->updateChoix()){
+                if(!$this->oEntity->updateChoix() || !$oReponseController->resetVotes($this->oEntity->getIChoixId())){
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
                     return json_encode($returnjson);
                 }

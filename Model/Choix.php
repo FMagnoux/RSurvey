@@ -14,7 +14,6 @@ class Choix extends SQL implements JsonSerializable
     private $bChoixActive;
 
     private static $bActive = 1;
-    private static $iResetVotes = 0;
 
     /**
      * @return mixed
@@ -130,12 +129,11 @@ class Choix extends SQL implements JsonSerializable
     }
 
     public function updateChoix(){
-        $requete = $this->db->prepare('update Choix set choix_libel = :choix_libel , choix_votes = :choix_votes where choix_id = :choix_id and choix_active = :choix_active') ;
+        $requete = $this->db->prepare('update Choix set choix_libel = :choix_libel where choix_id = :choix_id and choix_active = :choix_active') ;
         return $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
             ':choix_active'=>self::$bActive,
             ':choix_libel'=>$this->getSChoixLibel(),
-            ':choix_votes'=>self::$iResetVotes,
         ));
     }
 
