@@ -63,6 +63,12 @@ class ReponseController extends SuperController
 
     }
 
+    public function resetVotes($iIdchoix){
+        $this->oEntity->setIChoixId($iIdchoix);
+        return $this->oEntity->resetVotes();
+
+    }
+
     public function getReponseQuestion($aChoix){
         $aReponse = array();
         foreach ($aChoix as $oChoix){
