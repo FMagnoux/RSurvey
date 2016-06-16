@@ -350,12 +350,10 @@ class User extends SQL implements JsonSerializable
      * @param $iCurrentPage
      * @return array<User>
      */
-//[{"iUsrId":"9","sUsrPseudo":"FloDavRom","sUsrMail":"FloDavRomUPMC@gmail.com","sUsrPassword":"f65718429da1be42fa9684015aadf5df15de8bb7","sUsrToken":null,"bUsrActive":"1","iRoleId":"2"},
     public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
             "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
-            "table" => $this->sTable,
-            null
+            "table" => $this->sTable
         ));
     }
 

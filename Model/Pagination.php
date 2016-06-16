@@ -15,18 +15,14 @@ class Pagination extends SQL implements JsonSerializable
     
     /**
      * Compter le nombre de lignes
-     * @param String $table
-     * @param String $where
+     * @param String $config
      * @param array $values
      * @return int
      */
-    function getiNbLines($table, $where, $values) {
-        return parent::select(array(
-            "columns" => 'COUNT(*) AS nb',
-            "table" => $table,
-            "where" => $where,
-            "fetch" => true
-        ), $values)["nb"];
+    function getiNbLines($config, $values) {
+        $config["columns"] = 'COUNT(*) AS nb';
+        $config["fetch"] = true;
+        return parent::select($config, $values)["nb"];
     }
 
     /**
@@ -58,7 +54,7 @@ class Pagination extends SQL implements JsonSerializable
         if(empty($config["where"])) {
             $config["where"] = null;
         }
-        $this->iNbLines = $this->getiNbLines($config["table"], $config["where"], $values);
+        $this->iNbLines = $this->getiNbLines($config, $values);
 
         // Extraire les donn�es voulues
         if ($this->iNbLines > $position) {
