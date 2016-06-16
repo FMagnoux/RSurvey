@@ -152,7 +152,8 @@ class QuestionController extends SuperController
         $aTabQuestion =  $this->oEntity->getQuestion();
         if(!$aTabQuestion){
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            return $this->view(array("returnjson" => $returnjson));
+            echo json_encode($returnjson);
+            return false;
         }
 
         //return $this->view(array("aTabQuestion" => $aTabQuestion));
