@@ -62,17 +62,33 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function updateQuestion(){
+        require_once "./Controller/ChoixController.php";
+
+        // Vérifie le format de la question
         if($this->checkQuestion()) {
-            $oChoixcontroller = new ChoixController();
-            if ($this->checkChangeQuestion()) {
-                $aChoixCreate = array();
-                foreach ($_POST['aQuestionChoix'] as $aChoix) {
-                    $oChoixcontroller->desactiveChoix($aChoix['iIdChoix']);
-                    array_push($aChoixCreate , $aChoix['sChoixLibel']);
+            // Vérifie que la question est changée
+            if($this->checkChangeQuestion()){
+                // Met à jour la question
+                if(!$this->oEntity->changeQuestion()){
+                    $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                    echo json_encode($returnjson);
                 }
-                $oChoixcontroller->createChoix($aChoixCreate,$_POST['iIdQuestion']);
-                $returnjson = array(self::SUCCESS,self::SUCCESS_UPDATEQUESTION);
-                return json_encode($returnjson);
+                $aChoix = array();
+                for ($i=0;$i<count($_POST['aChoix']);$i++){
+                    $oChoix = new Choix();
+                    if(!empty($_POST['aChoix'][$i]['sChoixLibel']) && !empty($_POST['aChoix'][$i]['iIdChoix'])){
+                        $oChoix->setSChoixLibel($_POST['aChoix'][$i]['sChoixLibel']);
+                        $oChoix->setIChoixId($_POST['aChoix'][$i]['iIdChoix']);
+
+                        array_push($aChoix,$oChoix);
+                    }
+                    else {
+                        $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
+                        return json_encode($returnjson);
+                    }
+                }
+                $oChoixController = new ChoixController();
+                return $oChoixController->updateChoix($aChoix,$_POST['iIdQuestion']);
             }
         }
         else {

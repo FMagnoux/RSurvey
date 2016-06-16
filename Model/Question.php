@@ -167,6 +167,14 @@ class Question extends SQL implements JsonSerializable
      * @return mixed
      */
 
+    public function changeQuestion(){
+        $requete = $this->db->prepare('update Question set question_libel = :question_libel where question_id = :question_id and question_active = :question_active') ;
+        return $requete->execute (array(
+            ':question_id'=>$this->getIQuestionId(),
+            ':question_active'=>self::$active,
+        ));
+    }
+
 
     public function closeQuestion(){
         $requete = $this->db->prepare('update Question set question_close = :question_close where question_id = :question_id') ;
@@ -279,23 +287,6 @@ class Question extends SQL implements JsonSerializable
         }
 
     }
-
-    public function checkChangeQuestion(){
-        $requete = $this->db->prepare('select question_libel from Question where question_id = :question_id') ;
-        $requete->execute (array(
-            ':question_id'=>$this->getIQuestionId(),
-        ));
-        $results = $requete->fetchAll();
-        if(empty($results)){
-            return false;
-        }
-        else {
-            foreach ($results as $result){
-                return $result['question_libel'];
-            }
-        }
-    }
-
     public function createQuestion(){
         $bStatutRequete = false;
         $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , zone_id)values(:question_libel , :question_date , :usr_id , :zone_id)') ;
