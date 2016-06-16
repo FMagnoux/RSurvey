@@ -26,6 +26,7 @@ class QuestionController extends SuperController
 
     const SUCCESS_CLOSEQUESTION = "Le sondage est maintenant terminé.";
     const SUCCESS_UPDATEQUESTION = "Le sondage a été mis à jour.";
+    const SUCCESS_CREATEQUESTION = "Le sondage a été crée.";
 
     private static $changeyes = 1;
     private static $nocreate = -1;
@@ -185,13 +186,18 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function createQuestion(){
-        if($this->checkQuestion()){
-            if(count($_POST['aQuestionChoix']) >= 2){
+        if($this->checkQuestion() && !is_string($this->checkQuestion())){
+            if(count($_POST['aQuestionChoix']) > 1 && count($_POST['aQuestionChoix']) <= 3   ){
+                require_once "./Controller/ChoixController.php";
                 $oChoixController = new ChoixController();
                 if($oChoixController->checkTabChoix($_POST['aQuestionChoix'])){
 
+                  require_once "./Model/User.php";
+
                     $oUser = new User();
                     $oUser->setIUsrId($_SESSION['iIdUser']);
+
+                    require_once "./Model/Subdivision.php";
 
                     $oSub = new Subdivision();
                     $oSub->setISubId($_POST['iIdSub']);
@@ -203,14 +209,16 @@ class QuestionController extends SuperController
                     $bLastQuestion = $this->oEntity->createQuestion();
                     if(!$bLastQuestion){
                         $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                        return json_encode($returnjson);
+                        echo json_encode($returnjson);
                     }
                     else {
                         if($oChoixController->createChoix($_POST['aQuestionChoix'],$bLastQuestion)){
-                            return true;
+                          $returnjson = array(self::SUCCESS,self::SUCCESS_CREATEQUESTION);
+                          echo json_encode($returnjson);
                         }
                         else {
-                            return false;
+                          $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                          echo json_encode($returnjson);
                         }
                     }
 
@@ -227,7 +235,7 @@ class QuestionController extends SuperController
 
         }
         else {
-            return $this->checkQuestion();
+            echo $this->checkQuestion();
         }
 
 
@@ -238,7 +246,7 @@ class QuestionController extends SuperController
      */
     public function checkQuestion(){
         if(isset($_POST['sQuestionLibel']) && !empty($_POST['sQuestionLibel'])){
-            if($this->checkLenQuestion($_POST['sQuestionLibel'])){
+            if($this->checkLenQuestion($_POST['sQuestionLibel']) && !is_string($this->checkLenQuestion($_POST['sQuestionLibel'])) ){
                 return true;
             }
             else {
@@ -362,7 +370,7 @@ class QuestionController extends SuperController
         }
         return true;
     }
-    
+
     private function checkDate($aDate) {
         if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$aDate)) {
             return true;
