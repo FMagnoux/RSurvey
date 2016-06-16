@@ -50,18 +50,17 @@ $.ajax({
 }
 
 
-var signupRequest = function() {
-  var datas = $('#formSignup').serialize();
+var ajaxRequestSerialize = function(idForm,urlDest) {
+  var datas = $('#'+idForm).serialize();
   $.ajax({
-    url: 'inscription.html',
+    url: urlDest,
     type: 'POST',
     dataType: 'json',
     data: datas
   })
   .done(function(e) {
     console.log("success");
-    $('#formSignup').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
-
+    $('#'+idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
   })
   .fail(function(e) {
     console.log("error");
@@ -72,54 +71,6 @@ var signupRequest = function() {
   });
 }
 
-
-var loginRequest = function() {
-    var datas = $('#formLogin').serialize();
-  $.ajax({
-    url: 'login.html',
-    type: 'POST',
-    dataType: 'json',
-    data: datas
-  })
-  .done(function(e) {
-    console.log("success");
-    console.info(e[1]);
-    $('#formLogin').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
-
-  })
-  .fail(function(e) {
-    console.log("error");
-    console.warn(e.responseText);
-  })
-  .always(function(e) {
-    console.log("complete");
-  });
-}
-
-
-var forgotPassowrdRequest = function() {
-  var datas = $('#formForgotPassword').serialize();
-  $.ajax({
-    url: 'mot-de-passe-oublie.html',
-    type: 'POST',
-    dataType: 'json',
-    data: datas
-  })
-  .done(function(e) {
-    console.log("success");
-    $('#formForgotPassword').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
-
-  })
-  .fail(function(e) {
-    console.log("error");
-    console.warn(e);
-
-  })
-  .always(function(e) {
-    console.log("complete");
-  });
-
-}
 
 /*DOCUMENT READY*/
 
@@ -151,7 +102,7 @@ $(document).ready(function() {
             $('#positive').off('click');
             $('#positive').click(function() {
               $('#errorForm').remove()
-              loginRequest();
+              ajaxRequestSerialize('formLogin','login.html');
             });
           },
           title: "<span class='mdl-color-text--blue-800'>Se connecter</span>",
@@ -164,7 +115,7 @@ $(document).ready(function() {
                       $('#positive').off('click');
                       $('#positive').click(function() {
                         $('#errorForm').remove()
-                        forgotPassowrdRequest();
+                        ajaxRequestSerialize('formForgotPassword','mot-de-passe-oublie.html');
                       });
                     },
                       title: "<span class='mdl-color-text--blue-800'>Mot de passe oublié ?</span>",
@@ -189,7 +140,7 @@ $(document).ready(function() {
           $('#positive').off('click');
           $('#positive').click(function() {
             $('#errorForm').remove()
-            signupRequest();
+            ajaxRequestSerialize('formSignup','inscription.html');
           });
         },
           title: "<span class='mdl-color-text--blue-800'>Créer un compte</span>",
