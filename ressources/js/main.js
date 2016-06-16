@@ -36,7 +36,7 @@ $.ajax({
 })
 .done(function(e) {
   console.log("success");
-  console.log(e[1]);
+  $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
 })
 .fail(function(e) {
   console.log("error");
@@ -60,7 +60,7 @@ var signupRequest = function() {
   })
   .done(function(e) {
     console.log("success");
-    console.info(e[1]);
+    $('#formSignup').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
 
   })
   .fail(function(e) {
@@ -84,6 +84,7 @@ var loginRequest = function() {
   .done(function(e) {
     console.log("success");
     console.info(e[1]);
+    $('#formLogin').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
 
   })
   .fail(function(e) {
@@ -106,7 +107,7 @@ var forgotPassowrdRequest = function() {
   })
   .done(function(e) {
     console.log("success");
-    console.info(e[1]);
+    $('#formForgotPassword').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
 
   })
   .fail(function(e) {
@@ -127,14 +128,18 @@ $(document).ready(function() {
   $('#newSurvey').click(function(event) {
       event.preventDefault();
       showDialog({
+        onLoaded:function(e){
+          $('#positive').off('click');
+          $('#positive').click(function() {
+            $('#errorForm').remove()
+            newSurveyRequest();
+          });
+        },
           title: "<span class='mdl-color-text--blue-800'>Ajouter un sondage</span>",
           text: contentNewSurvey,
           negative: false,
           positive: {
-              title: 'Ajouter un sondage',
-              onClick: function(e) {
-                  newSurveyRequest();
-              }
+              title: 'Ajouter un sondage'
           }
       });
   });
@@ -145,6 +150,7 @@ $(document).ready(function() {
           onLoaded:function(e){
             $('#positive').off('click');
             $('#positive').click(function() {
+              $('#errorForm').remove()
               loginRequest();
             });
           },
@@ -154,14 +160,18 @@ $(document).ready(function() {
               title: 'Mot de passe oublié ?',
               onClick: function() {
                   showDialog({
+                    onLoaded:function(e){
+                      $('#positive').off('click');
+                      $('#positive').click(function() {
+                        $('#errorForm').remove()
+                        forgotPassowrdRequest();
+                      });
+                    },
                       title: "<span class='mdl-color-text--blue-800'>Mot de passe oublié ?</span>",
                       text: contentForgotPassword,
                       negative: false,
                       positive: {
-                          title: 'Envoyer',
-                          onClick: function() {
-                              forgotPassowrdRequest();
-                          }
+                          title: 'Envoyer'
                       }
                   });
               }
@@ -175,14 +185,18 @@ $(document).ready(function() {
   $('#signup').click(function(event) {
       event.preventDefault();
       showDialog({
+        onLoaded:function(e){
+          $('#positive').off('click');
+          $('#positive').click(function() {
+            $('#errorForm').remove()
+            signupRequest();
+          });
+        },
           title: "<span class='mdl-color-text--blue-800'>Créer un compte</span>",
           text: contentSignup,
           negative: false,
           positive: {
-              title: 'Créer un compte',
-              onClick: function() {
-                  signupRequest();
-              }
+              title: 'Créer un compte'
           }
       });
   });
