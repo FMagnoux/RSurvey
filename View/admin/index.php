@@ -1,4 +1,3 @@
-        <section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
             <div class="page-content">
                 <?php foreach ($oPagination->getAData() as $oQuestion) : ?>
                     <div class=" container-card section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
@@ -20,7 +19,3 @@
                     </div>
                 <?php endforeach; ?>
             </div>
-        </section>
-        <section class="mdl-layout__tab-panel" id="scroll-tab-2">
-            <div class="page-content">Tab 2</div>
-        </section>
