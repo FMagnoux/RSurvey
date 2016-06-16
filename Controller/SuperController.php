@@ -10,6 +10,7 @@ class SuperController
 {
     protected $page;
     const URLKEY = "9wdg22i2WU2tCButPLHN736aK68vgDv5";
+    const ERROR_LOGIN = "L'utilisateur n'est pas authentifié.";
 
     function __construct() {
 
@@ -23,6 +24,16 @@ class SuperController
     public function error() {
         $this->page = "commun/404";
         $this->view();
+    }
+
+    public function checkLogin()
+    {
+        if(isset($_SESSION['iIdUser']) && !empty($_SESSION['iIdUser'])){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public function callController($ctrl, $action) {
@@ -61,6 +72,10 @@ class SuperController
             return 0;
         }
         return $this->checkId($_GET["id"]);
+    }
+    
+    public function checkPage() {
+        return isset($_GET["page"]) ? $_GET["page"] : 1;
     }
 
     /**

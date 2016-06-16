@@ -167,6 +167,14 @@ class Question extends SQL implements JsonSerializable
      * @return mixed
      */
 
+    public function changeQuestion(){
+        $requete = $this->db->prepare('update Question set question_libel = :question_libel where question_id = :question_id and question_active = :question_active') ;
+        return $requete->execute (array(
+            ':question_id'=>$this->getIQuestionId(),
+            ':question_active'=>self::$active,
+        ));
+    }
+
 
     public function closeQuestion(){
         $requete = $this->db->prepare('update Question set question_close = :question_close where question_id = :question_id') ;
@@ -178,7 +186,7 @@ class Question extends SQL implements JsonSerializable
 
     public function getQuestion(){
         $requete = $this->db->prepare('
-        select 
+        select
             question_id ,
             question_libel ,
             question_date ,
@@ -188,7 +196,7 @@ class Question extends SQL implements JsonSerializable
         from Question
         where
             question_active = :question_active
-        and 
+        and
             question_id = :question_id
          ') ;
         $requete->execute (array(
@@ -243,7 +251,7 @@ class Question extends SQL implements JsonSerializable
             $fonction = "MAX";
         }
         $requete = $this->db->prepare('
-        select 
+        select
             question_id ,
             question_libel ,
             '.$fonction.'(question_date) ,
@@ -254,7 +262,7 @@ class Question extends SQL implements JsonSerializable
         where
             question_active = :question_active
         and
-            question_date '.$operateur.' :question_date 
+            question_date '.$operateur.' :question_date
          ') ;
         $requete->execute (array(
             ':question_active'=>self::$active,
@@ -279,10 +287,9 @@ class Question extends SQL implements JsonSerializable
         }
 
     }
-
     public function createQuestion(){
         $bStatutRequete = false;
-        $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , zone_id)values(:question_libel , :question_date , :usr_id , :zone_id)') ;
+        $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , sub_id)values(:question_libel , :question_date , :usr_id , :sub_id)') ;
         if ($requete->execute (array(
             ':question_libel'=>$this->getSQuestionLibel(),
             ':question_date'=>$this->getDQuestionDate()->format('Y-m-d H:i:s'),
@@ -296,23 +303,16 @@ class Question extends SQL implements JsonSerializable
             return $bStatutRequete;
         }
     }
-    
+
     public function desactivateQuestion($id) {
         $query = $this->db->prepare("UPDATE ".$this->table." SET question_active = 0 WHERE question_id = :id");
         return $query->execute(array(
-           "id" => $id 
+           "id" => $id
         ));
     }
 
-    /**
-     * Liste paginée des questions
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @return array<Question>
-     */
-    public function getPaginatedQuestionList($iMaxItems, $iCurrentPage, $iId = null) {
-        $values = null;
-        $aConfig = array(
+    private function getPaginatedQuestionListConfig() {
+        return array(
             "columns" => 'question_id, question_libel, question_date, question_active, question_close, '.$this->table.'.usr_id, usr_pseudo, '.$this->table.'.sub_id, sub_libel',
             "table" => $this->table,
             "join" => array(
@@ -328,10 +328,82 @@ class Question extends SQL implements JsonSerializable
                 )
             )
         );
+    }
+
+    /**
+     * Liste paginée des questions
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @return array<Question>
+     */
+    public function getPaginatedQuestionList($iMaxItems, $iCurrentPage, $iId = null) {
+        $values = null;
+        $aConfig = $this->getPaginatedQuestionListConfig();
         if(!empty($iId)) {
             $aConfig["where"] = "usr_id = :id";
             $values = array("id" => $iId);
         }
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
+    }
+
+    /**
+     * Rechercher le pseudo qui a créé les sondages
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @param $sPseudo
+     * @return array
+     */
+    public function getPaginatedQuestionListByPseudo($iMaxItems, $iCurrentPage, $sPseudo) {
+        $aConfig = $this->getPaginatedQuestionListConfig();
+        $aConfig["where"] = "usr_pseudo = :pseudo";
+        $values = array("pseudo" => $sPseudo);
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
+    }
+
+    /**
+     * Rechercher des questions en fonction de leur libellé
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @param $sLibel
+     * @return array
+     */
+    public function getPaginatedQuestionListByLibel($iMaxItems, $iCurrentPage, $sLibel) {
+        $aConfig = $this->getPaginatedQuestionListConfig();
+        $aConfig["where"] = "question_libel = :libel";
+        $values = array("libel" => $sLibel);
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
+    }
+
+    /**
+     * Rechercher des questions supérieures ou inférieures à une date
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @param $aDateAfter
+     * @param $sOperator
+     * @return array
+     */
+    public function getPaginatedQuestionListByDate($iMaxItems, $iCurrentPage, $aDate, $sOperator) {
+        $aConfig = $this->getPaginatedQuestionListConfig();
+        $aConfig["where"] = "question_date ".$sOperator." :date";
+        $values = array("date" => $aDate);
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
+    }
+
+    /**
+     * Rechercher des questions entre une intervalle de date
+     * @param $iMaxItems
+     * @param $iCurrentPage
+     * @param $aDateAfter
+     * @param $sOperator
+     * @return array
+     */
+    public function getPaginatedQuestionListByDateInterval($iMaxItems, $iCurrentPage, $aDateAfter, $aDateBefore) {
+        $aConfig = $this->getPaginatedQuestionListConfig();
+        $aConfig["where"] = "question_date BETWEEN :date_after AND :date_before";
+        $values = array(
+            "date_after" => $aDateAfter,
+            "date_before" => $aDateBefore
+        );
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
 
