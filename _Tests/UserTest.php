@@ -151,7 +151,7 @@ class UserTest extends PHPUnit_Framework_TestCase
     }
 
     public function test_crypt() {
-        $string = "2";
+        $string = "10";
         $userController = new UserController();
 
         $crypt = $userController->encrypt($string);
