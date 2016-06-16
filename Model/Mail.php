@@ -30,15 +30,15 @@ class Mail
         $this->sSubject = $sSubject;
         $this->sMessage = $sMessage;
     }
-    
+
     public function sendMail() {
-        $sHeaders = 
+        $sHeaders =
             'MIME-Version: 1.0' . "\r\n" .
             'Content-type: text/html; charset=iso-8859-1' . "\r\n" .
             'From:  '.$this->sName.' <'.$this->sFrom.'>' . "\r\n" .
             'Reply-To: '.$this->sFrom.'' . "\r\n" .
             'X-Mailer: PHP/' . phpversion();
 
-        mail($this->sTo, $this->sSubject, $this->sMessage, $sHeaders);
+        @mail($this->sTo, $this->sSubject, $this->sMessage, $sHeaders);
     }
 }

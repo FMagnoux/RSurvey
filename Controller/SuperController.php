@@ -70,8 +70,7 @@ class SuperController
      */
     function encrypt($sText)
     {
-        $sEncrypt = urlencode(trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::URLKEY, $sText, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB), MCRYPT_RAND)))));
-        return preg_replace('#%3D#', '%25', $sEncrypt);
+        return urlencode(trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::URLKEY, $sText, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB), MCRYPT_RAND)))));
     }
 
     /**

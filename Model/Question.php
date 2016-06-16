@@ -167,6 +167,14 @@ class Question extends SQL implements JsonSerializable
      * @return mixed
      */
 
+    public function changeQuestion(){
+        $requete = $this->db->prepare('update Question set question_libel = :question_libel where question_id = :question_id and question_active = :question_active') ;
+        return $requete->execute (array(
+            ':question_id'=>$this->getIQuestionId(),
+            ':question_active'=>self::$active,
+        ));
+    }
+
 
     public function closeQuestion(){
         $requete = $this->db->prepare('update Question set question_close = :question_close where question_id = :question_id') ;
@@ -176,39 +184,20 @@ class Question extends SQL implements JsonSerializable
         ));
     }
 
-    public function getQuestionFull(){
+    public function getQuestion(){
         $requete = $this->db->prepare('
         select 
-         q.question_id ,
-         q.question_libel , 
-         q.question_date ,
-         q.question_close ,
-         u.usr_pseudo ,  
-         c.choix_id ,
-         c.choix_libel ,
-         r.reponse_id ,
-         r.reponse_votes , 
-         r.reponse_subcode ,
-         z.zone_id ,
-         z.zone_libel , 
-         s.sub_libel ,
-         s.sub_id
-        from 
-         Question q 
-        inner join Choix c 
-          on c.question_id = q.question_id
-        inner join Reponse r
-          on r.choix_id = c.choix_id
-        inner join User u 
-          on u.usr_id = q.usr_id
-        inner join Subdivision s 
-          on s.sub_id = q.sub_id
-        inner join Zone z 
-          on z.zone_id = s.zone_id
-        where 
-           q.question_id = :question_id
+            question_id ,
+            question_libel ,
+            question_date ,
+            question_close ,
+            usr_id ,
+            sub_id
+        from Question
+        where
+            question_active = :question_active
         and 
-           q.question_active = :question_active
+            question_id = :question_id
          ') ;
         $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
@@ -222,48 +211,93 @@ class Question extends SQL implements JsonSerializable
             $aTabObjectQuestion = array();
             foreach ($results as $result){
                 $oQuestion = new Question();
-                require_once './Model/User.php';
-                $oUser = new User();
-                require_once './Model/Choix.php';
-                $oChoix = new Choix();
-                require_once './Model/Reponse.php';
-                $oReponse = new Reponse();
-                require_once './Model/Zone.php';
-                $oZone = new Zone();
-                require_once './Model/Subdivision.php';
-                $oSubdivision = new Subdivision();
-
-                $oUser->setSUsrPseudo($result['usr_pseudo']);
-
-                $oZone->setSZoneLibel($result['zone_libel']);
-                $oZone->setIZoneId($result['zone_id']);
-
-                $oSubdivision->setSSubLibel($result['sub_libel']);
-                $oSubdivision->setISubId($result['sub_id']);
-                $oSubdivision->setoZoneId($oZone);
 
                 $oQuestion->setIQuestionId($result['question_id']);
                 $oQuestion->setSQuestionLibel($result['question_libel']);
                 $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
                 $oQuestion->setBQuestionClose($result['question_close']);
-                $oQuestion->setOSub($oSubdivision);
-                $oQuestion->setOUsr($oUser);
+                $oQuestion->setOUsr($result['usr_id']);
+                $oQuestion->setOSub($result['sub_id']);
+                return $oQuestion;
+            }
+        }
+    }
 
-                $oChoix->setIChoixId($result['choix_id']);
-                $oChoix->setSChoixLibel($result['choix_libel']);
+    public function checkChangeQuestion(){
+        $requete = $this->db->prepare('select question_libel from Question where question_id = :question_id') ;
+        $requete->execute (array(
+            ':question_id'=>$this->getIQuestionId(),
+        ));
+        $results = $requete->fetchAll();
+        if(empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                return $result['question_libel'];
+            }
+        }
+    }
 
+<<<<<<< HEAD
                 $oReponse->setIReponseId($result['reponse_id']);
                 $oReponse->setIReponseVotes($result['reponse_votes']);
                 $oReponse->setIReponseSubcode($result['reponse_subcode']);
 
                 $aQuestion = array($oQuestion,$oChoix,$oReponse);
                 array_push($aTabObjectQuestion,$aQuestion);
+=======
+    public function getNextPreviousQuestion($next){
+        $operateur = "";
+        $fonction = "";
+
+        if($next){
+            $operateur = ">";
+            $fonction = "MIN";
+        }
+        else {
+            $operateur = "<";
+            $fonction = "MAX";
+        }
+        $requete = $this->db->prepare('
+        select 
+            question_id ,
+            question_libel ,
+            '.$fonction.'(question_date) ,
+            question_close ,
+            usr_id ,
+            sub_id
+        from Question
+        where
+            question_active = :question_active
+        and
+            question_date '.$operateur.' :question_date 
+         ') ;
+        $requete->execute (array(
+            ':question_active'=>self::$active,
+            ':question_date'=>$this->getDQuestionDate(),
+        ));
+        $results = $requete->fetchAll();
+        if(empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                $oQuestion = new Question();
+                $oQuestion->setIQuestionId($result['question_id']);
+                $oQuestion->setSQuestionLibel($result['question_libel']);
+                $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
+                $oQuestion->setBQuestionClose($result['question_close']);
+                $oQuestion->setOUsr($result['usr_id']);
+                $oQuestion->setOSub($result['sub_id']);
+
+                return $oQuestion;
+>>>>>>> master
             }
             return $aTabObjectQuestion;
         }
 
     }
-
     public function createQuestion(){
         $bStatutRequete = false;
         $requete = $this->db->prepare('insert into Question (question_libel , question_date , usr_id , zone_id)values(:question_libel , :question_date , :usr_id , :zone_id)') ;
@@ -297,8 +331,20 @@ class Question extends SQL implements JsonSerializable
     public function getPaginatedQuestionList($iMaxItems, $iCurrentPage, $iId = null) {
         $values = null;
         $aConfig = array(
-            "columns" => '*',
+            "columns" => 'question_id, question_libel, question_date, question_active, question_close, '.$this->table.'.usr_id, usr_pseudo, '.$this->table.'.sub_id, sub_libel',
             "table" => $this->table,
+            "join" => array(
+                array(
+                    "table" => "User",
+                    "key" => "usr_id",
+                    "foreignKey" => "usr_id"
+                ),
+                array(
+                    "table" => "Subdivision",
+                    "key" => "sub_id",
+                    "foreignKey" => "sub_id"
+                )
+            )
         );
         if(!empty($iId)) {
             $aConfig["where"] = "usr_id = :id";
@@ -313,14 +359,16 @@ class Question extends SQL implements JsonSerializable
      * @return $this
      */
     public function toObject($array) {
+        require_once "./Model/User.php";
+        require_once "./Model/Subdivision.php";
         return (new Question())
-            ->setIQuestionId($array["question_id"])
-            ->setSQuestionLibel($array["question_libel"])
-            ->setDQuestionDate($array["question_date"])
-            ->setBQuestionActive($array["question_active"])
-            ->setBQuestionClose($array["question_close"])
-            ->setoUsr($array["usr_id"])
-            ->setoSub($array["zone_id"])
+            ->setIQuestionId(isset($array["question_id"]) ? $array["question_id"] : null)
+            ->setSQuestionLibel(isset($array["question_libel"]) ? $array["question_libel"] : null)
+            ->setDQuestionDate(isset($array["question_date"]) ? $array["question_date"] : null)
+            ->setBQuestionActive(isset($array["question_active"]) ? $array["question_active"] : null)
+            ->setBQuestionClose(isset($array["question_close"]) ? $array["question_close"] : null)
+            ->setoUsr(isset($array["usr_id"]) ? (new User())->toObject($array) : null)
+            ->setoSub(isset($array["sub_id"]) ? (new Subdivision())->toObject($array) : null)
         ;
     }
 
@@ -335,7 +383,7 @@ class Question extends SQL implements JsonSerializable
     {
         return [
             'iQuestionId' => $this->iQuestionId,
-            'sQuestionLibel' => $this->sQuestionLibel,
+            'sQuestionLibel' => utf8_encode($this->sQuestionLibel),
             'dQuestionDate' => $this->dQuestionDate,
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,
