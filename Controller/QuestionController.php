@@ -24,6 +24,8 @@ class QuestionController extends SuperController
     const ERROR_QUESTIONKO = "Aucun résultat n'a été trouvé.";
     const ERROR_DATE = "Les dates spécifiées n'ont pas un bon format.";
 
+    const ERROR_EMPTYSUBID = "L'identifiant de la subdivision n'est pas renseigné.";
+
     const SUCCESS_CLOSEQUESTION = "Le sondage est maintenant terminé.";
     const SUCCESS_UPDATEQUESTION = "Le sondage a été mis à jour.";
     const SUCCESS_CREATEQUESTION = "Le sondage a été crée.";
@@ -186,8 +188,18 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function createQuestion(){
+        if(!$this->checkLogin()){
+            $aDataPost = array(
+                "sQuestionLibel" => $_POST['sQuestionLibel'],
+                "aQuestionChoix" => $_POST['aQuestionChoix'],
+                "iIdSub" => $_POST['iIdSub'],
+                self::ERROR => self::ERROR_LOGIN);
+            echo json_encode($aDataPost);
+            return;
+        }
         if($this->checkQuestion() && !is_string($this->checkQuestion())){
             if(count($_POST['aQuestionChoix']) > 1 && count($_POST['aQuestionChoix']) <= 3   ){
+
                 require_once "./Controller/ChoixController.php";
                 $oChoixController = new ChoixController();
                 if($oChoixController->checkTabChoix($_POST['aQuestionChoix'])){
@@ -197,6 +209,11 @@ class QuestionController extends SuperController
                     $oUser = new User();
                     $oUser->setIUsrId($_SESSION['iIdUser']);
 
+                    if(!isset($_POST['iIdSub']) || empty($_POST['iIdSub'])){
+                        $returnjson = array(self::ERROR,self::ERROR_EMPTYSUBID);
+                        echo json_encode($returnjson);
+                        return;
+                    }
                     require_once "./Model/Subdivision.php";
 
                     $oSub = new Subdivision();
@@ -210,15 +227,18 @@ class QuestionController extends SuperController
                     if(!$bLastQuestion){
                         $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
                         echo json_encode($returnjson);
+                        return;
                     }
                     else {
                         if($oChoixController->createChoix($_POST['aQuestionChoix'],$bLastQuestion)){
                           $returnjson = array(self::SUCCESS,self::SUCCESS_CREATEQUESTION);
                           echo json_encode($returnjson);
+                            return;
                         }
                         else {
                           $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
                           echo json_encode($returnjson);
+                            return;
                         }
                     }
 
@@ -229,13 +249,15 @@ class QuestionController extends SuperController
             }
             else {
                 $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
-                return json_encode($returnjson);
+                echo json_encode($returnjson);
+                return;
             }
 
 
         }
         else {
             echo $this->checkQuestion();
+            return;
         }
 
 
