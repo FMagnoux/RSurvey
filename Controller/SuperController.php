@@ -36,7 +36,12 @@ class SuperController
         if (isset($var)) {
             extract($var);
         }
-        require_once './View/commun/default.php';
+        if(dirname($this->page) == "admin") {
+            require_once './View/admin/default.php';
+        }
+        else {
+            require_once './View/commun/default.php';
+        }
     }
     
     public function setJsonData() {

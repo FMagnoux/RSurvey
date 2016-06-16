@@ -290,8 +290,8 @@ class QuestionController extends SuperController
      * Liste de questions paginées
      */
     public function listQuestions() {
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()));
+        $this->page = "admin/index";
+        $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage())));
     }
 
     /**
@@ -375,9 +375,6 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function desactivateQuestion() {
-        $id = $this->checkId();
-        if($id == 0) return false;
-        return $this->oEntity->desactivateQuestion($id);
         $iId = $this->checkPostId();
         if($iId == 0) return false;
         return $this->oEntity->desactivateQuestion($iId);
