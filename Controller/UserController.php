@@ -24,7 +24,7 @@ class UserController extends SuperController
     const ERROR_SENDMAIL = "Votre compte a été créé mais un problème est survenu lors de l'envoi de l'email de confirmation. Veuillez contacter un administrateur.";
     const SUCCESS_MAILSENT = "Suivez les instructions indiqués dans l'e-mail qui vous a été envoyé.";
 
-    const ERROR_LOGIN = "Adresse email ou pseudo incorrect.";
+    const ERROR_LOGIN = "Adresse email ou mot de passe incorrect.";
     const SUCCESS_USERCONFIRMED = "Votre compte a été activé. Connectez-vous pour créer des sondages.";
     const SUCCESS_PASSWORDCHANGED = "Votre mot de passe a été mis à jour.";
 
@@ -37,8 +37,8 @@ class UserController extends SuperController
     const SUCCESS_UPDATE = "Votre profil a bien été mis à jour.";
 
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
-    
-    const ERROR_ID = "Le lien a expiré.";
+
+    const ERROR_BROKENLINK = "Le lien a expiré.";
 
     //private static $sSender = "R Survey";
     //private static $sFrom = "no-reply@r-survey.com";
@@ -65,7 +65,7 @@ class UserController extends SuperController
                     $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
                         ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
                         ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
-                        ->setSUsrToken($this->generateToken())    
+                        ->setSUsrToken($this->generateToken())
                     ;
                     if($this->oEntity->signinUser()){
                         $returnjson = array(self::SUCCESS,self::SUCCESS_SIGNIN);
@@ -76,7 +76,7 @@ class UserController extends SuperController
                         $oMail = new Mail(
                             $aMail["fromName"],
                             $aMail["from"],
-                            $_POST["sMail"],
+                            $this->oEntity->getSUsrMail(),
                             $aMail["subject"],
                             $aMail["message"]);
                         try {
@@ -124,25 +124,25 @@ class UserController extends SuperController
     }
 
     /**
-     * Confirmer l'user une fois qu'il a cliqué sur le lien dans son mail 
+     * Confirmer l'user une fois qu'il a cliqué sur le lien dans son mail
      * @return bool
      */
     public function confirmUser() {
-        $this->setJsonData();
+        $this->page = "user/confirmUser";
         $id = $this->checkToken();
         if(!$id) {
-            echo json_encode(array(self::ERROR, self::ERROR_ID));
+            $this->view(array(self::ERROR =>self::ERROR_BROKENLINK));
             return false;
         }
         if(!$this->oEntity->activateDesactivate($id, 1)) {
-            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            $this->view(array(self::ERROR =>self::ERROR_INTERNAL));
             return false;
         }
         if(!$this->oEntity->setTokenById($this->generateToken(), $id)) {
-            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            $this->view(array(self::ERROR =>self::ERROR_INTERNAL));
             return false;
         }
-        echo json_encode(self::SUCCESS, self::SUCCESS_USERCONFIRMED);
+        $this->view(array(self::SUCCESS =>self::SUCCESS_USERCONFIRMED));
         return true;
     }
 
@@ -154,6 +154,7 @@ class UserController extends SuperController
                 $this->oEntity->setSUsrMail($_POST['sUsrMail'])
                     ->setSUsrPassword($this->cryptPassword($_POST['sUsrPassword']));
                 if ($this->oEntity->loginUser()){
+
                     $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
                     $returnjson = array(self::SUCCESS,self::SUCCESS_LOGIN);
                     echo json_encode($returnjson);
@@ -183,12 +184,12 @@ class UserController extends SuperController
     public function checkEmail(){
         if (isset($_POST['sUsrMail']) && !empty($_POST['sUsrMail'])){
             $sUsrMail = $_POST['sUsrMail'];
-            if ($this->filterEmail($sUsrMail)){
+            if ($this->filterEmail($sUsrMail) && !is_string($this->filterEmail($sUsrMail))){
                 if($this->oEntity->checkEmail($sUsrMail)){
                     return true;
                 }
                 else {
-                    return self::ERROR_MAIL;
+                    return json_encode(array(self::ERROR, self::ERROR_MAIL));
                 }
             }
             else {
@@ -343,6 +344,7 @@ class UserController extends SuperController
     public function forgottenPassword() {
         $this->setJsonData();
         if($this->filterEmail($_POST["sMail"]) !== true) {
+            echo json_encode(array(self::ERROR, self::ERROR_FILTERMAIL));
             return false;
         }
         // Vérifier que le mail renvoie une id
@@ -395,27 +397,37 @@ class UserController extends SuperController
      * @return bool
      */
     public function generateNewPassword() {
-        $this->setJsonData();
+        $this->page = "user/generateNewPassword";
         // Vérifier que tous les champs requis soient renseignés
-        if(empty($_POST["submit"])
-            || empty($_POST['sUsrPassword'])
+        if(
+            empty($_GET["token"])
+            || empty($_GET["id"])
+        ) {
+            $this->view(array(self::ERROR => self::ERROR_BROKENLINK));
+            return false;
+        }
+        if(empty($_POST["submit"])) {
+            return $this->view();
+            return false;
+        }
+        if(
+            empty($_POST['sUsrPassword'])
             || empty($_POST['sUsrConfirmPassword'])
             || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
-            || empty($_GET["token"])
-            || empty($_GET["id"])) 
+        )
         {
             echo json_encode(array(self::ERROR, self::ERROR_CHECKPASSWORD));
             return false;
         }
-        if(!$this->checkToken()){
-            echo json_encode(array(self::ERROR, self::ERROR_ID));
+        $id = $this->checkToken();
+        if(!$id) {
+            echo json_encode(array(self::ERROR, self::ERROR_BROKENLINK));
             return false;
         }
-        $id = $this->checkToken();
         // Changer le mot de passe et le token
         if(!$this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken())) {
             echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
-            return flase;
+            return false;
         }
         echo json_encode(array(self::SUCCESS, self::SUCCESS_PASSWORDCHANGED));
         return true;
