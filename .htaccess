@@ -3,9 +3,12 @@
 
 Options +FollowSymlinks
 RewriteEngine On
+RewriteBase /RSurvey
 
 #Accueil
 RewriteRule ^$ index.php?ctrl=Super&action=home [L]
+#Ressources
+# RewriteRule ^/ressources$ ../../ressources [L]
 #Admin
 RewriteRule ^administration$ index.php?ctrl=Admin&action=home [L]
 # Question
@@ -23,8 +26,8 @@ RewriteRule ^list-users/page-([0-9]+)\.json$ index.php?ctrl=user&action=listUser
 RewriteRule ^login.html$ index.php?ctrl=User&action=loginUser [L]
 RewriteRule ^inscription.html$ index.php?ctrl=User&action=createUser [L]
 RewriteRule ^mot-de-passe-oublie.html$ index.php?ctrl=user&action=forgottenPassword [L]
-RewriteRule ^mot-de-passe-oublie/(.*)\/([a-zA-Z0-9\%-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
-RewriteRule ^confirmer-compte/(.*)\/([a-zA-Z0-9\%-]*)$ index.php?ctrl=user&action=confirmUser&id=$1&token=$2 [L]
+RewriteRule ^mot-de-passe-oublie/(.*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
+RewriteRule ^confirmer-compte/(.*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=user&action=confirmUser&id=$1&token=$2 [L]
 
 # Question
 RewriteRule ^(.*)\.html$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]

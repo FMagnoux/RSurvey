@@ -13,6 +13,8 @@ class Reponse extends SQL implements JsonSerializable
     private $iReponseSubcode;
     private $iChoixId;
 
+    private static $iResetVotes = 0;
+
     /**
      * @return mixed
      */
@@ -154,6 +156,14 @@ class Reponse extends SQL implements JsonSerializable
             }
             return $aReponse;
         }
+    }
+
+    public function resetVotes(){
+        $requete = $this->db->prepare('update Reponse set reponse_votes = :reponse_votes where choix_id = :choix_id') ;
+        $requete->execute (array(
+            ':choix_id'=>$this->getIChoixId(),
+            ':reponse_votes'=>self::$iResetVotes,
+        ));
     }
 
     function jsonSerialize()
