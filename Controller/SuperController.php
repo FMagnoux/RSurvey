@@ -62,6 +62,10 @@ class SuperController
         }
         return $this->checkId($_GET["id"]);
     }
+    
+    public function checkPage() {
+        return isset($_GET["page"]) ? $_GET["page"] : 1;
+    }
 
     /**
      * Chiffrer une chaine de caractères

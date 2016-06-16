@@ -121,10 +121,10 @@ abstract class SQL
      * @param $aParams
      * @return array<Question>
      */
-    public function getPaginatedList($iMaxItems, $iCurrentPage, $aParams) {
+    public function getPaginatedList($iMaxItems, $iCurrentPage, $aParams, $aValues = null) {
         require_once './Model/Pagination.php';
         $pagination = new Pagination();
-        $pagination->setPagination($iMaxItems, $iCurrentPage, $aParams);
+        $pagination->setPagination($iMaxItems, $iCurrentPage, $aParams, $aValues);
         $pagination->setAData($this->toObjects($pagination->getAData()));
         return $pagination;
     }
