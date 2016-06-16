@@ -145,13 +145,14 @@ class QuestionController extends SuperController
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
             echo json_encode($returnjson);
         }
-        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
-        $aTabQuestion =  $this->oEntity->getQuestionFull();
+        $this->oEntity->setIQuestionId($id);
+        $aTabQuestion =  $this->oEntity->getQuestion();
         if(!$aTabQuestion){
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
             return $this->view(array("returnjson" => $returnjson));
         }
-        return $this->view(array("aTabQuestion" => $aTabQuestion));
+
+        //return $this->view(array("aTabQuestion" => $aTabQuestion));
 
         require_once "./Controller/ChoixController.php";
         require_once "./Controller/ReponseController.php";
@@ -169,10 +170,8 @@ class QuestionController extends SuperController
         foreach ($aChoix as $oChoix){
             $oChoix->setAReponse($oReponseController->getReponseQuestion($oChoix->getIChoixId()));
         }
-        $aReponse = $oReponseController->getReponseQuestion($aChoix);
 
         $oQuestion->setOUsr($oUser);
-
         $returnjson = array($oQuestion,$aChoix);
         echo json_encode($returnjson);
         return;
