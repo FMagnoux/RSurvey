@@ -320,8 +320,21 @@ class QuestionController extends SuperController
      * Liste de questions paginées
      */
     public function listQuestions() {
-        $this->page = "admin/index";
-        $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage())));
+        $this->page = "admin/listQuestions";
+        $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage())));
+    }
+
+    private function helperlistQuestions($sFunctionName, $sParam) {
+        $this->page = "admin/error";
+        $iId = $this->checkGetId();
+        $oPagination = $this->oEntity->$sFunctionName($this->iPagination, $this->checkPage(), $sParam);
+        if(count($oPagination->getAData()) == 0) {
+            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+            return false;
+        }
+        $this->page = "admin/listQuestions";
+        $this->view(array("oPagination" => $oPagination));
+        return true;
     }
 
     /**
@@ -329,11 +342,13 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function listQuestionsByIdUser() {
-        $this->setJsonData();
+        $this->page = "admin/error";
         $iId = $this->checkGetId();
-        if($iId == 0) return false;
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage(), $iId));
+        if($iId == 0) {
+            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+            return false;
+        }
+        return $this->helperlistQuestions("getPaginatedQuestionList", $iId);
     }
 
     /**
@@ -341,13 +356,12 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function listQuestionsByPseudoUser() {
+        $this->page = "admin/error";
         if(empty($_GET["sPseudo"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
+            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
             return false;
         }
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionListByPseudo($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sPseudo"])));
-        return true;
+        return $this->helperlistQuestions("getPaginatedQuestionListByPseudo", htmlspecialchars($_GET["sPseudo"]));
     }
 
     /**
@@ -355,13 +369,12 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function listQuestionsByLibel() {
+        $this->page = "admin/error";
         if(empty($_GET["sLibel"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
+            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
             return false;
         }
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionListByLibel($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sLibel"])));
-        return true;
+        return $this->helperlistQuestions("getPaginatedQuestionListByLibel", htmlspecialchars($_GET["sLibel"]));
     }
 
     /**

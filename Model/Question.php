@@ -340,7 +340,7 @@ class Question extends SQL implements JsonSerializable
         $values = null;
         $aConfig = $this->getPaginatedQuestionListConfig();
         if(!empty($iId)) {
-            $aConfig["where"] = "usr_id = :id";
+            $aConfig["where"] = $this->table . ".usr_id = :id";
             $values = array("id" => $iId);
         }
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
@@ -369,8 +369,8 @@ class Question extends SQL implements JsonSerializable
      */
     public function getPaginatedQuestionListByLibel($iMaxItems, $iCurrentPage, $sLibel) {
         $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "question_libel = :libel";
-        $values = array("libel" => $sLibel);
+        $aConfig["where"] = "question_libel LIKE :libel";
+        $values = array("libel" => "%" . $sLibel . "%");
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
 
