@@ -35,9 +35,11 @@ $.ajax({
 })
 .done(function(e) {
   console.log("success");
+  console.log(e[1]);
 })
 .fail(function(e) {
   console.log("error");
+  console.log(e[1]);
 })
 .always(function(e) {
   console.log("complete");
