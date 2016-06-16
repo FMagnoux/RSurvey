@@ -3,9 +3,12 @@
 
 Options +FollowSymlinks
 RewriteEngine On
+RewriteBase /RSurvey
 
 #Accueil
 RewriteRule ^$ index.php?ctrl=Super&action=home [L]
+#Ressources
+# RewriteRule ^/ressources$ ../../ressources [L]
 #Admin
 RewriteRule ^administration$ index.php?ctrl=Admin&action=home [L]
 # Question
