@@ -166,11 +166,14 @@ class QuestionController extends SuperController
         $oQuestion =  $this->oEntity->getQuestion();
         $oUser = $oUserController->getUser($oQuestion->getOUsr());
         $aChoix = $oChoixController->getChoixQuestion($oQuestion->getIQuestionId());
+        foreach ($aChoix as $oChoix){
+            $oChoix->setAReponse($oReponseController->getReponseQuestion($oChoix->getIChoixId()));
+        }
         $aReponse = $oReponseController->getReponseQuestion($aChoix);
 
         $oQuestion->setOUsr($oUser);
 
-        $returnjson = array($oQuestion,$aChoix,$aReponse);
+        $returnjson = array($oQuestion,$aChoix);
         echo json_encode($returnjson);
         return;
     }

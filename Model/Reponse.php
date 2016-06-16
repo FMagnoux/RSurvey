@@ -135,7 +135,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function getReponseQuestion(){
-        $requete = $this->db->prepare('select reponse_id , reponse_votes , reponse_subcode , choix_id from Reponse where choix_id = :choix_id') ;
+        $requete = $this->db->prepare('select reponse_id , reponse_votes , reponse_subcode , choix_id from Reponse where choix_id = :choix_id order by reponse_subcode asc') ;
         $requete->execute (array(
             ':choix_id'=>$this->getIChoixId(),
         ));
@@ -160,7 +160,7 @@ class Reponse extends SQL implements JsonSerializable
 
     public function resetVotes(){
         $requete = $this->db->prepare('update Reponse set reponse_votes = :reponse_votes where choix_id = :choix_id') ;
-        $requete->execute (array(
+        return $requete->execute (array(
             ':choix_id'=>$this->getIChoixId(),
             ':reponse_votes'=>self::$iResetVotes,
         ));
