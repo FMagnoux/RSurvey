@@ -10,6 +10,7 @@ class SuperController
 {
     protected $page;
     const URLKEY = "9wdg22i2WU2tCButPLHN736aK68vgDv5";
+    const ERROR_LOGIN = "L'utilisateur n'est pas authentifié.";
 
     function __construct() {
 
@@ -25,6 +26,16 @@ class SuperController
         $this->view();
     }
 
+    public function checkLogin()
+    {
+        if(isset($_SESSION['iIdUser']) && !empty($_SESSION['iIdUser'])){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public function callController($ctrl, $action) {
         require_once("./Controller/" . $ctrl . "Controller.php");
         $ctrl = $ctrl . "Controller";
@@ -36,7 +47,12 @@ class SuperController
         if (isset($var)) {
             extract($var);
         }
-        require_once './View/commun/default.php';
+        if(dirname($this->page) == "admin") {
+            require_once './View/admin/default.php';
+        }
+        else {
+            require_once './View/commun/default.php';
+        }
     }
     
     public function setJsonData() {
@@ -67,24 +83,26 @@ class SuperController
         return isset($_GET["page"]) ? $_GET["page"] : 1;
     }
 
-    /**
-     * Chiffrer une chaine de caractères
-     * @param $text
-     * @return string
-     */
-    function encrypt($sText)
+    function encrypt($id)
     {
-        return urlencode(trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, self::URLKEY, $sText, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB), MCRYPT_RAND)))));
+        $id = base_convert($id, 10, 36); // Save some space
+        $data = mcrypt_encrypt(MCRYPT_BLOWFISH, self::URLKEY, $id, 'ecb');
+        $data = bin2hex($data);
+
+        return $data;
     }
 
-    /**
-     * Déchiffrer une chaine de caractères
-     * @param $text
-     * @return string
-     */
-    function decrypt($sText)
+    function decrypt($encrypted_id)
     {
-        return trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, self::URLKEY, base64_decode(urldecode($sText)), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_ECB), MCRYPT_RAND)));
+        // Si le nombre n'est pas un exadecimal, ne pas decrypter
+        if(!ctype_xdigit($encrypted_id)) {
+            return 0;
+        }
+        $data = pack('H*', $encrypted_id); // Translate back to binary
+        $data = mcrypt_decrypt(MCRYPT_BLOWFISH, self::URLKEY, $data, 'ecb');
+        $data = base_convert($data, 36, 10);
+
+        return $data;
     }
 
     /**
