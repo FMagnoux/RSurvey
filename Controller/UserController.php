@@ -294,6 +294,7 @@ class UserController extends SuperController
      * Liste de users paginés
      */
     public function listUsers() {
+        if(!$this->isAdmin()) return false;
         $this->page = "admin/listUsers";
         $oPagination = $this->oEntity->getPaginatedUserList(10, isset($_GET["page"]) ? $_GET["page"] : 1);
         if(count($oPagination->getAData()) == 0) {
@@ -309,6 +310,7 @@ class UserController extends SuperController
      * @return bool
      */
     public function desactivateUser() {
+        if(!$this->isAdmin()) return false;
         $iId = $this->checkPostId();
         if($iId == 0 || !$this->oEntity->activateDesactivate($iId, 0)) {
             echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));
@@ -323,6 +325,7 @@ class UserController extends SuperController
      * @return bool
      */
     public function activateUser() {
+        if(!$this->isAdmin()) return false;
         $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 1);

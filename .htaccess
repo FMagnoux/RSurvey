@@ -1,5 +1,5 @@
 #Liste des erreurs courantes.
-# ErrorDocument 404 /error/error_404.html
+ErrorDocument 404 /RSurvey/index.php?ctrl=Super&action=error
 
 Options +FollowSymlinks
 RewriteEngine On
@@ -26,6 +26,7 @@ RewriteRule ^activate-zone.html$ index.php?ctrl=Subdivision&action=activateSubdi
 RewriteRule ^administration-users.html$ index.php?ctrl=user&action=listUsers [L]
 RewriteRule ^administration-users/page-([0-9]+)\.html$ index.php?ctrl=user&action=listUsers&page=$1 [L]
 RewriteRule ^login.html$ index.php?ctrl=User&action=loginUser [L]
+RewriteRule ^disconnect.html$ index.php?ctrl=Super&action=disconnectUser [L]
 RewriteRule ^inscription.html$ index.php?ctrl=User&action=createUser [L]
 RewriteRule ^mot-de-passe-oublie.html$ index.php?ctrl=user&action=forgottenPassword [L]
 RewriteRule ^mot-de-passe-oublie/(.*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
