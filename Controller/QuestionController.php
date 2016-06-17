@@ -30,6 +30,9 @@ class QuestionController extends SuperController
     const SUCCESS_UPDATEQUESTION = "Le sondage a été mis à jour.";
     const SUCCESS_CREATEQUESTION = "Le sondage a été crée.";
 
+    const ERROR_DESACTIVATE = "Le sondage n'a pas été désactivé.";
+    const SUCCESS_DESACTIVATE = "Le sondage a été désactivé.";
+
     private static $changeyes = 1;
     private static $nocreate = -1;
 
@@ -320,76 +323,70 @@ class QuestionController extends SuperController
      * Liste de questions paginées
      */
     public function listQuestions() {
-        $this->page = "admin/index";
-        $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage())));
+        $this->page = "admin/listQuestions";
+        $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStart" => "./administration/page-", "sUrlEnd" => ".html"));
     }
 
     /**
-     * Liste des questions d'un utilisateur en fonction de son id
+     * Faire une recherche sur les questions
      * @return bool
      */
-    public function listQuestionsByIdUser() {
-        $this->setJsonData();
-        $iId = $this->checkGetId();
-        if($iId == 0) return false;
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage(), $iId));
-    }
+    public function listQuestionsFilter() {
+        $this->page = "admin/listQuestions";
 
-    /**
-     * Liste des questions d'un utilisateur en fonction de son pseudo
-     * @return bool
-     */
-    public function listQuestionsByPseudoUser() {
-        if(empty($_GET["sPseudo"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
-            return false;
-        }
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionListByPseudo($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sPseudo"])));
-        return true;
-    }
+        if(!empty($_POST)) extract($_POST);
+        else if(!empty($_GET)) extract($_GET);
 
-    /**
-     * Liste des questions en fonction de leur libellé
-     * @return bool
-     */
-    public function listQuestionsByLibel() {
-        if(empty($_GET["sLibel"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
-            return false;
-        }
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionListByLibel($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sLibel"])));
-        return true;
-    }
-
-    /**
-     * Liste des questions en fonction d'une intervalle de date
-     * @return bool
-     */
-    public function listQuestionsByDate() {
-        if(empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_DATE));
-            return false;
-        }
-        $this->setJsonData();
-        // Rechercher les questions dont la date est supérieure à la date précisée
-        if(!empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateAfter"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">="));
-        }
-        // Rechercher les questions dont la date est inférieure à la date précisée
-        else if(empty($_GET["dDateAfter"]) && !empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateBefore"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<="));
-        }
-        // Rechercher les questions entre une intervalle de date
-        else if($this->checkDate($_GET["dDateAfter"]) && $this->checkDate($_GET["dDateBefore"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"])));
+        if(empty($sPseudo)) {
+            $sPseudo = "";
         }
         else {
-            echo json_encode(array(self::ERROR, self::ERROR_DATE));
+            $sPseudo = htmlspecialchars($sPseudo);
+        }
+        if(empty($sLibel)) {
+            $sLibel = "";
+        }
+        else {
+            $sLibel = htmlspecialchars($sLibel);
+        }
+        if(!empty($dDateAfter) && $this->checkDate($dDateAfter)) {
+            $dDateAfter = htmlspecialchars($dDateAfter);
+        }
+        else {
+            $dDateAfter = "";
+        }
+        if(!empty($dDateBefore)&& $this->checkDate($dDateBefore)) {
+            $dDateBefore = htmlspecialchars($dDateBefore);
+        }
+        else {
+            $dDateBefore = "";
+        }
+
+        $oPagination = $this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore);
+        if(count($oPagination->getAData()) == 0) {
+            $this->page = "admin/errorFilterQuestions";
+            $this->view(
+                array(
+                    self::ERROR => self::ERROR_QUESTIONKO,
+                    "sPseudo" => $sPseudo,
+                    "sLibel" => $sLibel,
+                    "dDateAfer" => $dDateAfter,
+                    "dDateBefore" => $dDateBefore,
+                )
+            );
             return false;
         }
+
+        $this->view(
+            array(
+                "oPagination" => $oPagination,
+                "sPseudo" => $sPseudo,
+                "sLibel" => $sLibel,
+                "dDateAfer" => $dDateAfter,
+                "dDateBefore" => $dDateBefore,
+                "sUrlStart" => "./administration-filtre/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-"
+            )
+        );
         return true;
     }
 
@@ -406,7 +403,11 @@ class QuestionController extends SuperController
      */
     public function desactivateQuestion() {
         $iId = $this->checkPostId();
-        if($iId == 0) return false;
-        return $this->oEntity->desactivateQuestion($iId);
+        if($iId == 0 || !$this->oEntity->desactivateQuestion($iId)) {
+            echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));
+            return false;
+        }
+        echo json_encode(array(self::SUCCESS, self::SUCCESS_DESACTIVATE));
+        return true;
     }
 }

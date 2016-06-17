@@ -354,7 +354,8 @@ class User extends SQL implements JsonSerializable
     public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
             "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
-            "table" => $this->sTable
+            "table" => $this->sTable,
+            "where" => "usr_active = 1"
         ));
     }
 

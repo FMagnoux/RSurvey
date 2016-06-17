@@ -73,6 +73,7 @@ class SuperController
     }
     
     public function checkId($id) {
+        $id = $this->decrypt($id);
         $id = intval($id);
         if($id > 0) return $id;
         return 0;
