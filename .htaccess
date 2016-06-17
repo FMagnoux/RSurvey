@@ -16,6 +16,7 @@ RewriteRule ^search-questions-date/([0-9\-]+)\/([0-9\-]+)\/page-([0-9]+)\.json$ 
 RewriteRule ^search-questions-date/([0-9\-]+)\/page-([0-9]+)\.json$ index.php?ctrl=Question&action=listQuestionsByDate&dDateAfter=$1&page=$2 [L]
 RewriteRule ^search-questions-date/([0-9\-]+)\/page-([0-9]+)\.json$ index.php?ctrl=Question&action=listQuestionsByDate&dDateBefore=$1&page=$2 [L]
 RewriteRule ^desactivate-question$ index.php?ctrl=question&action=desactivateQuestion [L]
+RewriteRule ^answer-sondage.html$ index.php?ctrl=Reponse&action=answerQuestion [L]
 # Zone
 RewriteRule ^list-zones.json$ index.php?ctrl=subdivision&action=listSubdivisions [L]
 RewriteRule ^list-zones/page-([0-9]+)\.json$ index.php?ctrl=subdivision&action=listSubdivisions&page=$1 [L]

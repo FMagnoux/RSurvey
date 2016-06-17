@@ -36,7 +36,7 @@ $.ajax({
 })
 .done(function(e) {
   console.log("success");
-  console.log(e[1]);
+  $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
 })
 .fail(function(e) {
   console.log("error");
@@ -50,18 +50,17 @@ $.ajax({
 }
 
 
-var signupRequest = function() {
-  var datas = $('#formSignup').serialize();
+var ajaxRequestSerialize = function(idForm,urlDest) {
+  var datas = $('#'+idForm).serialize();
   $.ajax({
-    url: 'inscription.html',
+    url: urlDest,
     type: 'POST',
     dataType: 'json',
     data: datas
   })
   .done(function(e) {
     console.log("success");
-    console.info(e[1]);
-
+    $('#'+idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
   })
   .fail(function(e) {
     console.log("error");
@@ -72,53 +71,6 @@ var signupRequest = function() {
   });
 }
 
-
-var loginRequest = function() {
-    var datas = $('#formLogin').serialize();
-  $.ajax({
-    url: 'login.html',
-    type: 'POST',
-    dataType: 'json',
-    data: datas
-  })
-  .done(function(e) {
-    console.log("success");
-    console.info(e[1]);
-
-  })
-  .fail(function(e) {
-    console.log("error");
-    console.warn(e.responseText);
-  })
-  .always(function(e) {
-    console.log("complete");
-  });
-}
-
-
-var forgotPassowrdRequest = function() {
-  var datas = $('#formForgotPassword').serialize();
-  $.ajax({
-    url: 'mot-de-passe-oublie.html',
-    type: 'POST',
-    dataType: 'json',
-    data: datas
-  })
-  .done(function(e) {
-    console.log("success");
-    console.info(e[1]);
-
-  })
-  .fail(function(e) {
-    console.log("error");
-    console.warn(e);
-
-  })
-  .always(function(e) {
-    console.log("complete");
-  });
-
-}
 
 /*DOCUMENT READY*/
 
@@ -127,14 +79,18 @@ $(document).ready(function() {
   $('#newSurvey').click(function(event) {
       event.preventDefault();
       showDialog({
+        onLoaded:function(e){
+          $('#positive').off('click');
+          $('#positive').click(function() {
+            $('#errorForm').remove()
+            newSurveyRequest();
+          });
+        },
           title: "<span class='mdl-color-text--blue-800'>Ajouter un sondage</span>",
           text: contentNewSurvey,
           negative: false,
           positive: {
-              title: 'Ajouter un sondage',
-              onClick: function(e) {
-                  newSurveyRequest();
-              }
+              title: 'Ajouter un sondage'
           }
       });
   });
@@ -145,7 +101,8 @@ $(document).ready(function() {
           onLoaded:function(e){
             $('#positive').off('click');
             $('#positive').click(function() {
-              loginRequest();
+              $('#errorForm').remove()
+              ajaxRequestSerialize('formLogin','login.html');
             });
           },
           title: "<span class='mdl-color-text--blue-800'>Se connecter</span>",
@@ -154,14 +111,18 @@ $(document).ready(function() {
               title: 'Mot de passe oublié ?',
               onClick: function() {
                   showDialog({
+                    onLoaded:function(e){
+                      $('#positive').off('click');
+                      $('#positive').click(function() {
+                        $('#errorForm').remove()
+                        ajaxRequestSerialize('formForgotPassword','mot-de-passe-oublie.html');
+                      });
+                    },
                       title: "<span class='mdl-color-text--blue-800'>Mot de passe oublié ?</span>",
                       text: contentForgotPassword,
                       negative: false,
                       positive: {
-                          title: 'Envoyer',
-                          onClick: function() {
-                              forgotPassowrdRequest();
-                          }
+                          title: 'Envoyer'
                       }
                   });
               }
@@ -175,14 +136,18 @@ $(document).ready(function() {
   $('#signup').click(function(event) {
       event.preventDefault();
       showDialog({
+        onLoaded:function(e){
+          $('#positive').off('click');
+          $('#positive').click(function() {
+            $('#errorForm').remove()
+            ajaxRequestSerialize('formSignup','inscription.html');
+          });
+        },
           title: "<span class='mdl-color-text--blue-800'>Créer un compte</span>",
           text: contentSignup,
           negative: false,
           positive: {
-              title: 'Créer un compte',
-              onClick: function() {
-                  signupRequest();
-              }
+              title: 'Créer un compte'
           }
       });
   });
