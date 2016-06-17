@@ -39,6 +39,7 @@ class SuperController
     public function disconnectUser(){
         unset($_SESSION);
         session_destroy();
+        header('Location: ./');
     }
 
     public function callController($ctrl, $action) {
