@@ -390,6 +390,26 @@ class QuestionController extends SuperController
         return true;
     }
 
+    /**
+     * Liste des questions d'un utilisateur en fonction de son id
+     * @return bool
+     */
+    public function listQuestionsByIdUser() {
+        $this->page = "admin/error";
+        $iId = $this->checkGetId();
+        if($iId == 0) {
+            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+            return false;
+        }
+        $oPagination = $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage(), $iId);
+        if(count($oPagination->getAData()) == 0) {
+            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+            return false;
+        }
+        $this->page = "admin/listQuestions";
+        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration/".$_GET["id"]."/page-", "sUrlEnd" => ".html"));
+    }
+
     private function checkDate($aDate) {
         if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$aDate)) {
             return true;
