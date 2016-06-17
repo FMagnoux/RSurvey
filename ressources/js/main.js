@@ -73,6 +73,11 @@ var ajaxRequestSerialize = function(idForm,urlDest) {
 }
 
 
+
+var updateUserRequest = function() {
+  console.log('EDIT');
+
+}
 /*DOCUMENT READY*/
 
 $(document).ready(function() {
@@ -151,5 +156,10 @@ $(document).ready(function() {
               title: 'Créer un compte'
           }
       });
+  });
+
+  $('#updateUser').click(function(event) {
+    event.preventDefault();
+    updateUserRequest();
   });
 });
