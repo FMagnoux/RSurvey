@@ -156,6 +156,7 @@ class UserController extends SuperController
                 if ($this->oEntity->loginUser()){
 
                     $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
+                    $_SESSION['iIdRole'] = $this->oEntity->getIRoleId();
                     $returnjson = array(self::SUCCESS,self::SUCCESS_LOGIN);
                     echo json_encode($returnjson);
                     return true;
