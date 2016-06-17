@@ -346,6 +346,18 @@ class Question extends SQL implements JsonSerializable
         }
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
+    
+    public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore) {
+        $aConfig = $this->getPaginatedQuestionListConfig();
+        $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo AND question_libel LIKE :libel AND question_date >= :date_after AND question_date <= :date_before";
+        $values = array(
+            "pseudo" => !empty($sPseudo) ? "%" . $sPseudo . "%" : "%",
+            "libel" => !empty($sLibel) ? "%" . $sLibel . "%" : "%",
+            "date_after" => $dDateAfter,
+            "date_before" => $dDateBefore
+        );
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
+    }
 
     /**
      * Rechercher le pseudo qui a créé les sondages

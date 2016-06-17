@@ -1,4 +1,11 @@
-            
+<form action="./administration-filtre.html" method="post">
+    <input type="text" name="sPseudo" placeholder="Pseudo">
+    <input type="text" name="sLibel" placeholder="Libellé">
+    <input type="date" name="dDateAfter" placeholder="Après cette date">
+    <input type="date" name="dDateBefore" placeholder="Avant cette date">
+    <input type="submit">
+</form>
+
 <?php foreach ($oPagination->getAData() as $oQuestion) : ?>
     <div class=" container-card section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
 
@@ -18,4 +25,6 @@
         </div>
     </div>
 <?php endforeach; ?>
-            
+
+<?php
+$oPagination->view($sUrlStart, ".html");

@@ -22,3 +22,5 @@
         </div>
     </div>
 <?php endforeach; ?>
+
+<?php $oPagination->view("./administration-zones/page-", ".html");

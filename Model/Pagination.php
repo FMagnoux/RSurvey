@@ -119,4 +119,14 @@ class Pagination extends SQL implements JsonSerializable
         $this->aData = $aData;
         //return this;
     }
+
+    /**
+     * Créer une barre de navigation pour la pagination
+     * @param String $url Url de la page courante avec les arguments sauf $page
+     * @param String $link Argument dans l'url pour définir la page courante
+     * @param type $adj
+     */
+    public function view($urlStart, $urlEnd, $adj = 3) {
+        require_once './View/commun/pagination.php';
+    }
 }

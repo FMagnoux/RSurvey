@@ -9,7 +9,7 @@
 class QuestionController extends SuperController
 {
     private $oEntity;
-    private $iPagination = 10;
+    private $iPagination = 2;
 
     const SUCCESS = "success";
     const ERROR = "error";
@@ -324,10 +324,50 @@ class QuestionController extends SuperController
      */
     public function listQuestions() {
         $this->page = "admin/listQuestions";
-        $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage())));
+        $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStart" => "./administration/page-", "sUrlEnd" => ".html"));
     }
 
-    private function helperlistQuestions($sFunctionName, $sParam) {
+    public function listQuestionsFilter() {
+        $this->page = "admin/listQuestions";
+
+        if(!empty($_POST)) extract($_POST);
+        else if(!empty($_GET)) extract($_GET);
+
+        if(empty($sPseudo)) {
+            $sPseudo = "";
+        }
+        else {
+            $sPseudo = htmlspecialchars($sPseudo);
+        }
+        if(empty($sLibel)) {
+            $sLibel = "";
+        }
+        else {
+            $sLibel = htmlspecialchars($sLibel);
+        }
+        if(!empty($dDateAfter) && $this->checkDate($dDateAfter)) {
+            $dDateAfter = htmlspecialchars($dDateAfter);
+        }
+        else {
+            $dDateAfter = "2016-01-01";
+        }
+        if(!empty($dDateBefore)&& $this->checkDate($dDateBefore)) {
+            $dDateBefore = htmlspecialchars($dDateBefore);
+        }
+        else {
+            $dDateBefore = date("Y-m-d");
+        }
+
+        $this->view(
+            array(
+                "oPagination" =>$this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore),
+                "sUrlStart" => "./administration-filtre/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-"
+            )
+        );
+        return true;
+    }
+
+    private function helperlistQuestions($sFunctionName, $sParam, $sUrlStart) {
         $this->page = "admin/error";
         $oPagination = $this->oEntity->$sFunctionName($this->iPagination, $this->checkPage(), $sParam);
         if(count($oPagination->getAData()) == 0) {
@@ -335,7 +375,7 @@ class QuestionController extends SuperController
             return false;
         }
         $this->page = "admin/listQuestions";
-        $this->view(array("oPagination" => $oPagination));
+        $this->view(array("oPagination" => $oPagination, "sUrlStart" => $sUrlStart));
         return true;
     }
 
@@ -350,7 +390,7 @@ class QuestionController extends SuperController
             $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
             return false;
         }
-        return $this->helperlistQuestions("getPaginatedQuestionList", $iId);
+        return $this->helperlistQuestions("getPaginatedQuestionList", $iId, "./administration/".$_GET["id"]."/page-");
     }
 
     /**
@@ -363,7 +403,7 @@ class QuestionController extends SuperController
             $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
             return false;
         }
-        return $this->helperlistQuestions("getPaginatedQuestionListByPseudo", htmlspecialchars($_GET["sPseudo"]));
+        return $this->helperlistQuestions("getPaginatedQuestionListByPseudo", htmlspecialchars($_GET["sPseudo"]), "./administration-questions-pseudo/".htmlspecialchars($_GET["sPseudo"])."/page-");
     }
 
     /**
@@ -376,7 +416,7 @@ class QuestionController extends SuperController
             $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
             return false;
         }
-        return $this->helperlistQuestions("getPaginatedQuestionListByLibel", htmlspecialchars($_GET["sLibel"]));
+        return $this->helperlistQuestions("getPaginatedQuestionListByLibel", htmlspecialchars($_GET["sLibel"]), "./administration-questions-libel/".htmlspecialchars($_GET["sLibel"])."/page-");
     }
 
     /**
@@ -392,15 +432,15 @@ class QuestionController extends SuperController
         }
         // Rechercher les questions dont la date est supérieure à la date précisée
         if(!empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateAfter"])) {
-            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">=")));
+            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">="), "sUrlStart" => "./administration-questions-date/".htmlspecialchars($_GET["dDateAfter"])."/page-"));
         }
         // Rechercher les questions dont la date est inférieure à la date précisée
         else if(empty($_GET["dDateAfter"]) && !empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateBefore"])) {
-            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<=")));
+            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<="), "sUrlStart" => "./administration-questions-date/".htmlspecialchars($_GET["dDateBefore"])."/page-"));
         }
         // Rechercher les questions entre une intervalle de date
         else if($this->checkDate($_GET["dDateAfter"]) && $this->checkDate($_GET["dDateBefore"])) {
-            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"]))));
+            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"])), "sUrlStart" => "./administration-questions-date/".htmlspecialchars($_GET["dDateAfter"])."/".htmlspecialchars($_GET["dDateBefore"])."/page-"));
         }
         else {
             $this->page = "admin/error";

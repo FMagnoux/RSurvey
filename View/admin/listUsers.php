@@ -11,10 +11,11 @@
             </div>
             <div class="mdl-card__actions">
                 <a href="./administration/<?= $this->encrypt($oUser->getIUsrId()) ?>/page-1.html" class="mdl-button">Acceder aux sondages</a>
-                <a href="#" class="mdl-button">Partager le sondage</a>
-                <button id="<?= $this->encrypt($oUser->getIUsrId()) ?>" class="mdl-button mdl-color-text--red-500 desactivate-survey">Desactiver le sondage</button>
+                <button id="<?= $this->encrypt($oUser->getIUsrId()) ?>" class="mdl-button mdl-color-text--red-500 desactivate-survey">Desactiver l'utilisateur</button>
 
             </div>
         </div>
     </div>
 <?php endforeach; ?>
+
+<?php $oPagination->view("./administration-users/page-", ".html");
