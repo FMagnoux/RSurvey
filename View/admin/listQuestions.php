@@ -1,4 +1,4 @@
-<?php require_once './View/admin/filtreQuestions.php' ?>
+<?php require_once './View/admin/filterQuestions.php' ?>
 
 <?php foreach ($oPagination->getAData() as $oQuestion) : ?>
     <div class=" container-card section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">

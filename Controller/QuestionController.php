@@ -9,7 +9,7 @@
 class QuestionController extends SuperController
 {
     private $oEntity;
-    private $iPagination = 2;
+    private $iPagination = 10;
 
     const SUCCESS = "success";
     const ERROR = "error";
@@ -327,6 +327,10 @@ class QuestionController extends SuperController
         $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStart" => "./administration/page-", "sUrlEnd" => ".html"));
     }
 
+    /**
+     * Faire une recherche sur les questions
+     * @return bool
+     */
     public function listQuestionsFilter() {
         $this->page = "admin/listQuestions";
 
@@ -360,7 +364,7 @@ class QuestionController extends SuperController
 
         $oPagination = $this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore);
         if(count($oPagination->getAData()) == 0) {
-            $this->page = "admin/error";
+            $this->page = "admin/errorFilterQuestions";
             $this->view(
                 array(
                     self::ERROR => self::ERROR_QUESTIONKO,
@@ -383,89 +387,6 @@ class QuestionController extends SuperController
                 "sUrlStart" => "./administration-filtre/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-"
             )
         );
-        return true;
-    }
-
-    private function helperlistQuestions($sFunctionName, $sParam, $sUrlStart) {
-        $this->page = "admin/error";
-        $oPagination = $this->oEntity->$sFunctionName($this->iPagination, $this->checkPage(), $sParam);
-        if(count($oPagination->getAData()) == 0) {
-            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
-            return false;
-        }
-        $this->page = "admin/listQuestions";
-        $this->view(array("oPagination" => $oPagination, "sUrlStart" => $sUrlStart));
-        return true;
-    }
-
-    /**
-     * Liste des questions d'un utilisateur en fonction de son id
-     * @return bool
-     */
-    public function listQuestionsByIdUser() {
-        $this->page = "admin/error";
-        $iId = $this->checkGetId();
-        if($iId == 0) {
-            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
-            return false;
-        }
-        return $this->helperlistQuestions("getPaginatedQuestionList", $iId, "./administration/".$_GET["id"]."/page-");
-    }
-
-    /**
-     * Liste des questions d'un utilisateur en fonction de son pseudo
-     * @return bool
-     */
-    public function listQuestionsByPseudoUser() {
-        $this->page = "admin/error";
-        if(empty($_GET["sPseudo"])) {
-            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
-            return false;
-        }
-        return $this->helperlistQuestions("getPaginatedQuestionListByPseudo", htmlspecialchars($_GET["sPseudo"]), "./administration-questions-pseudo/".htmlspecialchars($_GET["sPseudo"])."/page-");
-    }
-
-    /**
-     * Liste des questions en fonction de leur libellé
-     * @return bool
-     */
-    public function listQuestionsByLibel() {
-        $this->page = "admin/error";
-        if(empty($_GET["sLibel"])) {
-            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
-            return false;
-        }
-        return $this->helperlistQuestions("getPaginatedQuestionListByLibel", htmlspecialchars($_GET["sLibel"]), "./administration-questions-libel/".htmlspecialchars($_GET["sLibel"])."/page-");
-    }
-
-    /**
-     * Liste des questions en fonction d'une intervalle de date
-     * @return bool
-     */
-    public function listQuestionsByDate() {
-        $this->page = "admin/listQuestions";
-        if(empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"])) {
-            $this->page = "admin/error";
-            $this->view(array(self::ERROR => self::ERROR_DATE));
-            return false;
-        }
-        // Rechercher les questions dont la date est supérieure à la date précisée
-        if(!empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateAfter"])) {
-            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">="), "sUrlStart" => "./administration-questions-date/".htmlspecialchars($_GET["dDateAfter"])."/page-"));
-        }
-        // Rechercher les questions dont la date est inférieure à la date précisée
-        else if(empty($_GET["dDateAfter"]) && !empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateBefore"])) {
-            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<="), "sUrlStart" => "./administration-questions-date/".htmlspecialchars($_GET["dDateBefore"])."/page-"));
-        }
-        // Rechercher les questions entre une intervalle de date
-        else if($this->checkDate($_GET["dDateAfter"]) && $this->checkDate($_GET["dDateBefore"])) {
-            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"])), "sUrlStart" => "./administration-questions-date/".htmlspecialchars($_GET["dDateAfter"])."/".htmlspecialchars($_GET["dDateBefore"])."/page-"));
-        }
-        else {
-            $this->page = "admin/error";
-            $this->view(array(self::ERROR => self::ERROR_DATE));
-            return false;
-        }
         return true;
     }
 

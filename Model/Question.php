@@ -360,67 +360,6 @@ class Question extends SQL implements JsonSerializable
     }
 
     /**
-     * Rechercher le pseudo qui a créé les sondages
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $sPseudo
-     * @return array
-     */
-    public function getPaginatedQuestionListByPseudo($iMaxItems, $iCurrentPage, $sPseudo) {
-        $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] .= " AND usr_pseudo = :pseudo";
-        $values = array("pseudo" => $sPseudo);
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
-    }
-
-    /**
-     * Rechercher des questions en fonction de leur libellé
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $sLibel
-     * @return array
-     */
-    public function getPaginatedQuestionListByLibel($iMaxItems, $iCurrentPage, $sLibel) {
-        $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] .= " AND question_libel LIKE :libel";
-        $values = array("libel" => "%" . $sLibel . "%");
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
-    }
-
-    /**
-     * Rechercher des questions supérieures ou inférieures à une date
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $aDateAfter
-     * @param $sOperator
-     * @return array
-     */
-    public function getPaginatedQuestionListByDate($iMaxItems, $iCurrentPage, $aDate, $sOperator) {
-        $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] .= " AND question_date ".$sOperator." :date";
-        $values = array("date" => $aDate);
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
-    }
-
-    /**
-     * Rechercher des questions entre une intervalle de date
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $aDateAfter
-     * @param $sOperator
-     * @return array
-     */
-    public function getPaginatedQuestionListByDateInterval($iMaxItems, $iCurrentPage, $aDateAfter, $aDateBefore) {
-        $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] .= " AND question_date BETWEEN :date_after AND :date_before";
-        $values = array(
-            "date_after" => $aDateAfter,
-            "date_before" => $aDateBefore
-        );
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
-    }
-
-    /**
      * Convertir un tableau en un objet Question
      * @param $array
      * @return $this
