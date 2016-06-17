@@ -193,10 +193,12 @@ class QuestionController extends SuperController
     public function createQuestion(){
           if(!$this->checkLogin()){
             $aDataPost = array(
-                "sQuestionLibel" => $_POST['sQuestionLibel'],
-                "aQuestionChoix" => $_POST['aQuestionChoix'],
-                "iIdSub" => $_POST['iIdSub'],
-                self::ERROR => self::ERROR_LOGIN);
+              self::ERROR,
+              self::ERROR_LOGIN,
+              $_POST['sQuestionLibel'],
+              $_POST['aQuestionChoix'],
+              $_POST['iIdSub']
+            );
             echo json_encode($aDataPost);
             return;
         }
@@ -234,7 +236,7 @@ class QuestionController extends SuperController
                     }
                     else {
                         if($oChoixController->createChoix($_POST['aQuestionChoix'],$bLastQuestion)){
-                          $returnjson = array(self::SUCCESS,self::SUCCESS_CREATEQUESTION);
+                          $returnjson = array(self::SUCCESS,self::SUCCESS_CREATEQUESTION , $this->encrypt($bLastQuestion));
                           echo json_encode($returnjson);
                             return;
                         }

@@ -37,7 +37,7 @@ $.ajax({
 .done(function(e) {
   console.log("success");
   console.log(e);
-  $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e.error+"</span>");
+  $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
 })
 .fail(function(e) {
   console.log("error");
