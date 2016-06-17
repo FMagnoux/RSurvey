@@ -60,6 +60,7 @@ class QuestionController extends SuperController
         }
 
         $oQuestion->setOUsr($oUser);
+        $oQuestion->setIQuestionId($this->encrypt($oQuestion->getIQuestionId()));
         $returnjson = array($oQuestion,$aChoix);
         echo json_encode($returnjson);
         return;
@@ -122,15 +123,26 @@ class QuestionController extends SuperController
      * @return string
      */
     public function closeQuestion(){
-        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
+
+      $id = $this->decrypt($_POST['iIdQuestion']);
+      $id = intval($id);
+      if($id <= 0) {
+          $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
+          echo json_encode($returnjson);
+          return false;
+      }
+
+      $this->oEntity->setIQuestionId($id);
         $this->oEntity->setBQuestionClose(1);
         if($this->oEntity->closeQuestion()){
             $returnjson = array(self::SUCCESS,self::SUCCESS_CLOSEQUESTION);
-            return json_encode($returnjson);
+            echo json_encode($returnjson);
+            return;
         }
         else {
             $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-            return json_encode($returnjson);
+            echo json_encode($returnjson);
+            return;
         }
     }
 
@@ -182,6 +194,7 @@ class QuestionController extends SuperController
         }
 
         $oQuestion->setOUsr($oUser);
+        $oQuestion->setIQuestionId($this->encrypt($oQuestion->getIQuestionId()));
         $returnjson = array($oQuestion,$aChoix);
         echo json_encode($returnjson);
         return;
