@@ -338,6 +338,7 @@ class QuestionController extends SuperController
      * Liste de questions paginées
      */
     public function listQuestions() {
+        if(!$this->isAdmin()) return false;
         $this->page = "admin/listQuestions";
         $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStart" => "./administration/page-", "sUrlEnd" => ".html"));
     }
@@ -347,6 +348,7 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function listQuestionsFilter() {
+        if(!$this->isAdmin()) return false;
         $this->page = "admin/listQuestions";
 
         if(!empty($_POST)) extract($_POST);
@@ -410,6 +412,7 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function listQuestionsByIdUser() {
+        if(!$this->isAdmin()) return false;
         $this->page = "admin/error";
         $iId = $this->checkGetId();
         if($iId == 0) {
@@ -437,6 +440,7 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function desactivateQuestion() {
+        if(!$this->isAdmin()) return false;
         $iId = $this->checkPostId();
         if($iId == 0 || !$this->oEntity->desactivateQuestion($iId)) {
             echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));

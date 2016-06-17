@@ -29,6 +29,7 @@ class SubdivisionController extends SuperController
      * Liste de zones paginées
      */
     public function listSubdivisions() {
+        if(!$this->isAdmin()) return false;
         $this->page = "admin/listZones";
         $oPagination = $this->oEntity->getPaginatedZoneList(10, isset($_GET["page"]) ? $_GET["page"] : 1);
         if(count($oPagination->getAData()) == 0) {
@@ -40,6 +41,7 @@ class SubdivisionController extends SuperController
     }
 
     public function desactivateSubdivision() {
+        if(!$this->isAdmin()) return false;
         $iId = $this->checkPostId();
         if($iId == 0 || !$this->oEntity->activateDesactivate($iId, 0)) {
             echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));
@@ -50,6 +52,7 @@ class SubdivisionController extends SuperController
     }
     
     public function activateSubdivision() {
+        if(!$this->isAdmin()) return false;
         $iId = $this->checkPostId();
         if($iId == 0 || !$this->oEntity->activateDesactivate($iId, 1)) {
             echo json_encode(array(self::ERROR, self::ERROR_ACTIVATE));
