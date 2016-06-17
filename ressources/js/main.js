@@ -14,7 +14,7 @@ var contentForgotPassword = "<form id='formForgotPassword' action='#'> <div clas
 
 var newSurveyRequest = function() {
   var sQuestionLibelValue = $("#newSurveyQuestion").val();
-  var aQuestionChoixValues = []
+  var aQuestionChoixValues = [];
   var iIdSubValue = $(".newSurveychoiceZone:checked").val();
   var newSurveychoice1 = $('#newSurveychoice1').val();
   var newSurveychoice2 = $('#newSurveychoice2').val();
@@ -23,9 +23,9 @@ var newSurveyRequest = function() {
   if(newSurveychoice1 != '') {aQuestionChoixValues.push(newSurveychoice1);}
   if(newSurveychoice2 != '') {aQuestionChoixValues.push(newSurveychoice2);}
   if(newSurveychoice3 != '') {aQuestionChoixValues.push(newSurveychoice3);}
-
+  if(aQuestionChoixValues[0] == undefined) {aQuestionChoixValues.push(null);}
 console.log(sQuestionLibelValue);
-console.log(aQuestionChoixValues);
+console.warn(aQuestionChoixValues);
 console.log(iIdSubValue);
 
 $.ajax({
@@ -36,11 +36,12 @@ $.ajax({
 })
 .done(function(e) {
   console.log("success");
-  $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+  console.log(e);
+  $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e.error+"</span>");
 })
 .fail(function(e) {
   console.log("error");
-  console.log(e[1]);
+  console.log(e.responseText);
 })
 .always(function(e) {
   console.log("complete");
