@@ -23,6 +23,7 @@ RewriteRule ^list-zones/page-([0-9]+)\.json$ index.php?ctrl=subdivision&action=l
 RewriteRule ^list-users.json$ index.php?ctrl=user&action=listUsers [L]
 RewriteRule ^list-users/page-([0-9]+)\.json$ index.php?ctrl=user&action=listUsers&page=$1 [L]
 RewriteRule ^login.html$ index.php?ctrl=User&action=loginUser [L]
+RewriteRule ^disconnect.html$ index.php?ctrl=Super&action=disconnectUser [L]
 RewriteRule ^inscription.html$ index.php?ctrl=User&action=createUser [L]
 RewriteRule ^mot-de-passe-oublie.html$ index.php?ctrl=user&action=forgottenPassword [L]
 RewriteRule ^mot-de-passe-oublie/(.*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=user&action=generateNewPassword&id=$1&token=$2 [L]
