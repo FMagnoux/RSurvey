@@ -187,21 +187,31 @@ class Question extends SQL implements JsonSerializable
     public function getQuestion(){
         $requete = $this->db->prepare('
         select
-            question_id ,
-            question_libel ,
-            question_date ,
-            question_close ,
-            usr_id ,
-            sub_id
-        from Question
+            q.question_id ,
+            q.question_libel ,
+            q.question_date ,
+            q.question_close ,
+            q.usr_id ,
+            q.sub_id
+        from Question q
+        inner join Subdivision s 
+          on s.sub_id = q.sub_id
+        inner join Zone z 
+          on z.zone_id = s.zone_id
         where
-            question_active = :question_active
+            q.question_active = :question_active
         and
-            question_id = :question_id
+            q.question_id = :question_id
+        and 
+            s.sub_active = :sub_active
+        and 
+            z.zone_id = :zone_id
          ') ;
         $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
-            ':question_active'=>self::$active
+            ':question_active'=>self::$active,
+            ':sub_id'=>self::$active,
+            ':zone_id'=>self::$active
         ));
         $results = $requete->fetchAll();
         if(empty($results)){
