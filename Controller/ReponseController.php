@@ -31,13 +31,16 @@ class ReponseController extends SuperController
 
             $this->oEntity->setIChoixId($_POST['iIdChoix']);
             $this->oEntity->setIReponseSubcode($_POST['iSubCode']);
+            $this->oEntity->setIReponseVotes(1);
             if($this->oEntity->createReponse()){
                 $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
-                return json_encode($returnjson);
+                echo json_encode($returnjson);
+                return;
             }
             else {
                 $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                return json_encode($returnjson);
+                echo json_encode($returnjson);
+                return;
             }
         }
         else {
@@ -51,11 +54,13 @@ class ReponseController extends SuperController
 
             if($this->oEntity->updateReponse()){
                 $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
-                return json_encode($returnjson);
+                echo json_encode($returnjson);
+                return;
             }
             else {
                 $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                return json_encode($returnjson);
+                echo json_encode($returnjson);
+                return;
             }
 
 

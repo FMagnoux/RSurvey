@@ -1,8 +1,42 @@
 
 console.log("I'm survey !");
 
-function createMap(mapPosition,mapContent) {
-  var dataAjax = "ressources/data/"+mapContent+".geojson";
+function getMap() {
+  $.ajax({
+    url: window.location.href+".json",
+    type: 'GET',
+    dataType: 'json'
+  })
+  .done(function(e) {
+    console.log("success");
+    console.log(e);
+    test = e;
+    createMap("centermap",e)
+
+  })
+  .fail(function() {
+    console.log("error");
+  })
+  .always(function() {
+    console.log("complete");
+  });
+
+}
+
+function createMap(mapPosition,datas) {
+  var iSubCode = datas[0].oSub;
+  var zone = "zone"+iSubCode;
+  var sQuestionLibel = datas[0].sQuestionLibel;
+  var dataAjax = "ressources/data/"+zone+".geojson";
+  var containerChoice = $("<div></div>").text(sQuestionLibel);
+  var choices = $("<form action='#' class='survey-box'></form>");
+  $(containerChoice).append(choices);
+  datas[1].forEach(function(e){
+    console.log(e.sChoixLibel)
+    var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect answerButton'></button>").text(e.sChoixLibel);
+    $(choices).append(button);
+  });
+
   var map = L.map(mapPosition,{
     dragging:false,
     touchZoom:true,
@@ -15,20 +49,23 @@ function createMap(mapPosition,mapContent) {
   function onEachFeature(feature, layer) {
     if (feature.properties && feature.properties.nom) {
       layer.on('click',function(){
-
         showDialog({
-                title: feature.properties.code,
-                text: "<span>Chocolatine ou Pain au chocolat ?</span><form action='#' class='survey-box'><button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect'>Chocolatine</button> <button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect mdl-color--blue-500'>Pain au chocolat</button> </form>",
+                title: feature.properties.nom,
+                text:$(containerChoice).html(),
                 negative: false,
-                positive:false
+                positive:false,
+                onLoaded:function(e) {
+                  console.log('yo');
+                  $('.answerButton').click(function(e) {
+                    e.preventDefault();
+                    var iChoixIdValue = $(this).data().ichoixid;
+                    sendAnswer(iChoixIdValue,iSubCode);
+                  });
+                }
               });
       })
     }
 }
-
-
-
-
   mapContent.addTo(map);
   $.ajax({
   dataType: "json",
@@ -42,6 +79,32 @@ function createMap(mapPosition,mapContent) {
 }
 
 
+
+
+var sendAnswer = function(c,s) {
+  $.ajax({
+    url: 'answer-sondage.html',
+    type: 'POST',
+    dataType: 'json',
+    data: {iIdChoix:c,iSubCode:s}
+  })
+  .done(function(e) {
+    console.log("success");
+    console.log(e);
+  })
+  .fail(function(e) {
+    console.log("error");
+    console.log(e);
+
+  })
+  .always(function() {
+    console.log("complete");
+  });
+
+}
+
+
 $(document).ready(function() {
-createMap("centermap","frenchdepartments")
+  console.log(window.location.href)
+  getMap();
 });
