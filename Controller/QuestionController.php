@@ -9,6 +9,7 @@
 class QuestionController extends SuperController
 {
     private $oEntity;
+    private $iPagination = 10;
 
     const SUCCESS = "success";
     const ERROR = "error";
@@ -21,9 +22,13 @@ class QuestionController extends SuperController
     const ERROR_EMPTYCHOIX = "Deux choix sont requis pour créer un sondage";
 
     const ERROR_QUESTIONKO = "Aucun résultat n'a été trouvé.";
+    const ERROR_DATE = "Les dates spécifiées n'ont pas un bon format.";
+
+    const ERROR_EMPTYSUBID = "L'identifiant de la subdivision n'est pas renseigné.";
 
     const SUCCESS_CLOSEQUESTION = "Le sondage est maintenant terminé.";
     const SUCCESS_UPDATEQUESTION = "Le sondage a été mis à jour.";
+    const SUCCESS_CREATEQUESTION = "Le sondage a été crée.";
 
     private static $changeyes = 1;
     private static $nocreate = -1;
@@ -144,14 +149,17 @@ class QuestionController extends SuperController
         if($id <= 0) {
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
             echo json_encode($returnjson);
+            return false;
         }
-        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
-        $aTabQuestion =  $this->oEntity->getQuestionFull();
+        $this->oEntity->setIQuestionId($id);
+        $aTabQuestion =  $this->oEntity->getQuestion();
         if(!$aTabQuestion){
             $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            return $this->view(array("returnjson" => $returnjson));
+            echo json_encode($returnjson);
+            return false;
         }
-        return $this->view(array("aTabQuestion" => $aTabQuestion));
+
+        //return $this->view(array("aTabQuestion" => $aTabQuestion));
 
         require_once "./Controller/ChoixController.php";
         require_once "./Controller/ReponseController.php";
@@ -169,10 +177,8 @@ class QuestionController extends SuperController
         foreach ($aChoix as $oChoix){
             $oChoix->setAReponse($oReponseController->getReponseQuestion($oChoix->getIChoixId()));
         }
-        $aReponse = $oReponseController->getReponseQuestion($aChoix);
 
         $oQuestion->setOUsr($oUser);
-
         $returnjson = array($oQuestion,$aChoix);
         echo json_encode($returnjson);
         return;
@@ -182,13 +188,33 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function createQuestion(){
-        if($this->checkQuestion()){
-            if(count($_POST['aQuestionChoix']) >= 2){
+        if(!$this->checkLogin()){
+            $aDataPost = array(
+                "sQuestionLibel" => $_POST['sQuestionLibel'],
+                "aQuestionChoix" => $_POST['aQuestionChoix'],
+                "iIdSub" => $_POST['iIdSub'],
+                self::ERROR => self::ERROR_LOGIN);
+            echo json_encode($aDataPost);
+            return;
+        }
+        if($this->checkQuestion() && !is_string($this->checkQuestion())){
+            if(count($_POST['aQuestionChoix']) > 1 && count($_POST['aQuestionChoix']) <= 3   ){
+
+                require_once "./Controller/ChoixController.php";
                 $oChoixController = new ChoixController();
                 if($oChoixController->checkTabChoix($_POST['aQuestionChoix'])){
 
+                  require_once "./Model/User.php";
+
                     $oUser = new User();
                     $oUser->setIUsrId($_SESSION['iIdUser']);
+
+                    if(!isset($_POST['iIdSub']) || empty($_POST['iIdSub'])){
+                        $returnjson = array(self::ERROR,self::ERROR_EMPTYSUBID);
+                        echo json_encode($returnjson);
+                        return;
+                    }
+                    require_once "./Model/Subdivision.php";
 
                     $oSub = new Subdivision();
                     $oSub->setISubId($_POST['iIdSub']);
@@ -200,14 +226,19 @@ class QuestionController extends SuperController
                     $bLastQuestion = $this->oEntity->createQuestion();
                     if(!$bLastQuestion){
                         $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                        return json_encode($returnjson);
+                        echo json_encode($returnjson);
+                        return;
                     }
                     else {
                         if($oChoixController->createChoix($_POST['aQuestionChoix'],$bLastQuestion)){
-                            return true;
+                          $returnjson = array(self::SUCCESS,self::SUCCESS_CREATEQUESTION);
+                          echo json_encode($returnjson);
+                            return;
                         }
                         else {
-                            return false;
+                          $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                          echo json_encode($returnjson);
+                            return;
                         }
                     }
 
@@ -218,13 +249,15 @@ class QuestionController extends SuperController
             }
             else {
                 $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
-                return json_encode($returnjson);
+                echo json_encode($returnjson);
+                return;
             }
 
 
         }
         else {
-            return $this->checkQuestion();
+            echo $this->checkQuestion();
+            return;
         }
 
 
@@ -235,7 +268,7 @@ class QuestionController extends SuperController
      */
     public function checkQuestion(){
         if(isset($_POST['sQuestionLibel']) && !empty($_POST['sQuestionLibel'])){
-            if($this->checkLenQuestion($_POST['sQuestionLibel'])){
+            if($this->checkLenQuestion($_POST['sQuestionLibel']) && !is_string($this->checkLenQuestion($_POST['sQuestionLibel'])) ){
                 return true;
             }
             else {
@@ -288,18 +321,83 @@ class QuestionController extends SuperController
      */
     public function listQuestions() {
         $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+        echo json_encode($this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()));
     }
 
     /**
-     * Liste des questions d'un utilisateur
+     * Liste des questions d'un utilisateur en fonction de son id
      * @return bool
      */
     public function listQuestionsByIdUser() {
+        $this->setJsonData();
         $iId = $this->checkGetId();
         if($iId == 0) return false;
         $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionList(10, isset($_GET["page"]) ? $_GET["page"] : 1, $iId));
+        echo json_encode($this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage(), $iId));
+    }
+
+    /**
+     * Liste des questions d'un utilisateur en fonction de son pseudo
+     * @return bool
+     */
+    public function listQuestionsByPseudoUser() {
+        if(empty($_GET["sPseudo"])) {
+            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
+            return false;
+        }
+        $this->setJsonData();
+        echo json_encode($this->oEntity->getPaginatedQuestionListByPseudo($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sPseudo"])));
+        return true;
+    }
+
+    /**
+     * Liste des questions en fonction de leur libellé
+     * @return bool
+     */
+    public function listQuestionsByLibel() {
+        if(empty($_GET["sLibel"])) {
+            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
+            return false;
+        }
+        $this->setJsonData();
+        echo json_encode($this->oEntity->getPaginatedQuestionListByLibel($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sLibel"])));
+        return true;
+    }
+
+    /**
+     * Liste des questions en fonction d'une intervalle de date
+     * @return bool
+     */
+    public function listQuestionsByDate() {
+        if(empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"])) {
+            echo json_encode(array(self::ERROR, self::ERROR_DATE));
+            return false;
+        }
+        $this->setJsonData();
+        // Rechercher les questions dont la date est supérieure à la date précisée
+        if(!empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateAfter"])) {
+            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">="));
+        }
+        // Rechercher les questions dont la date est inférieure à la date précisée
+        else if(empty($_GET["dDateAfter"]) && !empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateBefore"])) {
+            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<="));
+        }
+        // Rechercher les questions entre une intervalle de date
+        else if($this->checkDate($_GET["dDateAfter"]) && $this->checkDate($_GET["dDateBefore"])) {
+            echo json_encode($this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"])));
+        }
+        else {
+            echo json_encode(array(self::ERROR, self::ERROR_DATE));
+            return false;
+        }
+        return true;
+    }
+
+    private function checkDate($aDate) {
+        if (preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/",$aDate)) {
+            return true;
+        }
+            return false;
     }
 
     /**
