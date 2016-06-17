@@ -2,10 +2,10 @@
 console.log("I'm survey !");
 
 function createMap(mapPosition,mapContent) {
-  var dataAjax = "data/"+mapContent+".geojson";
+  var dataAjax = "ressources/data/"+mapContent+".geojson";
   var map = L.map(mapPosition,{
     dragging:false,
-    touchZoom:false,
+    touchZoom:true,
     doubleClickZoom:false,
     scrollWheelZoom:false,
     boxZoom:false,
@@ -15,10 +15,19 @@ function createMap(mapPosition,mapContent) {
   function onEachFeature(feature, layer) {
     if (feature.properties && feature.properties.nom) {
       layer.on('click',function(){
-        swal({   title: "<h2>"+feature.properties.nom+"</h2>",text: "<h5 class='mdl-typography--display-1-color-contrast'>Chocolatine ou Pain au chocolat ?</h5><form action='#'><button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect'>Chocolatine</button> <button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect mdl-color--blue-500'>Pain au chocolat</button> </form>",  animation: "slide-from-top", showConfirmButton: false,html:true});
+
+        showDialog({
+                title: feature.properties.code,
+                text: "<span>Chocolatine ou Pain au chocolat ?</span><form action='#' class='survey-box'><button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect'>Chocolatine</button> <button type='submit' class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect mdl-color--blue-500'>Pain au chocolat</button> </form>",
+                negative: false,
+                positive:false
+              });
       })
     }
 }
+
+
+
 
   mapContent.addTo(map);
   $.ajax({
