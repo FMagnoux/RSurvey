@@ -71,7 +71,8 @@ function createMap(mapPosition,datas) {
                   $('.answerButton').click(function(e) {
                     e.preventDefault();
                     var iChoixIdValue = $(this).data().ichoixid;
-                    sendAnswer(iChoixIdValue/* PLUS ID DU DEPARTEMENT*/);
+                    var idCode = feature.properties.code;
+                    sendAnswer(iChoixIdValue,idCode);
                   });
                 }
               });
