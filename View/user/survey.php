@@ -7,14 +7,14 @@
                 <div class="mdl-cell mdl-cell--10-col">
                     <div id="containerCenter" class="card-wide mdl-card mdl-shadow--6dp">
                         <div class="mdl-card__title mdl-color--blue-800">
-                            <h2 class="mdl-card__title-text mdl-typography--font-bold">Chocolatine ou Pain au chocolat ?</h2>
+                            <h2 id="titleSurvey" class="mdl-card__title-text mdl-typography--font-bold"></h2>
                         </div>
                         <div class="mdl-card__supporting-text">
                             <div id="centermap"></div>
                         </div>
 
                         <div class="mdl-card__actions mdl-card--border">
-                            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--red-500">Supprimer ce sondage
+                            <a id="cloreSurveyButton" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--red-500">Clore ce sondage
                             </a>
                         </div>
                         <div class="mdl-card__menu">

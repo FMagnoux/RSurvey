@@ -16,7 +16,7 @@ RewriteRule ^administration-filtre/pseudo:([a-zA-Z0-9\-]*)\/libel:([a-zA-Z0-9\-]
 RewriteRule ^desactivate-question.html$ index.php?ctrl=question&action=desactivateQuestion [L]
 RewriteRule ^answer-question.html$ index.php?ctrl=Reponse&action=answerQuestion [L]
 RewriteRule ^change-question.html$ index.php?ctrl=Question&action=getNextPreviousQuestion [L]
-
+RewriteRule ^close-question.html$ index.php?ctrl=Question&action=closeQuestion [L]
 # Zone
 RewriteRule ^administration-zones.html$ index.php?ctrl=subdivision&action=listSubdivisions [L]
 RewriteRule ^administration-zones/page-([0-9]+)\.html$ index.php?ctrl=subdivision&action=listSubdivisions&page=$1 [L]

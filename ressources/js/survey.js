@@ -12,10 +12,17 @@ function getMap() {
     console.log();
     test = e;
     var dateSurvey = e[0].dQuestionDate.date;
+    var titleSurvey = e[0].sQuestionLibel;
+    var iIdQuestionValue = e[0].iQuestionId;
     createMap("centermap",e)
     $('.navigateButton').click(function() {
       var isTrue = $(this).data().next;
       navigateButtons(isTrue,dateSurvey);
+    });
+
+    $("#titleSurvey").text(titleSurvey);
+    $('#cloreSurveyButton').click(function() {
+      cloreSurvey(iIdQuestionValue);
     });
 
   })
@@ -131,6 +138,28 @@ var navigateButtons = function(data,date) {
 
 }
 
+var cloreSurvey = function(iIdQuestionValue) {
+  console.log(iIdQuestionValue);
+  $.ajax({
+    url: 'close-question.html',
+    type: 'POST',
+    dataType: 'json',
+    data: {iIdQuestion: iIdQuestionValue}
+  })
+  .done(function(e) {
+    console.log("success");
+    console.log(e);
+  })
+  .fail(function(e) {
+    console.log("error");
+    console.log(e);
+
+  })
+  .always(function() {
+    console.log("complete");
+  });
+
+}
 
 $(document).ready(function() {
   console.log(window.location.href)
