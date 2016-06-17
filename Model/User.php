@@ -231,7 +231,7 @@ class User extends SQL implements JsonSerializable
     }
 
     public function loginUser(){
-        $requete = $this->db->prepare('select usr_id from User where usr_mail = :usr_mail and usr_password = :usr_password');
+        $requete = $this->db->prepare('select usr_id , role_id from User where usr_mail = :usr_mail and usr_password = :usr_password');
         $requete->execute (array(
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
@@ -242,6 +242,7 @@ class User extends SQL implements JsonSerializable
         }
         else {
           $this->setIUsrId($results['usr_id']);
+          $this->setIRoleId($results['role_id']);
           return true;
         }
     }

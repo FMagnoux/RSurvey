@@ -36,6 +36,11 @@ class SuperController
         }
     }
 
+    public function disconnectUser(){
+        unset($_SESSION);
+        session_destroy();
+    }
+
     public function callController($ctrl, $action) {
         require_once("./Controller/" . $ctrl . "Controller.php");
         $ctrl = $ctrl . "Controller";
