@@ -12,14 +12,11 @@
                         <div class="mdl-card__supporting-text">
                             <div id="centermap"></div>
                         </div>
-<<<<<<< HEAD
 
-=======
                         <div class="mdl-card__actions mdl-card--border">
                             <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--red-500">Supprimer ce sondage
                             </a>
                         </div>
->>>>>>> refs/remotes/origin/master
                         <div class="mdl-card__menu">
                             <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">Voir les réponses</a>
                         </div>
