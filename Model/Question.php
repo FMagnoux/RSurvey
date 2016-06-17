@@ -194,24 +194,24 @@ class Question extends SQL implements JsonSerializable
             q.usr_id ,
             q.sub_id
         from Question q
-        inner join Subdivision s 
+        inner join Subdivision s
           on s.sub_id = q.sub_id
-        inner join Zone z 
+        inner join Zone z
           on z.zone_id = s.zone_id
         where
             q.question_active = :question_active
         and
             q.question_id = :question_id
-        and 
+        and
             s.sub_active = :sub_active
-        and 
-            z.zone_id = :zone_id
+        and
+            z.zone_active = :zone_active
          ') ;
         $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
             ':question_active'=>self::$active,
-            ':sub_id'=>self::$active,
-            ':zone_id'=>self::$active
+            ':sub_active'=>self::$active,
+            ':zone_active'=>self::$active
         ));
         $results = $requete->fetchAll();
         if(empty($results)){
