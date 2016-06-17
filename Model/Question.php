@@ -326,7 +326,8 @@ class Question extends SQL implements JsonSerializable
                     "key" => "sub_id",
                     "foreignKey" => "sub_id"
                 )
-            )
+            ),
+            "where" => "question_active = 1"
         );
     }
 
@@ -340,7 +341,7 @@ class Question extends SQL implements JsonSerializable
         $values = null;
         $aConfig = $this->getPaginatedQuestionListConfig();
         if(!empty($iId)) {
-            $aConfig["where"] = $this->table . ".usr_id = :id";
+            $aConfig["where"] .= " AND " . $this->table . ".usr_id = :id";
             $values = array("id" => $iId);
         }
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
@@ -355,7 +356,7 @@ class Question extends SQL implements JsonSerializable
      */
     public function getPaginatedQuestionListByPseudo($iMaxItems, $iCurrentPage, $sPseudo) {
         $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "usr_pseudo = :pseudo";
+        $aConfig["where"] .= " AND usr_pseudo = :pseudo";
         $values = array("pseudo" => $sPseudo);
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
@@ -369,7 +370,7 @@ class Question extends SQL implements JsonSerializable
      */
     public function getPaginatedQuestionListByLibel($iMaxItems, $iCurrentPage, $sLibel) {
         $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "question_libel LIKE :libel";
+        $aConfig["where"] .= " AND question_libel LIKE :libel";
         $values = array("libel" => "%" . $sLibel . "%");
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
@@ -384,7 +385,7 @@ class Question extends SQL implements JsonSerializable
      */
     public function getPaginatedQuestionListByDate($iMaxItems, $iCurrentPage, $aDate, $sOperator) {
         $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "question_date ".$sOperator." :date";
+        $aConfig["where"] .= " AND question_date ".$sOperator." :date";
         $values = array("date" => $aDate);
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
@@ -399,7 +400,7 @@ class Question extends SQL implements JsonSerializable
      */
     public function getPaginatedQuestionListByDateInterval($iMaxItems, $iCurrentPage, $aDateAfter, $aDateBefore) {
         $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "question_date BETWEEN :date_after AND :date_before";
+        $aConfig["where"] .= " AND question_date BETWEEN :date_after AND :date_before";
         $values = array(
             "date_after" => $aDateAfter,
             "date_before" => $aDateBefore

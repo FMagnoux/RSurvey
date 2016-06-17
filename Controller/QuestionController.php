@@ -30,6 +30,9 @@ class QuestionController extends SuperController
     const SUCCESS_UPDATEQUESTION = "Le sondage a été mis à jour.";
     const SUCCESS_CREATEQUESTION = "Le sondage a été crée.";
 
+    const ERROR_DESACTIVATE = "Le sondage n'a pas été désactivé.";
+    const SUCCESS_DESACTIVATE = "Le sondage a été désactivé.";
+
     private static $changeyes = 1;
     private static $nocreate = -1;
 
@@ -326,7 +329,6 @@ class QuestionController extends SuperController
 
     private function helperlistQuestions($sFunctionName, $sParam) {
         $this->page = "admin/error";
-        $iId = $this->checkGetId();
         $oPagination = $this->oEntity->$sFunctionName($this->iPagination, $this->checkPage(), $sParam);
         if(count($oPagination->getAData()) == 0) {
             $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
@@ -382,25 +384,27 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function listQuestionsByDate() {
+        $this->page = "admin/listQuestions";
         if(empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_DATE));
+            $this->page = "admin/error";
+            $this->view(array(self::ERROR => self::ERROR_DATE));
             return false;
         }
-        $this->setJsonData();
         // Rechercher les questions dont la date est supérieure à la date précisée
         if(!empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateAfter"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">="));
+            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">=")));
         }
         // Rechercher les questions dont la date est inférieure à la date précisée
         else if(empty($_GET["dDateAfter"]) && !empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateBefore"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<="));
+            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<=")));
         }
         // Rechercher les questions entre une intervalle de date
         else if($this->checkDate($_GET["dDateAfter"]) && $this->checkDate($_GET["dDateBefore"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"])));
+            $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"]))));
         }
         else {
-            echo json_encode(array(self::ERROR, self::ERROR_DATE));
+            $this->page = "admin/error";
+            $this->view(array(self::ERROR => self::ERROR_DATE));
             return false;
         }
         return true;
@@ -419,7 +423,11 @@ class QuestionController extends SuperController
      */
     public function desactivateQuestion() {
         $iId = $this->checkPostId();
-        if($iId == 0) return false;
-        return $this->oEntity->desactivateQuestion($iId);
+        if($iId == 0 || !$this->oEntity->desactivateQuestion($iId)) {
+            echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));
+            return false;
+        }
+        echo json_encode(array(self::SUCCESS, self::SUCCESS_DESACTIVATE));
+        return true;
     }
 }

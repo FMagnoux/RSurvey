@@ -1,4 +1,5 @@
 <?php
+require_once './View/admin/config.php';
 require_once './View/admin/header.php';
 
 if (isset($this->page)) {
