@@ -9,9 +9,14 @@ function getMap() {
   })
   .done(function(e) {
     console.log("success");
-    console.log(e);
+    console.log();
     test = e;
+    var dateSurvey = e[0].dQuestionDate.date;
     createMap("centermap",e)
+    $('.navigateButton').click(function() {
+      var isTrue = $(this).data().next;
+      navigateButtons(isTrue,dateSurvey);
+    });
 
   })
   .fail(function() {
@@ -59,7 +64,7 @@ function createMap(mapPosition,datas) {
                   $('.answerButton').click(function(e) {
                     e.preventDefault();
                     var iChoixIdValue = $(this).data().ichoixid;
-                    sendAnswer(iChoixIdValue,iSubCode);
+                    sendAnswer(iChoixIdValue/* PLUS ID DU DEPARTEMENT*/);
                   });
                 }
               });
@@ -83,7 +88,7 @@ function createMap(mapPosition,datas) {
 
 var sendAnswer = function(c,s) {
   $.ajax({
-    url: 'answer-sondage.html',
+    url: 'answer-question.html',
     type: 'POST',
     dataType: 'json',
     data: {iIdChoix:c,iSubCode:s}
@@ -104,7 +109,31 @@ var sendAnswer = function(c,s) {
 }
 
 
+var navigateButtons = function(data,date) {
+  $.ajax({
+    url: 'change-question.html',
+    type: 'POST',
+    dataType: 'json',
+    data: {next: data,dDate:date}
+  })
+  .done(function(e) {
+    console.log("success");
+    console.log(e);
+  })
+  .fail(function(e) {
+    console.log("error");
+    console.log(e.responseText);
+
+  })
+  .always(function() {
+    console.log("complete");
+  });
+
+}
+
+
 $(document).ready(function() {
   console.log(window.location.href)
   getMap();
+
 });

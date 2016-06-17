@@ -43,7 +43,7 @@ class QuestionController extends SuperController
     }
 
     public function getNextPreviousQuestion(){
-
+        $this->oEntity->setDQuestionDate(new DateTime($_POST['dDate']));
         $oQuestion = $this->oEntity->getNextPreviousQuestion($_POST['next']);
 
         require_once "./Controller/ChoixController.php";
@@ -52,15 +52,15 @@ class QuestionController extends SuperController
 
         $oChoixController = new ChoixController();
         $oReponseController = new ReponseController();
-
         $oUserController = new UserController();
         $oUser = $oUserController->getUser($oQuestion->getOUsr());
         $aChoix = $oChoixController->getChoixQuestion($oQuestion->getIQuestionId());
-        $aReponse = $oReponseController->getReponseQuestion($aChoix);
+        foreach ($aChoix as $oChoix){
+            $oChoix->setAReponse($oReponseController->getReponseQuestion($oChoix->getIChoixId()));
+        }
 
         $oQuestion->setOUsr($oUser);
-
-        $returnjson = array($oQuestion,$aChoix,$aReponse);
+        $returnjson = array($oQuestion,$aChoix);
         echo json_encode($returnjson);
         return;
 

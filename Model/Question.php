@@ -252,7 +252,7 @@ class Question extends SQL implements JsonSerializable
         $operateur = "";
         $fonction = "";
 
-        if($next){
+        if($next=="true"){
             $operateur = ">";
             $fonction = "MIN";
         }
@@ -264,7 +264,7 @@ class Question extends SQL implements JsonSerializable
         select
             question_id ,
             question_libel ,
-            '.$fonction.'(question_date) ,
+            '.$fonction.'(question_date) as question_date ,
             question_close ,
             usr_id ,
             sub_id
@@ -274,9 +274,10 @@ class Question extends SQL implements JsonSerializable
         and
             question_date '.$operateur.' :question_date
          ') ;
+
         $requete->execute (array(
             ':question_active'=>self::$active,
-            ':question_date'=>$this->getDQuestionDate(),
+            ':question_date'=>$this->getDQuestionDate()->format('Y-m-d H:i:s')
         ));
         $results = $requete->fetchAll();
         if(empty($results)){
@@ -356,7 +357,7 @@ class Question extends SQL implements JsonSerializable
         }
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
-    
+
     public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore) {
         $aConfig = $this->getPaginatedQuestionListConfig();
         $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo AND question_libel LIKE :libel AND question_date >= :date_after AND question_date <= :date_before";
