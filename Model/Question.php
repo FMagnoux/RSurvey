@@ -353,8 +353,8 @@ class Question extends SQL implements JsonSerializable
         $values = array(
             "pseudo" => !empty($sPseudo) ? "%" . $sPseudo . "%" : "%",
             "libel" => !empty($sLibel) ? "%" . $sLibel . "%" : "%",
-            "date_after" => $dDateAfter,
-            "date_before" => $dDateBefore
+            "date_after" => !empty($dDateAfter) ? $dDateAfter : "2016-01-01",
+            "date_before" => !empty($dDateBefore) ? $dDateBefore : date("Y-m-d")
         );
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }

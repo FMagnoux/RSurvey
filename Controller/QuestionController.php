@@ -349,18 +349,37 @@ class QuestionController extends SuperController
             $dDateAfter = htmlspecialchars($dDateAfter);
         }
         else {
-            $dDateAfter = "2016-01-01";
+            $dDateAfter = "";
         }
         if(!empty($dDateBefore)&& $this->checkDate($dDateBefore)) {
             $dDateBefore = htmlspecialchars($dDateBefore);
         }
         else {
-            $dDateBefore = date("Y-m-d");
+            $dDateBefore = "";
+        }
+
+        $oPagination = $this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore);
+        if(count($oPagination->getAData()) == 0) {
+            $this->page = "admin/error";
+            $this->view(
+                array(
+                    self::ERROR => self::ERROR_QUESTIONKO,
+                    "sPseudo" => $sPseudo,
+                    "sLibel" => $sLibel,
+                    "dDateAfer" => $dDateAfter,
+                    "dDateBefore" => $dDateBefore,
+                )
+            );
+            return false;
         }
 
         $this->view(
             array(
-                "oPagination" =>$this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore),
+                "oPagination" => $oPagination,
+                "sPseudo" => $sPseudo,
+                "sLibel" => $sLibel,
+                "dDateAfer" => $dDateAfter,
+                "dDateBefore" => $dDateBefore,
                 "sUrlStart" => "./administration-filtre/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-"
             )
         );
