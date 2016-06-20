@@ -36,7 +36,18 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
     {
         $_GET["id"] = 2;
         $questionController = new QuestionController();
-        $questionController->listQuestionsByIdUser();
+        $questionController->adminListQuestionsByIdUser();
+    }
+
+    public function test_getRandomQuestion() {
+        $questionController = new QuestionController();
+        $questionController->getRandomQuestion();
+    }
+
+    public function test_getQuestionFull() {
+        $questionController = new QuestionController();
+        $_GET["iIdQuestion"] = "dda31d87a70aa9ae";
+        $questionController->getQuestionFull();
     }
 }
 

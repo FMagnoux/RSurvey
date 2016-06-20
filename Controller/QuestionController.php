@@ -166,27 +166,40 @@ class QuestionController extends SuperController
         return $this->view();
     }
 
-    /**
-     *
-     */
-    public function getQuestionFull(){
-        $this->setJsonData();
-        $id = $this->decrypt($_GET['iIdQuestion']);
-        $id = intval($id);
-        if($id <= 0) {
-            $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            echo json_encode($returnjson);
-            return false;
-        }
-        $this->oEntity->setIQuestionId($id);
-        $aTabQuestion =  $this->oEntity->getQuestion();
-        if(!$aTabQuestion){
-            $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
-            echo json_encode($returnjson);
-            return false;
-        }
+    public function getRandomQuestion() {
+        return $this->getQuestionFull(true);
+    }
 
-        //return $this->view(array("aTabQuestion" => $aTabQuestion));
+    /**
+     * @param bool $bRandom Si c'est à true, on demande à la fonction un sondage aléatoire
+     */
+    public function getQuestionFull($bRandom = false){
+        $this->setJsonData();
+        if(!$bRandom) {
+            if(empty($_GET['iIdQuestion'])) {
+                $returnjson = array(self::ERROR, self::ERROR_QUESTIONKO);
+                echo json_encode($returnjson);
+                return false;
+            }
+            $id = $this->decrypt($_GET['iIdQuestion']);
+            $id = intval($id);
+            if ($id <= 0) {
+                $returnjson = array(self::ERROR, self::ERROR_QUESTIONKO);
+                echo json_encode($returnjson);
+                return false;
+            }
+            $this->oEntity->setIQuestionId($id);
+            $aTabQuestion = $this->oEntity->getQuestion();
+            if (!$aTabQuestion) {
+                $returnjson = array(self::ERROR, self::ERROR_QUESTIONKO);
+                echo json_encode($returnjson);
+                return false;
+            }
+            $oQuestion =  $this->oEntity->getQuestion();
+        }
+        else {
+            $oQuestion =  $this->oEntity->getRandomQuestion();
+        }
 
         require_once "./Controller/ChoixController.php";
         require_once "./Controller/ReponseController.php";
@@ -196,9 +209,6 @@ class QuestionController extends SuperController
         $oReponseController = new ReponseController();
         $oUserController = new UserController();
 
-        $this->oEntity->setIQuestionId($id);
-
-        $oQuestion =  $this->oEntity->getQuestion();
         $oUser = $oUserController->getUser($oQuestion->getOUsr());
         $aChoix = $oChoixController->getChoixQuestion($oQuestion->getIQuestionId());
         foreach ($aChoix as $oChoix){

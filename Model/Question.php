@@ -184,7 +184,58 @@ class Question extends SQL implements JsonSerializable
         ));
     }
 
-    public function getQuestion(){
+    public function getRandomQuestion() {
+        $requete = $this->db->prepare('
+        select
+            q.question_id ,
+            q.question_libel ,
+            q.question_date ,
+            q.question_close ,
+            q.usr_id ,
+            q.sub_id
+        from Question q
+        inner join Subdivision s
+          on s.sub_id = q.sub_id
+        inner join Zone z
+          on z.zone_id = s.zone_id
+        where
+            q.question_active = :question_active
+        and
+            s.sub_active = :sub_active
+        and
+            z.zone_active = :zone_active
+        order by rand() 
+        limit 1
+         ') ;
+        $requete->execute (array(
+            ':question_active'=>self::$active,
+            ':sub_active'=>self::$active,
+            ':zone_active'=>self::$active
+        ));
+        return $this->getQuestionDefault($requete);
+    }
+    
+    private function getQuestionDefault($requete) {
+        $results = $requete->fetchAll();
+        if(empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                $oQuestion = new Question();
+
+                $oQuestion->setIQuestionId($result['question_id']);
+                $oQuestion->setSQuestionLibel($result['question_libel']);
+                $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
+                $oQuestion->setBQuestionClose($result['question_close']);
+                $oQuestion->setOUsr($result['usr_id']);
+                $oQuestion->setOSub($result['sub_id']);
+                return $oQuestion;
+            }
+        }
+    }
+
+    public function getQuestion() {
         $requete = $this->db->prepare('
         select
             q.question_id ,
@@ -213,23 +264,7 @@ class Question extends SQL implements JsonSerializable
             ':sub_active'=>self::$active,
             ':zone_active'=>self::$active
         ));
-        $results = $requete->fetchAll();
-        if(empty($results)){
-            return false;
-        }
-        else {
-            foreach ($results as $result){
-                $oQuestion = new Question();
-
-                $oQuestion->setIQuestionId($result['question_id']);
-                $oQuestion->setSQuestionLibel($result['question_libel']);
-                $oQuestion->setDQuestionDate(new DateTime($result['question_date']));
-                $oQuestion->setBQuestionClose($result['question_close']);
-                $oQuestion->setOUsr($result['usr_id']);
-                $oQuestion->setOSub($result['sub_id']);
-                return $oQuestion;
-            }
-        }
+        return $this->getQuestionDefault($requete);
     }
 
     public function checkChangeQuestion(){
