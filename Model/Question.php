@@ -349,11 +349,12 @@ class Question extends SQL implements JsonSerializable
     public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore) {
         $aConfig = $this->getPaginatedQuestionListConfig();
         $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo AND question_libel LIKE :libel AND question_date >= :date_after AND question_date <= :date_before";
+        $datetime = new DateTime('tomorrow');
         $values = array(
             "pseudo" => !empty($sPseudo) ? "%" . $sPseudo . "%" : "%",
             "libel" => !empty($sLibel) ? "%" . $sLibel . "%" : "%",
             "date_after" => !empty($dDateAfter) ? $dDateAfter : "2016-01-01",
-            "date_before" => !empty($dDateBefore) ? $dDateBefore : date("Y-m-d")
+            "date_before" => !empty($dDateBefore) ? $dDateBefore : $datetime->format('Y-m-d H:i:s')
         );
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }

@@ -29,6 +29,8 @@ RewriteRule ^activate-zone.html$ index.php?ctrl=Subdivision&action=activateSubdi
 #User
 RewriteRule ^administration-users.html$ index.php?ctrl=User&action=listUsers [L]
 RewriteRule ^administration-users/page-([0-9]+)\.html$ index.php?ctrl=User&action=listUsers&page=$1 [L]
+RewriteRule ^administration-filtre-users.html$ index.php?ctrl=User&action=searchUsersByPseudo [L]
+RewriteRule ^administration-filtre-users/pseudo:([a-zA-Z0-9\-]*)\/page-([0-9]*)\.html$ index.php?ctrl=User&action=searchUsersByPseudo&sPseudo=$1&page=$2 [L]
 RewriteRule ^login.html$ index.php?ctrl=User&action=loginUser [L]
 RewriteRule ^disconnect.html$ index.php?ctrl=Super&action=disconnectUser [L]
 RewriteRule ^inscription.html$ index.php?ctrl=User&action=createUser [L]

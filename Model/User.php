@@ -344,6 +344,14 @@ class User extends SQL implements JsonSerializable
             )
         )["role_id"];
     }
+    
+    private function getPaginatedConfig() {
+        return array(
+            "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
+            "table" => $this->sTable,
+            "where" => "usr_active = 1"
+        );
+    }
 
     /**
      * Liste paginée des users
@@ -352,11 +360,16 @@ class User extends SQL implements JsonSerializable
      * @return array<User>
      */
     public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
-            "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
-            "table" => $this->sTable,
-            "where" => "usr_active = 1"
-        ));
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $this->getPaginatedConfig());
+    }
+
+    public function getPaginatedUserListByPseudo($iMaxItems, $iCurrentPage, $sPseudo) {
+        $aConfig = $this->getPaginatedConfig();
+        $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo";
+        $aValues = array(
+            "pseudo" => !empty($sPseudo) ? "%" . $sPseudo . "%" : "%"
+        );
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $aValues);
     }
 
     /**

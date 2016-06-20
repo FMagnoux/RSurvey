@@ -313,7 +313,24 @@ class UserController extends SuperController
             $this->view(array(self::ERROR => self::ERROR_NOTFOUND));
             return false;
         }
-        $this->view(array("oPagination" => $oPagination));
+        $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration-users/page-"));
+    }
+    
+    public function searchUsersByPseudo() {
+        if(!$this->isAdmin()) return false;
+        if(!empty($_POST)) extract($_POST);
+        else if(!empty($_GET)) extract($_GET);
+        $this->page = "admin/errorFilterUsers";
+        if(empty($sPseudo)) {
+            $sPseudo = "";
+        }
+        $oPagination = $this->oEntity->getPaginatedUserListByPseudo(10, isset($_GET["page"]) ? $_GET["page"] : 1, htmlspecialchars($sPseudo));
+        if(count($oPagination->getAData()) == 0) {
+            $this->view(array(self::ERROR => self::ERROR_NOTFOUND));
+            return false;
+        }
+        $this->page = "admin/listUsers";
+        $this->view(array("oPagination" => $oPagination, "sPseudo" => $sPseudo, "sUrlStart" => "./administration-filtre-users/pseudo:".$sPseudo."/page-"));
     }
 
     /**
