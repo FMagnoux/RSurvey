@@ -15,18 +15,14 @@ class Pagination extends SQL implements JsonSerializable
     
     /**
      * Compter le nombre de lignes
-     * @param String $table
-     * @param String $where
+     * @param String $config
      * @param array $values
      * @return int
      */
-    function getiNbLines($table, $where, $values) {
-        return parent::select(array(
-            "columns" => 'COUNT(*) AS nb',
-            "table" => $table,
-            "where" => $where,
-            "fetch" => true
-        ), $values)["nb"];
+    function getiNbLines($config, $values) {
+        $config["columns"] = 'COUNT(*) AS nb';
+        $config["fetch"] = true;
+        return parent::select($config, $values)["nb"];
     }
 
     /**
@@ -55,7 +51,10 @@ class Pagination extends SQL implements JsonSerializable
         $position = $this->iCurrentPage * $max - $max;
 
         // Connaitre le nombre de lignes dans la table
-        $this->iNbLines = $this->getiNbLines($config["table"], $config["where"], $values);
+        if(empty($config["where"])) {
+            $config["where"] = null;
+        }
+        $this->iNbLines = $this->getiNbLines($config, $values);
 
         // Extraire les donn�es voulues
         if ($this->iNbLines > $position) {
@@ -118,6 +117,16 @@ class Pagination extends SQL implements JsonSerializable
     public function setAData($aData)
     {
         $this->aData = $aData;
-        return this;
+        //return this;
+    }
+
+    /**
+     * Créer une barre de navigation pour la pagination
+     * @param String $url Url de la page courante avec les arguments sauf $page
+     * @param String $link Argument dans l'url pour définir la page courante
+     * @param type $adj
+     */
+    public function view($urlStart, $urlEnd, $adj = 3) {
+        require_once './View/commun/pagination.php';
     }
 }
