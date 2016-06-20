@@ -24,54 +24,29 @@ class ReponseController extends SuperController
     }
 
     public function answerQuestion(){
-
-        $iResultReponse = $this->oEntity->getReponse();
-
-        if($iResultReponse == 0){
-
-            $this->oEntity->setIChoixId($_POST['iIdChoix']);
-            $this->oEntity->setIReponseSubcode($_POST['iSubCode']);
-            $this->oEntity->setIReponseVotes(1);
-            if($this->oEntity->createReponse()){
-                $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
-                echo json_encode($returnjson);
-                return;
-            }
-            else {
-                $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                echo json_encode($returnjson);
-                return;
-            }
+        $this->oEntity->setIChoixId($_POST['iIdChoix']);
+        $this->oEntity->setIReponseSubcode($_POST['iSubCode']);
+        if($this->oEntity->incrementReponse()) {
+            $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
+            echo json_encode($returnjson);
+            return true;
+        }
+        $this->oEntity->setIReponseVotes(1);
+        if($this->oEntity->createReponse()){
+            $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
+            echo json_encode($returnjson);
+            return true;
         }
         else {
-            $iNbvotes = $this->oEntity->getLastVotes();
-            intval($iNbvotes);
-
-            $this->oEntity->setIReponseId($iResultReponse);
-            $this->oEntity->setIChoixId($_POST['iIdChoix']);
-            $this->oEntity->setIReponseSubcode($_POST['iSubCode']);
-            $this->oEntity->setIReponseVotes($iNbvotes+1);
-
-            if($this->oEntity->updateReponse()){
-                $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
-                echo json_encode($returnjson);
-                return;
-            }
-            else {
-                $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                echo json_encode($returnjson);
-                return;
-            }
-
-
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
         }
-
     }
 
     public function resetVotes($iIdchoix){
         $this->oEntity->setIChoixId($iIdchoix);
         return $this->oEntity->resetVotes();
-
     }
 
     public function getReponseQuestion($iIdChoix){
