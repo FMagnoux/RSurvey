@@ -13,7 +13,7 @@ function getMap() {
     test = e;
     var userSession = e[2];
     var userQuestion = e[0].oUsrId.iUsrId;
-    if(userSession != userQuestion || e[0].bQuestionClose == "0"){
+    if(userSession != userQuestion || e[0].bQuestionClose == "1"){
       $("#cloreSurveyButton").hide();
     }
     var dateSurvey = e[0].dQuestionDate.date;

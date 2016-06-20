@@ -16,6 +16,7 @@ class ReponseController extends SuperController
 
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
     const ERROR_ALREADYVOTED = "Vous avez déjà voté pour ce sondage.";
+    const ERROR_CLOSED = "Ce sondage est clos.";
     const SUCCESS_VOTE = "Votre vote a été enregistré.";
 
     public function __construct() {
@@ -51,12 +52,18 @@ class ReponseController extends SuperController
     }
 
     public function answerQuestion(){
-        $this->oEntity->setIChoixId($_POST['iIdChoix']);
-        $this->oEntity->setIReponseSubcode($_POST['iSubCode']);
+        $this->oEntity->setIChoixId(intval($_POST['iIdChoix']));
+        $this->oEntity->setIReponseSubcode(intval($_POST['iSubCode']));
         // Récupérer le numéro de la question
         require_once "./Model/Choix.php";
         $oChoix = new Choix();
-        $oChoix->getIQuestionIdByIChoixId($this->oEntity->getIChoixId());
+        $oQuestion = $oChoix->getIQuestionByIChoixId($this->oEntity->getIChoixId());
+        // Vérifier que la question ne soit pas close
+        if($oQuestion->getBQuestionClose()) {
+            $returnjson = array(self::ERROR,self::ERROR_CLOSED);
+            echo json_encode($returnjson);
+            return false;
+        }
         // Vérifier que l'utilisateur n'ait pas déjà répondu au sondage
         if($this->alreadyVoted($oChoix->getIQuestionId())) {
             $returnjson = array(self::ERROR,self::ERROR_ALREADYVOTED);
