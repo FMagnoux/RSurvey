@@ -362,7 +362,7 @@ class UserController extends SuperController
      */
     public function forgottenPassword() {
         $this->setJsonData();
-        if($this->filterEmail($_POST["sMail"]) !== true) {
+        if(empty($_POST["sMail"]) || $this->filterEmail($_POST["sMail"]) !== true) {
             echo json_encode(array(self::ERROR, self::ERROR_FILTERMAIL));
             return false;
         }

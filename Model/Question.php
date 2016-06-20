@@ -338,7 +338,8 @@ class Question extends SQL implements JsonSerializable
                     "foreignKey" => "sub_id"
                 )
             ),
-            "where" => "question_active = 1"
+            "where" => "question_active = 1",
+            "order" => "question_date DESC"
         );
     }
 
