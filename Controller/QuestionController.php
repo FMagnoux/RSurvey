@@ -14,6 +14,7 @@ class QuestionController extends SuperController
     const SUCCESS = "success";
     const ERROR = "error";
 
+    const ERROR_DISCONNECTED = "Vous devez être connecté pour voir cette page.";
     const ERROR_EMPTYQUESTION = "Vous n'avez pas renseigné de question.";
     const ERROR_QUESTIONLENGHT = "La question renseignée dépasse les 100 caractères.";
     const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
@@ -418,25 +419,46 @@ class QuestionController extends SuperController
         return true;
     }
 
+    public function adminListQuestionsByIdUser() {
+        $this->page = "admin/error";
+        if(!$this->isAdmin()) {
+            return false;
+        }
+        $iId = $this->checkGetId();
+        if($iId == 0) {
+            return null;
+        }
+        $oPagination = $this->listQuestionsByIdUser($iId);
+        if(empty($oPagination)) {
+            return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+        }
+        $this->page = "admin/listQuestions";
+        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration/".$_GET["id"]."/page-", "sUrlEnd" => ".html"));
+    }
+
+    public function userListQuestionsByIdUser() {
+        $this->page = "user/error";
+        if(empty($_SESSION["iIdUser"])) {
+            return $this->view(array(self::ERROR => self::ERROR_DISCONNECTED));
+        }
+        $oPagination = $this->listQuestionsByIdUser($_SESSION["iIdUser"]);
+        if(empty($oPagination)) {
+            return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+        }
+        $this->page = "user/listQuestions";
+        return $this->view(array("oPagination" => $oPagination));
+    }
+
     /**
      * Liste des questions d'un utilisateur en fonction de son id
      * @return bool
      */
-    public function listQuestionsByIdUser() {
-        if(!$this->isAdmin()) return false;
-        $this->page = "admin/error";
-        $iId = $this->checkGetId();
-        if($iId == 0) {
-            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
-            return false;
-        }
+    private function listQuestionsByIdUser($iId) {
         $oPagination = $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage(), $iId);
         if(count($oPagination->getAData()) == 0) {
-            $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
-            return false;
+            return null;
         }
-        $this->page = "admin/listQuestions";
-        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration/".$_GET["id"]."/page-", "sUrlEnd" => ".html"));
+        return $oPagination;
     }
 
     private function checkDate($aDate) {
