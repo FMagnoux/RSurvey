@@ -9,13 +9,21 @@ function getMap() {
   })
   .done(function(e) {
     console.log("success");
+<<<<<<< HEAD
+=======
+    console.info(e);
+>>>>>>> origin/master
     test = e;
+    var userSession = e[2];
+    var userQuestion = e[0].oUsrId.iUsrId;
+    if(userSession != userQuestion || e[0].bQuestionClose == "1"){
+      $("#cloreSurveyButton").hide();
+    }
     var dateSurvey = e[0].dQuestionDate.date;
     $('.navigateButton').click(function() {
       var isTrue = $(this).data().next;
       navigateButtons(isTrue,dateSurvey);
     });
-
     $("#titleSurvey").text(test[0].sQuestionLibel);
 
     $('#cloreSurveyButton').click(function(event) {
@@ -162,7 +170,7 @@ var navigateButtons = function(data,date) {
   .done(function(e) {
     console.log("success");
     console.log(e);
-    window.location = "http://localhost/RSurvey/"+e[0].iQuestionId;
+    window.location = "./"+e[0].iQuestionId;
   })
   .fail(function(e) {
     console.log("error");

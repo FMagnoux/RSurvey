@@ -17,8 +17,9 @@ class SuperController
     }
 
     public function home() {
+        require_once './Model/Question.php';
         $this->page = "commun/index";
-        $this->view();
+        $this->view(array("iId" => $this->encrypt((new Question())->getRandomIdQuestion())));
     }
 
     public function error() {

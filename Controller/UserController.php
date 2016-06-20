@@ -17,11 +17,13 @@ class UserController extends SuperController
 
     const ERROR_PSEUDO = "Le pseudo indiqué est déjà utilisé par un autre utilisateur.";
     const ERROR_EMPTYPSEUDO = "Le pseudo n'est pas renseigné.";
+    const ERROR_LENGHTPSEUDO = "Le pseudo renseigné est trop grand.";
 
     const ERROR_MAIL = "L'adresse email indiquée est déjà utilisée par un autre utilisateur.";
     const ERROR_FILTERMAIL = "L'adresse email indiquée ne respecte pas le bon format d'email.";
     const ERROR_EMPTYMAIL = "L'adresse email n'est pas renseignée.";
     const ERROR_NOTEXISTMAIL = "L'email que vous avez renseigné n'existe pas.";
+    const ERROR_LENGHTMAIL = "L'email que vous avez renseigné est trop grande.";
     const ERROR_SENDMAIL = "Votre compte a été créé mais un problème est survenu lors de l'envoi de l'email de confirmation. Veuillez contacter un administrateur.";
     const SUCCESS_MAILSENT = "Suivez les instructions indiqués dans l'e-mail qui vous a été envoyé.";
 
@@ -211,7 +213,11 @@ class UserController extends SuperController
     }
 
     public function filterEmail($sUsrMail){
-        if(!empty($sUsrMail) && strlen($sUsrMail)<self::$lenght){
+        if(!empty($sUsrMail)){
+            if(strlen($sUsrMail)>self::$lenght){
+                $returnjson = array(self::ERROR,self::ERROR_LENGHTMAIL);
+                return json_encode($returnjson);
+            }
             if (filter_var($sUsrMail,FILTER_VALIDATE_EMAIL)){
                 return true;
             }
@@ -231,7 +237,11 @@ class UserController extends SuperController
      * @return bool
      */
     public function checkPseudo(){
-        if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo']) && strlen($_POST['sUsrPseudo'])<self::$lenght){
+        if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo'])){
+            if(strlen($_POST['sUsrPseudo'])<self::$lenght){
+                $returnjson = array(self::ERROR,self::ERROR_LENGHTPSEUDO);
+                return json_encode($returnjson);
+            }
             $sUsrPseudo = $_POST['sUsrPseudo'];
             if($this->oEntity->checkPseudo(htmlspecialchars($sUsrPseudo))){
                 return true;

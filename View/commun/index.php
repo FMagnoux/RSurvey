@@ -2,7 +2,7 @@
             <div class="homepage-landing-section mdl-typography--text-center">
                 <div class="logo-font homepage-slogan">Thé ou Café ?</div>
                 <div class="logo-font homepage-sub-slogan">R Survey vous permet de créer des sondages et d'avoir les résultats région par région.</div>
-                <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--green-800"><img src="ressources/media/img/rocket.png" style="max-height:31px;margin-top:-4px;margin-right:14px" alt="rocket">Voir un sondage Aléatoire !</button>
+                <a href="./<?= $iId ?>" class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--green-800"><img src="ressources/media/img/rocket.png" style="max-height:31px;margin-top:-4px;margin-right:14px" alt="rocket">Voir un sondage Aléatoire !</a>
 
                 <button id="homepage-fab" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--green-800"><i class="material-icons">expand_more</i></button>
             </div>
