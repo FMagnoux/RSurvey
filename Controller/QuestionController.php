@@ -44,6 +44,7 @@ class QuestionController extends SuperController
 
     public function getNextPreviousQuestion(){
         $this->oEntity->setDQuestionDate(new DateTime($_POST['dDate']));
+
         $oQuestion = $this->oEntity->getNextPreviousQuestion($_POST['next']);
 
         require_once "./Controller/ChoixController.php";

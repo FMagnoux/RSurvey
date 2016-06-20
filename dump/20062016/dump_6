@@ -1,0 +1,227 @@
+-- phpMyAdmin SQL Dump
+-- version 4.4.10
+-- http://www.phpmyadmin.net
+--
+-- Client :  localhost:8889
+-- Généré le :  Lun 20 Juin 2016 à 08:34
+-- Version du serveur :  5.5.42
+-- Version de PHP :  7.0.0
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+--
+-- Base de données :  `rsurvey`
+--
+CREATE DATABASE IF NOT EXISTS `rsurvey` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+USE `rsurvey`;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Choix`
+--
+
+DROP TABLE IF EXISTS `Choix`;
+CREATE TABLE `Choix` (
+  `choix_id` int(11) NOT NULL,
+  `choix_libel` varchar(30) COLLATE utf8_unicode_ci NOT NULL,
+  `question_id` int(11) NOT NULL,
+  `choix_active` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='table des choix';
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Question`
+--
+
+DROP TABLE IF EXISTS `Question`;
+CREATE TABLE `Question` (
+  `question_id` int(11) NOT NULL,
+  `question_libel` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `question_date` datetime NOT NULL,
+  `question_active` tinyint(1) NOT NULL DEFAULT '1',
+  `question_close` tinyint(1) NOT NULL DEFAULT '0',
+  `usr_id` int(11) NOT NULL,
+  `sub_id` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des sondages';
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Reponse`
+--
+
+DROP TABLE IF EXISTS `Reponse`;
+CREATE TABLE `Reponse` (
+  `reponse_id` int(11) NOT NULL,
+  `reponse_votes` int(11) NOT NULL DEFAULT '0',
+  `reponse_subcode` varchar(11) COLLATE utf8_unicode_ci NOT NULL,
+  `choix_id` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Role`
+--
+
+DROP TABLE IF EXISTS `Role`;
+CREATE TABLE `Role` (
+  `role_id` int(11) NOT NULL,
+  `role_libel` varchar(255) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des role utilisateurs';
+
+--
+-- Contenu de la table `Role`
+--
+
+INSERT INTO `Role` (`role_id`, `role_libel`) VALUES
+(1, 'ADMIN'),
+(2, 'USER');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Subdivision`
+--
+
+DROP TABLE IF EXISTS `Subdivision`;
+CREATE TABLE `Subdivision` (
+  `sub_id` int(11) NOT NULL,
+  `sub_libel` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `sub_active` tinyint(1) NOT NULL DEFAULT '1',
+  `zone_id` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des subdivisions';
+
+--
+-- Contenu de la table `Subdivision`
+--
+
+INSERT INTO `Subdivision` (`sub_id`, `sub_libel`, `sub_active`, `zone_id`) VALUES
+(1, 'Région', 1, 1),
+(2, 'Département', 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `User`
+--
+
+DROP TABLE IF EXISTS `User`;
+CREATE TABLE `User` (
+  `usr_id` int(11) NOT NULL,
+  `usr_pseudo` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `usr_mail` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `usr_password` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
+  `usr_token` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `usr_active` tinyint(1) DEFAULT '0',
+  `role_id` int(11) DEFAULT '2'
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table utilisateur';
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `Zone`
+--
+
+DROP TABLE IF EXISTS `Zone`;
+CREATE TABLE `Zone` (
+  `zone_id` int(11) NOT NULL,
+  `zone_libel` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `zone_active` tinyint(1) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Table des zones';
+
+--
+-- Contenu de la table `Zone`
+--
+
+INSERT INTO `Zone` (`zone_id`, `zone_libel`, `zone_active`) VALUES
+(1, 'France', 1);
+
+--
+-- Index pour les tables exportées
+--
+
+--
+-- Index pour la table `Choix`
+--
+ALTER TABLE `Choix`
+  ADD PRIMARY KEY (`choix_id`);
+
+--
+-- Index pour la table `Question`
+--
+ALTER TABLE `Question`
+  ADD PRIMARY KEY (`question_id`);
+
+--
+-- Index pour la table `Reponse`
+--
+ALTER TABLE `Reponse`
+  ADD PRIMARY KEY (`reponse_id`);
+
+--
+-- Index pour la table `Role`
+--
+ALTER TABLE `Role`
+  ADD PRIMARY KEY (`role_id`);
+
+--
+-- Index pour la table `Subdivision`
+--
+ALTER TABLE `Subdivision`
+  ADD PRIMARY KEY (`sub_id`);
+
+--
+-- Index pour la table `User`
+--
+ALTER TABLE `User`
+  ADD PRIMARY KEY (`usr_id`);
+
+--
+-- Index pour la table `Zone`
+--
+ALTER TABLE `Zone`
+  ADD PRIMARY KEY (`zone_id`);
+
+--
+-- AUTO_INCREMENT pour les tables exportées
+--
+
+--
+-- AUTO_INCREMENT pour la table `Choix`
+--
+ALTER TABLE `Choix`
+  MODIFY `choix_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+--
+-- AUTO_INCREMENT pour la table `Question`
+--
+ALTER TABLE `Question`
+  MODIFY `question_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+--
+-- AUTO_INCREMENT pour la table `Reponse`
+--
+ALTER TABLE `Reponse`
+  MODIFY `reponse_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
+--
+-- AUTO_INCREMENT pour la table `Role`
+--
+ALTER TABLE `Role`
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT pour la table `Subdivision`
+--
+ALTER TABLE `Subdivision`
+  MODIFY `sub_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
+-- AUTO_INCREMENT pour la table `User`
+--
+ALTER TABLE `User`
+  MODIFY `usr_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=11;
+--
+-- AUTO_INCREMENT pour la table `Zone`
+--
+ALTER TABLE `Zone`
+  MODIFY `zone_id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
