@@ -136,7 +136,7 @@ var navigateButtons = function(data,date) {
   .done(function(e) {
     console.log("success");
     console.log(e);
-    window.location = "http://localhost/RSurvey/"+e[0].iQuestionId;
+    window.location = "./"+e[0].iQuestionId;
   })
   .fail(function(e) {
     console.log("error");
