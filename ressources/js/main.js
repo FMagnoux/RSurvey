@@ -13,178 +13,194 @@ var contentForgotPassword = "<form id='formForgotPassword' action='#'> <div clas
 
 
 var newSurveyRequest = function() {
-  var sQuestionLibelValue = $("#newSurveyQuestion").val();
-  var aQuestionChoixValues = [];
-  var iIdSubValue = $(".newSurveychoiceZone:checked").val();
-  var newSurveychoice1 = $('#newSurveychoice1').val();
-  var newSurveychoice2 = $('#newSurveychoice2').val();
-  var newSurveychoice3 = $('#newSurveychoice3').val();
+    var sQuestionLibelValue = $("#newSurveyQuestion").val();
+    var aQuestionChoixValues = [];
+    var iIdSubValue = $(".newSurveychoiceZone:checked").val();
+    var newSurveychoice1 = $('#newSurveychoice1').val();
+    var newSurveychoice2 = $('#newSurveychoice2').val();
+    var newSurveychoice3 = $('#newSurveychoice3').val();
 
-  if(newSurveychoice1 != '') {aQuestionChoixValues.push(newSurveychoice1);}
-  if(newSurveychoice2 != '') {aQuestionChoixValues.push(newSurveychoice2);}
-  if(newSurveychoice3 != '') {aQuestionChoixValues.push(newSurveychoice3);}
-  if(aQuestionChoixValues[0] == undefined) {aQuestionChoixValues.push(null);}
+    if (newSurveychoice1 != '') {
+        aQuestionChoixValues.push(newSurveychoice1);
+    }
+    if (newSurveychoice2 != '') {
+        aQuestionChoixValues.push(newSurveychoice2);
+    }
+    if (newSurveychoice3 != '') {
+        aQuestionChoixValues.push(newSurveychoice3);
+    }
+    if (aQuestionChoixValues[0] == undefined) {
+        aQuestionChoixValues.push(null);
+    }
 
 
-$.ajax({
-  url: 'creer-sondage.html',
-  type: 'POST',
-  dataType: 'json',
-  data: {sQuestionLibel: sQuestionLibelValue,aQuestionChoix:aQuestionChoixValues,iIdSub:iIdSubValue}
-})
-.done(function(e) {
-  console.log("success");
-  console.log(e)
+    $.ajax({
+            url: 'creer-sondage.html',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                sQuestionLibel: sQuestionLibelValue,
+                aQuestionChoix: aQuestionChoixValues,
+                iIdSub: iIdSubValue
+            }
+        })
+        .done(function(e) {
+            console.log("success");
+            console.log(e)
 
-  if(e[0] == "success") {
-    hideDialog($('#orrsDiag'));
-    showDialog({
-        title: "<span class='mdl-color-text--green-800'>"+e[1]+"</span>",
-        text: "<div class=mdl-typography--text-center> Cliquez ici pour acceder à votre sondage <a target=_blank href=http://localhost/rsurvey/"+e[2]+">http://localhost/rsurvey/"+e[2]+"</a> <p class=shareButtonsContainer ><a class=shareButton target=_blank href=https://www.facebook.com/sharer/sharer.php?app_id=113869198637480&sdk=joey&u="+encodeURI("http://localhost/rsurvey/"+e[2])+"><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800'>Partager sur Facebook !</button></a><a class=shareButton target=_blank href=https://twitter.com/intent/tweet?text="+encodeURI("Je viens de créer un sondage ! "+sQuestionLibelValue+" http://localhost/rsurvey/"+e[2])+"><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-500'>Partager sur Twitter !</button></a></p></div>",
-        negative: false,
-        positive:false
-    });
+            if (e[0] == "success") {
+                hideDialog($('#orrsDiag'));
+                showDialog({
+                    title: "<span class='mdl-color-text--green-800'>" + e[1] + "</span>",
+                    text: "<div class=mdl-typography--text-center> Cliquez ici pour acceder à votre sondage <a target=_blank href=http://localhost/rsurvey/" + e[2] + ">http://localhost/rsurvey/" + e[2] + "</a>"+sharingGenerator(e[2],sQuestionLibelValue)+"</div>",
+                    negative: false,
+                    positive: false
+                });
 
-  }
-  else if(e[0] =="error") {
-    $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
-  }
-})
-.fail(function(e) {
-  console.log("error");
-  console.log(e.responseText);
-})
-.always(function(e) {
-  console.log("complete");
-});
+            } else if (e[0] == "error") {
+                $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>" + e[1] + "</span>");
+            }
+        })
+        .fail(function(e) {
+            console.log("error");
+            console.log(e.responseText);
+        })
+        .always(function(e) {
+            console.log("complete");
+        });
 
 
 }
 
 
-var ajaxRequestSerialize = function(idForm,urlDest) {
-  var datas = $('#'+idForm).serialize();
-  $.ajax({
-    url: urlDest,
-    type: 'POST',
-    dataType: 'json',
-    data: datas
-  })
-  .done(function(e) {
-    console.log("success");
-    if(e[0] == "success") {
-      hideDialog($('#orrsDiag'));
-      showDialog({
-          title: "<span class='mdl-color-text--green-800'>"+e[1]+"</span>",
-          text: "",
-          negative: false,
-          positive:false
-      });
-      setTimeout(function(){ location.reload(true); }, 4000);
+var ajaxRequestSerialize = function(idForm, urlDest) {
+    var datas = $('#' + idForm).serialize();
+    $.ajax({
+            url: urlDest,
+            type: 'POST',
+            dataType: 'json',
+            data: datas
+        })
+        .done(function(e) {
+            console.log("success");
+            if (e[0] == "success") {
+                hideDialog($('#orrsDiag'));
+                showDialog({
+                    title: "<span class='mdl-color-text--green-800'>" + e[1] + "</span>",
+                    text: "",
+                    negative: false,
+                    positive: false
+                });
+                setTimeout(function() {
+                    location.reload(true);
+                }, 4000);
 
-    }
-    else if(e[0] =="error") {
-      $('#'+idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+            } else if (e[0] == "error") {
+                $('#' + idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>" + e[1] + "</span>");
 
-    }
-  })
-  .fail(function(e) {
-    console.log("error");
-    console.warn(e.responseText);
-  })
-  .always(function(e) {
-    console.log("complete");
-  });
+            }
+        })
+        .fail(function(e) {
+            console.log("error");
+            console.warn(e.responseText);
+        })
+        .always(function(e) {
+            console.log("complete");
+        });
 }
-
 
 
 var updateUserRequest = function() {
-  console.log('EDIT');
+        console.log('EDIT');
 
+    }
+    /*DOCUMENT READY*/
+
+
+var sharingGenerator = function(url,sQuestionLibelValue) {
+  return "<p class=shareButtonsContainer ><a class=shareButton target=_blank href=https://www.facebook.com/sharer/sharer.php?app_id=113869198637480&sdk=joey&u=" + encodeURI("http://localhost/rsurvey/" + url) + "><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800'>Partager sur Facebook !</button></a><a class=shareButton target=_blank href=https://twitter.com/intent/tweet?text=" + encodeURI("Je viens de créer un sondage ! " + sQuestionLibelValue + " http://localhost/rsurvey/" + url) + "><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-500'>Partager sur Twitter !</button></a></p>";
 }
-/*DOCUMENT READY*/
-
 $(document).ready(function() {
 
-  $('#newSurvey').click(function(event) {
-      event.preventDefault();
-      showDialog({
-        onLoaded:function(e){
-          $('#positive').off('click');
-          $('#positive').click(function() {
-            $('#errorForm').remove()
-            newSurveyRequest();
-          });
-        },
-          title: "<span class='mdl-color-text--blue-800'>Ajouter un sondage</span>",
-          text: contentNewSurvey,
-          negative: false,
-          positive: {
-              title: 'Ajouter un sondage'
-          }
-      });
-  });
+    $('#newSurvey').click(function(event) {
+        event.preventDefault();
+        showDialog({
+            onLoaded: function(e) {
+                $('#positive').off('click');
+                $('#positive').click(function() {
+                    $('#errorForm').remove()
+                    newSurveyRequest();
+                });
+            },
+            title: "<span class='mdl-color-text--blue-800'>Ajouter un sondage</span>",
+            text: contentNewSurvey,
+            negative: false,
+            positive: {
+                title: 'Ajouter un sondage'
+            }
+        });
+    });
 
-  $('#login').click(function(event) {
-      event.preventDefault();
-      showDialog({
-          onLoaded:function(e){
-            $('#positive').off('click');
-            $('#positive').click(function() {
-              $('#errorForm').remove()
-              ajaxRequestSerialize('formLogin','login.html');
-            });
-          },
-          title: "<span class='mdl-color-text--blue-800'>Se connecter</span>",
-          text: contentLogin,
-          negative: {
-              title: 'Mot de passe oublié ?',
-              onClick: function() {
-                  showDialog({
-                    onLoaded:function(e){
-                      $('#positive').off('click');
-                      $('#positive').click(function() {
-                        $('#errorForm').remove()
-                        ajaxRequestSerialize('formForgotPassword','mot-de-passe-oublie.html');
-                      });
-                    },
-                      title: "<span class='mdl-color-text--blue-800'>Mot de passe oublié ?</span>",
-                      text: contentForgotPassword,
-                      negative: false,
-                      positive: {
-                          title: 'Envoyer'
-                      }
-                  });
-              }
-          },
-          positive: {
-              title: 'Se connecter'
-          }
-      });
-  });
+    $('#login').click(function(event) {
+        event.preventDefault();
+        showDialog({
+            onLoaded: function(e) {
+                $('#positive').off('click');
+                $('#positive').click(function() {
+                    $('#errorForm').remove()
+                    ajaxRequestSerialize('formLogin', 'login.html');
+                });
+            },
+            title: "<span class='mdl-color-text--blue-800'>Se connecter</span>",
+            text: contentLogin,
+            negative: {
+                title: 'Mot de passe oublié ?',
+                onClick: function() {
+                    showDialog({
+                        onLoaded: function(e) {
+                            $('#positive').off('click');
+                            $('#positive').click(function() {
+                                $('#errorForm').remove()
+                                ajaxRequestSerialize('formForgotPassword', 'mot-de-passe-oublie.html');
+                            });
+                        },
+                        title: "<span class='mdl-color-text--blue-800'>Mot de passe oublié ?</span>",
+                        text: contentForgotPassword,
+                        negative: false,
+                        positive: {
+                            title: 'Envoyer'
+                        }
+                    });
+                }
+            },
+            positive: {
+                title: 'Se connecter'
+            }
+        });
+    });
 
-  $('#signup').click(function(event) {
-      event.preventDefault();
-      showDialog({
-        onLoaded:function(e){
-          $('#positive').off('click');
-          $('#positive').click(function() {
-            $('#errorForm').remove()
-            ajaxRequestSerialize('formSignup','inscription.html');
-          });
-        },
-          title: "<span class='mdl-color-text--blue-800'>Créer un compte</span>",
-          text: contentSignup,
-          negative: false,
-          positive: {
-              title: 'Créer un compte'
-          }
-      });
-  });
+    $('#signup').click(function(event) {
+        event.preventDefault();
+        showDialog({
+            onLoaded: function(e) {
+                $('#positive').off('click');
+                $('#positive').click(function() {
+                    $('#errorForm').remove()
+                    ajaxRequestSerialize('formSignup', 'inscription.html');
+                });
+            },
+            title: "<span class='mdl-color-text--blue-800'>Créer un compte</span>",
+            text: contentSignup,
+            negative: false,
+            positive: {
+                title: 'Créer un compte'
+            }
+        });
+    });
 
-  $('#updateUser').click(function(event) {
-    event.preventDefault();
-    updateUserRequest();
-  });
+
+    $('#updateUser').click(function(event) {
+        event.preventDefault();
+        updateUserRequest();
+    });
 });
