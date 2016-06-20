@@ -357,6 +357,17 @@ class Question extends SQL implements JsonSerializable
         );
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
+    
+    public function getRandomIdQuestion() {
+        return parent::select(
+            array(
+                "columns" => "question_id",
+                "table" => $this->table,
+                "order" => "RAND()",
+                "limit" => 1
+            )
+        )["question_id"];
+    }
 
     /**
      * Convertir un tableau en un objet Question
