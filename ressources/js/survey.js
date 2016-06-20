@@ -18,8 +18,10 @@ function getMap() {
     });
 
     $("#titleSurvey").text(test[0].sQuestionLibel);
-    $('#cloreSurveyButton').click(function(e) {
-      cloreSurvey('yo');
+
+    $('#cloreSurveyButton').click(function(event) {
+      console.log(e);
+      cloreSurvey(e[0].iQuestionId);
     });
 
     createMap("centermap",e)
@@ -149,10 +151,11 @@ var cloreSurvey = function(e) {
     url: 'close-question.html',
     type: 'POST',
     dataType: 'json',
-    data: {param1: 'value1'}
+    data: {iIdQuestion: e}
   })
   .done(function() {
     console.log("success");
+    location.reload(true);
   })
   .fail(function(e) {
     console.log("error");

@@ -123,7 +123,6 @@ class QuestionController extends SuperController
      * @return string
      */
     public function closeQuestion(){
-
       $id = $this->decrypt($_POST['iIdQuestion']);
       $id = intval($id);
       if($id <= 0) {
