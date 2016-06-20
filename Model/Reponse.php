@@ -12,6 +12,7 @@ class Reponse extends SQL implements JsonSerializable
     private $iReponseVotes;
     private $iReponseSubcode;
     private $iChoixId;
+    private $sTable = "Reponse";
 
     private static $iResetVotes = 0;
 
@@ -96,12 +97,21 @@ class Reponse extends SQL implements JsonSerializable
         ));
     }
 
+    public function incrementReponse() {
+        $requete = $this->db->prepare('update Reponse set reponse_votes = reponse_votes + 1 where choix_id = :choix_id and reponse_subcode = :reponse_subcode') ;
+        $requete->execute (array(
+            ':reponse_subcode'=>$this->getIReponseSubcode(),
+            ':choix_id'=>$this->getIChoixId(),
+        ));
+        return $requete->rowCount();
+    }
+
     public function updateReponse(){
-        $requete = $this->db->prepare('update Reponse set reponse_votes = :reponse_votes where reponse_id = :reponse_votes and reponse_subcode = :reponse_subcode') ;
+        $requete = $this->db->prepare('update Reponse set reponse_votes = :reponse_votes where reponse_id = :reponse_id and reponse_subcode = :reponse_subcode') ;
         return $requete->execute (array(
             ':reponse_votes'=>$this->getIReponseVotes(),
             ':reponse_subcode'=>$this->getIReponseSubcode(),
-            ':choix_id'=>$this->getIChoixId(),
+            ':reponse_id'=>$this->getIChoixId(),
         ));
     }
 

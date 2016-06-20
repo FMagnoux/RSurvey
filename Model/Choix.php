@@ -13,6 +13,7 @@ class Choix extends SQL implements JsonSerializable
     private $iQuestionId;
     private $bChoixActive;
     private $aReponse;
+    private $sTable = "Choix";
 
     private static $bActive = 1;
 
@@ -104,6 +105,22 @@ class Choix extends SQL implements JsonSerializable
     public function setIQuestionId($iQuestionId)
     {
         $this->iQuestionId = $iQuestionId;
+        return $this;
+    }
+
+    public function getIQuestionIdByIChoixId($iChoixId)
+    {
+        $this->iQuestionId = parent::select(
+            array(
+                "columns" => "question_id",
+                "table" => $this->sTable,
+                "where" => "choix_id = :id",
+                "limit" => 1
+            ),
+            array(
+                "id" => $iChoixId
+            )
+        )["question_id"];
         return $this;
     }
 
