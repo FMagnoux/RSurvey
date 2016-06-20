@@ -9,7 +9,6 @@ function getMap() {
   })
   .done(function(e) {
     console.log("success");
-    console.log();
     test = e;
     var dateSurvey = e[0].dQuestionDate.date;
     $('.navigateButton').click(function() {
@@ -27,7 +26,7 @@ function getMap() {
     createMap("centermap",e)
     sharingCreator(e[0].iQuestionId,e[0].sQuestionLibel);
   })
-  .fail(function() {
+  .fail(function(e) {
     console.log("error");
   })
   .always(function() {
@@ -58,30 +57,61 @@ function createMap(mapPosition,datas) {
     boxZoom:false,
     keyboard:false
   }).setView([46.5, 2.234], 6.5);
-  var mapContent = new L.geoJson(null,{onEachFeature: onEachFeature});
+  var mapContent = new L.geoJson(null,{
+    onEachFeature: onEachFeature,
+    style: customStyle
+  });
   function onEachFeature(feature, layer) {
     if (feature.properties && feature.properties.nom) {
-      layer.on('click',function(){
+    layer.on('click',function(){
         showDialog({
                 title: feature.properties.nom,
                 text:$(containerChoice).html(),
                 negative: false,
                 positive:false,
                 onLoaded:function(e) {
-                  console.log('yo');
                   $('.answerButton').click(function(e) {
                     e.preventDefault();
                     hideDialog($('#orrsDiag'));
                     console.log(this);
                     var iChoixIdValue = $(this).data().ichoixid;
                     var iSubCodeValue = feature.properties.code;
-
                     sendAnswer(iChoixIdValue,iSubCodeValue);
                   });
                 }
               });
       })
     }
+}
+
+function customStyle(feature) {
+  if(feature.properties && feature.properties.nom){
+    var rgb = {};
+    var total=0;
+    $(datas[1]).each(function(i){
+      if (typeof this.aReponse[feature.properties.code] !== "undefined") {
+        console.log(this.aReponse[feature.properties.code]);
+        rgb[this.aReponse[feature.properties.code].iChoixId] = parseInt(this.aReponse[feature.properties.code].iReponseVotes);
+      }
+    });
+
+
+    var totalRgb = 0;
+    var formatRgb = [];
+    for(var i in rgb) { totalRgb += rgb[i]; }
+    console.warn(totalRgb);
+    $(datas[1]).each(function(i){
+      if(typeof rgb[this.iChoixId] !== "undefined"){
+        console.log(rgb[this.iChoixId]);
+        formatRgb.push(Math.round(rgb[this.iChoixId]/totalRgb*255));
+      }
+      else {
+        formatRgb.push(0);
+      }
+    });
+    console.log(formatRgb);
+    return {fillColor:"rgb("+formatRgb[0]+","+formatRgb[1]+","+formatRgb[2]+")",fillOpacity:1}
+  }
 }
   mapContent.addTo(map);
   $.ajax({

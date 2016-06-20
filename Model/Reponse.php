@@ -161,8 +161,8 @@ class Reponse extends SQL implements JsonSerializable
                 $oReponse->setIReponseVotes($result['reponse_votes']);
                 $oReponse->setIReponseSubcode($result['reponse_subcode']);
                 $oReponse->setIChoixId($result['choix_id']);
-
-                array_push($aReponse,$oReponse);
+                $aReponse[$oReponse->getIReponseSubcode()] = $oReponse;
+                //array_push($aReponse,$oReponse);
             }
             return $aReponse;
         }
