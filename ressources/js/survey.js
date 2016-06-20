@@ -12,18 +12,16 @@ function getMap() {
     console.log();
     test = e;
     var dateSurvey = e[0].dQuestionDate.date;
-    var titleSurvey = e[0].sQuestionLibel;
-    var iIdQuestionValue = e[0].iQuestionId;
-    createMap("centermap",e)
     $('.navigateButton').click(function() {
       var isTrue = $(this).data().next;
       navigateButtons(isTrue,dateSurvey);
     });
 
-    $("#titleSurvey").text(titleSurvey);
-    $('#cloreSurveyButton').click(function() {
-      cloreSurvey(iIdQuestionValue);
+    $("#titleSurvey").text(test[0].sQuestionLibel);
+    $('#cloreSurveyButton').click(function(e) {
+      cloreSurvey('yo');
     });
+    createMap("centermap",e)
 
   })
   .fail(function() {
@@ -43,9 +41,9 @@ function createMap(mapPosition,datas) {
   var containerChoice = $("<div></div>").text(sQuestionLibel);
   var choices = $("<form action='#' class='survey-box'></form>");
   $(containerChoice).append(choices);
-  datas[1].forEach(function(e){
-    console.log(e.sChoixLibel)
-    var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect answerButton'></button>").text(e.sChoixLibel);
+  datas[1].forEach(function(e,i){
+    console.log(e)
+    var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect answerButton answerButton"+i+"'></button>").text(e.sChoixLibel);
     $(choices).append(button);
   });
 
@@ -70,9 +68,12 @@ function createMap(mapPosition,datas) {
                   console.log('yo');
                   $('.answerButton').click(function(e) {
                     e.preventDefault();
+                    hideDialog($('#orrsDiag'));
+                    console.log(this);
                     var iChoixIdValue = $(this).data().ichoixid;
-                    var idCode = feature.properties.code;
-                    sendAnswer(iChoixIdValue,idCode);
+                    var iSubCodeValue = feature.properties.code;
+
+                    sendAnswer(iChoixIdValue,iSubCodeValue);
                   });
                 }
               });
@@ -95,6 +96,7 @@ function createMap(mapPosition,datas) {
 
 
 var sendAnswer = function(c,s) {
+
   $.ajax({
     url: 'answer-question.html',
     type: 'POST',
@@ -127,6 +129,7 @@ var navigateButtons = function(data,date) {
   .done(function(e) {
     console.log("success");
     console.log(e);
+    window.location = "http://localhost/RSurvey/"+e[0].iQuestionId;
   })
   .fail(function(e) {
     console.log("error");
@@ -139,22 +142,20 @@ var navigateButtons = function(data,date) {
 
 }
 
-var cloreSurvey = function(iIdQuestionValue) {
-  console.log(iIdQuestionValue);
+var cloreSurvey = function(e) {
+  console.log(e);
   $.ajax({
     url: 'close-question.html',
     type: 'POST',
     dataType: 'json',
-    data: {iIdQuestion: iIdQuestionValue}
+    data: {param1: 'value1'}
   })
-  .done(function(e) {
+  .done(function() {
     console.log("success");
-    console.log(e);
   })
   .fail(function(e) {
     console.log("error");
-    console.log(e);
-
+    console.log(e.responseText)
   })
   .always(function() {
     console.log("complete");

@@ -1,6 +1,6 @@
             <div class="mdl-grid">
                 <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet">
-                  <button data-next="false" class=" navigateButton mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                  <button data-next="false" class=" navigateButton navigatePrev mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                     <i class="material-icons">navigate_before</i>
                   </button>
                 </div>
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet">
-                  <button  data-next="true" class="navigateButton mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                  <button  data-next="true" class="navigateButton navigateNext mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                     <i class="material-icons">navigate_next</i>
                   </button>
                 </div>

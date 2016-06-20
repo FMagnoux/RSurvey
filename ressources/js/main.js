@@ -24,9 +24,7 @@ var newSurveyRequest = function() {
   if(newSurveychoice2 != '') {aQuestionChoixValues.push(newSurveychoice2);}
   if(newSurveychoice3 != '') {aQuestionChoixValues.push(newSurveychoice3);}
   if(aQuestionChoixValues[0] == undefined) {aQuestionChoixValues.push(null);}
-console.log(sQuestionLibelValue);
-console.warn(aQuestionChoixValues);
-console.log(iIdSubValue);
+
 
 $.ajax({
   url: 'creer-sondage.html',
@@ -36,8 +34,21 @@ $.ajax({
 })
 .done(function(e) {
   console.log("success");
-  console.log(e);
-  $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+  console.log(e)
+
+  if(e[0] == "success") {
+    hideDialog($('#orrsDiag'));
+    showDialog({
+        title: "<span class='mdl-color-text--green-800'>"+e[1]+"</span>",
+        text: "<div class=mdl-typography--text-center> Cliquez ici pour acceder à votre sondage <a target=_blank href=http://localhost/rsurvey/"+e[2]+">http://localhost/rsurvey/"+e[2]+"</a> <p class=shareButtonsContainer ><a class=shareButton target=_blank href=https://www.facebook.com/sharer/sharer.php?app_id=113869198637480&sdk=joey&u="+encodeURI("http://localhost/rsurvey/"+e[2])+"><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800'>Partager sur Facebook !</button></a><a class=shareButton target=_blank href=https://twitter.com/intent/tweet?text="+encodeURI("Je viens de créer un sondage ! "+sQuestionLibelValue+" http://localhost/rsurvey/"+e[2])+"><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-500'>Partager sur Twitter !</button></a></p></div>",
+        negative: false,
+        positive:false
+    });
+
+  }
+  else if(e[0] =="error") {
+    $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+  }
 })
 .fail(function(e) {
   console.log("error");
@@ -61,7 +72,21 @@ var ajaxRequestSerialize = function(idForm,urlDest) {
   })
   .done(function(e) {
     console.log("success");
-    $('#'+idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+    if(e[0] == "success") {
+      hideDialog($('#orrsDiag'));
+      showDialog({
+          title: "<span class='mdl-color-text--green-800'>"+e[1]+"</span>",
+          text: "",
+          negative: false,
+          positive:false
+      });
+      setTimeout(function(){ location.reload(true); }, 4000);
+
+    }
+    else if(e[0] =="error") {
+      $('#'+idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+
+    }
   })
   .fail(function(e) {
     console.log("error");

@@ -22,3 +22,11 @@
   .mdl-layout__drawer-button {display:none;}
   .mdl-layout__header-row {padding-left:24px;}
 }
+
+a.shareButton {
+    margin-right: 24px;
+}
+
+p.shareButtonsContainer {
+    margin-top: 24px;
+}
