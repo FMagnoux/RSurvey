@@ -222,7 +222,13 @@ class QuestionController extends SuperController
 
         $oQuestion->setOUsr($oUser);
         $oQuestion->setIQuestionId($this->encrypt($oQuestion->getIQuestionId()));
-        $returnjson = array($oQuestion,$aChoix);
+        if(!$this->checkLogin()){
+            $iIdUser = 0;
+        }
+        else {
+            $iIdUser = $_SESSION['iIdUser'];
+        }
+        $returnjson = array($oQuestion,$aChoix,$iIdUser);
         echo json_encode($returnjson);
         return;
     }
