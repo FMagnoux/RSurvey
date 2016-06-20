@@ -108,20 +108,27 @@ class Choix extends SQL implements JsonSerializable
         return $this;
     }
 
-    public function getIQuestionIdByIChoixId($iChoixId)
+    public function getIQuestionByIChoixId($iChoixId)
     {
-        $this->iQuestionId = parent::select(
+        require_once "./Model/Question.php";
+        $oQuestion = new Question();
+        $oQuestion = $oQuestion->toObject(parent::select(
             array(
-                "columns" => "question_id",
+                "columns" => $this->sTable . ".question_id, question_close",
                 "table" => $this->sTable,
+                "join" => array(
+                    "table" => "Question",
+                    "key" => "question_id",
+                    "foreignKey" => "question_id",
+                ),
                 "where" => "choix_id = :id",
                 "limit" => 1
             ),
             array(
                 "id" => $iChoixId
             )
-        )["question_id"];
-        return $this;
+        ));
+        return $oQuestion;
     }
 
     public function createChoix(){
