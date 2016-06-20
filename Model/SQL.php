@@ -17,10 +17,10 @@ abstract class SQL
         try {
             $engine = 'mysql';
             $host = '127.0.0.1';
-            $port ='3306';
+            $port ='8889';
             $database ='rsurvey';
             $user = 'root';
-            $password = '';
+            $password = 'root';
             $dns = $engine.':port='.$port.';dbname='.$database.";host=".$host;
             $this->db = new PDO($dns, $user, $password);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
