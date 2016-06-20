@@ -2,10 +2,9 @@
             <div class="homepage-landing-section mdl-typography--text-center">
                 <div class="logo-font homepage-slogan">Thé ou Café ?</div>
                 <div class="logo-font homepage-sub-slogan">R Survey vous permet de créer des sondages et d'avoir les résultats région par région.</div>
-                <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--green-800"><img src="ressources/media/img/tea.png" style="max-height:31px;margin-top:-12px;margin-right:8px" alt="tea">Je préfère le Thé</button>
-                <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--brown-800"><img src="ressources/media/img/coffee.png" style="max-height:31px;margin-top:-12px;margin-right:8px" alt="coffee">Définitivement Café</button>
+                <button class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--green-800"><img src="ressources/media/img/rocket.png" style="max-height:31px;margin-top:-4px;margin-right:14px" alt="rocket">Voir un sondage Aléatoire !</button>
 
-                <button id="homepage-fab" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--blue-800"><i class="material-icons">expand_more</i></button>
+                <button id="homepage-fab" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--green-800"><i class="material-icons">expand_more</i></button>
             </div>
             <div class="mdl-grid">
                 <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-card__supporting-text mdl-cell--2-offset-desktop ">
@@ -46,7 +45,7 @@
                             <input class="mdl-textfield__input" type="text" name="content">
                             <label class="mdl-textfield__label">Message</label>
                         </div>
-                        <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect">Envoyer</button>
+                        <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect mdl-color--blue-800">Envoyer</button>
 
                     </form>
 
