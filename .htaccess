@@ -17,6 +17,8 @@ RewriteRule ^desactivate-question.html$ index.php?ctrl=Question&action=desactiva
 RewriteRule ^answer-question.html$ index.php?ctrl=Reponse&action=answerQuestion [L]
 RewriteRule ^change-question.html$ index.php?ctrl=Question&action=getNextPreviousQuestion [L]
 RewriteRule ^close-question.html$ index.php?ctrl=Question&action=closeQuestion [L]
+RewriteRule ^update-question.html$ index.php?ctrl=Question&action=updateQuestion [L]
+
 # Zone
 RewriteRule ^administration-zones.html$ index.php?ctrl=Subdivision&action=listSubdivisions [L]
 RewriteRule ^administration-zones/page-([0-9]+)\.html$ index.php?ctrl=Subdivision&action=listSubdivisions&page=$1 [L]
@@ -32,6 +34,7 @@ RewriteRule ^mot-de-passe-oublie.html$ index.php?ctrl=User&action=forgottenPassw
 RewriteRule ^mot-de-passe-oublie/([a-zA-Z0-9]*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=User&action=generateNewPassword&id=$1&token=$2 [L]
 RewriteRule ^confirmer-compte/([a-zA-Z0-9]*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=User&action=confirmUser&id=$1&token=$2 [L]
 RewriteRule ^desactivate-user.html$ index.php?ctrl=User&action=desactivateUser [L]
+RewriteRule ^update-user.html$ index.php?ctrl=User&action=updateUser [L]
 
 # Lien vers un sondage
 RewriteRule ^([a-zA-Z0-9]*)$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]
