@@ -435,20 +435,20 @@ class UserController extends SuperController
             || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
         )
         {
-            echo json_encode(array(self::ERROR, self::ERROR_CHECKPASSWORD));
+            $this->view(array(self::ERROR => self::ERROR_CHECKPASSWORD));
             return false;
         }
         $id = $this->checkToken();
         if(!$id) {
-            echo json_encode(array(self::ERROR, self::ERROR_BROKENLINK));
+            $this->view(array(self::ERROR => self::ERROR_BROKENLINK));
             return false;
         }
         // Changer le mot de passe et le token
         if(!$this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken())) {
-            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            $this->view(array(self::ERROR => self::ERROR_INTERNAL));
             return false;
         }
-        echo json_encode(array(self::SUCCESS, self::SUCCESS_PASSWORDCHANGED));
+        $this->view(array(self::SUCCESS => self::SUCCESS_PASSWORDCHANGED));
         return true;
     }
 

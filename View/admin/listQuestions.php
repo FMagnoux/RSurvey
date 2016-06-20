@@ -8,7 +8,8 @@
                 <h2 class="mdl-card__title-text mdl-typography--font-bold mdl-color-text--white"><?= $oQuestion->getSQuestionLibel() ?></h2>
             </div>
             <div class="mdl-card__supporting-text">
-                Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua nisi cupidatat eu. Nostrud in laboris labore nisi amet do dolor eu fugiat consectetur elit cillum esse.
+                Sondage créé par : <a href="./administration/<?= $this->encrypt($oQuestion->getOUsr()->getIUsrId()) ?>/page-1.html" title="Voir les sondages de cet auteur"><?= $oQuestion->getOUsr()->getSUsrPseudo() ?></a>.<br>
+                Le sondage est <?= $oQuestion->getBQuestionClose() ? "clos" : "ouvert" ?>.
             </div>
             <div class="mdl-card__actions">
                 <a href="./<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="mdl-button" target="_blank">Acceder au sondage</a>
