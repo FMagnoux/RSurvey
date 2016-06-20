@@ -47,16 +47,31 @@ class QuestionController extends SuperController
         $next = $_POST['next'];
         $this->oEntity->setDQuestionDate(new DateTime($_POST['dDate']));
 
-        $oQuestion = $this->oEntity->getNextPreviousQuestion($next);
+        $operateur = "";
+        $fonction = "";
 
-        if($next == "true" && !$oQuestion){
-            $next = "false";
-            $oQuestion = $this->oEntity->getNextPreviousQuestion($next);
+        if($next=="true"){
+            $operateur = ">";
+            $fonction = "MIN";
         }
-        else if ($next == "false" && !$oQuestion){
-            $next = "true";
-            $oQuestion = $this->oEntity->getNextPreviousQuestion($next);
+        else {
+            $operateur = "<";
+            $fonction = "MAX";
         }
+
+        $oQuestion = $this->oEntity->getNextPreviousQuestion($operateur,$fonction);
+        
+        if(!$oQuestion && $next == "true"){
+            $operateur = "<";
+            $fonction = "MIN";
+
+        }
+        else if (!$oQuestion && $next == "false"){
+            $operateur = ">";
+            $fonction = "MAX";
+        }
+
+        $oQuestion = $this->oEntity->getNextPreviousQuestion($operateur,$fonction);
 
         require_once "./Controller/ChoixController.php";
         require_once "./Controller/ReponseController.php";
