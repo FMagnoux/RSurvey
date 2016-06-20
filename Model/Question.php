@@ -194,24 +194,24 @@ class Question extends SQL implements JsonSerializable
             q.usr_id ,
             q.sub_id
         from Question q
-        inner join Subdivision s 
+        inner join Subdivision s
           on s.sub_id = q.sub_id
-        inner join Zone z 
+        inner join Zone z
           on z.zone_id = s.zone_id
         where
             q.question_active = :question_active
         and
             q.question_id = :question_id
-        and 
+        and
             s.sub_active = :sub_active
-        and 
-            z.zone_id = :zone_id
+        and
+            z.zone_active = :zone_active
          ') ;
         $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
             ':question_active'=>self::$active,
-            ':sub_id'=>self::$active,
-            ':zone_id'=>self::$active
+            ':sub_active'=>self::$active,
+            ':zone_active'=>self::$active
         ));
         $results = $requete->fetchAll();
         if(empty($results)){
@@ -252,7 +252,7 @@ class Question extends SQL implements JsonSerializable
         $operateur = "";
         $fonction = "";
 
-        if($next){
+        if($next=="true"){
             $operateur = ">";
             $fonction = "MIN";
         }
@@ -264,7 +264,7 @@ class Question extends SQL implements JsonSerializable
         select
             question_id ,
             question_libel ,
-            '.$fonction.'(question_date) ,
+            '.$fonction.'(question_date) as question_date ,
             question_close ,
             usr_id ,
             sub_id
@@ -274,9 +274,10 @@ class Question extends SQL implements JsonSerializable
         and
             question_date '.$operateur.' :question_date
          ') ;
+
         $requete->execute (array(
             ':question_active'=>self::$active,
-            ':question_date'=>$this->getDQuestionDate(),
+            ':question_date'=>$this->getDQuestionDate()->format('Y-m-d H:i:s')
         ));
         $results = $requete->fetchAll();
         if(empty($results)){
@@ -336,7 +337,8 @@ class Question extends SQL implements JsonSerializable
                     "key" => "sub_id",
                     "foreignKey" => "sub_id"
                 )
-            )
+            ),
+            "where" => "question_active = 1"
         );
     }
 
@@ -350,69 +352,20 @@ class Question extends SQL implements JsonSerializable
         $values = null;
         $aConfig = $this->getPaginatedQuestionListConfig();
         if(!empty($iId)) {
-            $aConfig["where"] = "usr_id = :id";
+            $aConfig["where"] .= " AND " . $this->table . ".usr_id = :id";
             $values = array("id" => $iId);
         }
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
 
-    /**
-     * Rechercher le pseudo qui a créé les sondages
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $sPseudo
-     * @return array
-     */
-    public function getPaginatedQuestionListByPseudo($iMaxItems, $iCurrentPage, $sPseudo) {
+    public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore) {
         $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "usr_pseudo = :pseudo";
-        $values = array("pseudo" => $sPseudo);
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
-    }
-
-    /**
-     * Rechercher des questions en fonction de leur libellé
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $sLibel
-     * @return array
-     */
-    public function getPaginatedQuestionListByLibel($iMaxItems, $iCurrentPage, $sLibel) {
-        $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "question_libel = :libel";
-        $values = array("libel" => $sLibel);
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
-    }
-
-    /**
-     * Rechercher des questions supérieures ou inférieures à une date
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $aDateAfter
-     * @param $sOperator
-     * @return array
-     */
-    public function getPaginatedQuestionListByDate($iMaxItems, $iCurrentPage, $aDate, $sOperator) {
-        $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "question_date ".$sOperator." :date";
-        $values = array("date" => $aDate);
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
-    }
-
-    /**
-     * Rechercher des questions entre une intervalle de date
-     * @param $iMaxItems
-     * @param $iCurrentPage
-     * @param $aDateAfter
-     * @param $sOperator
-     * @return array
-     */
-    public function getPaginatedQuestionListByDateInterval($iMaxItems, $iCurrentPage, $aDateAfter, $aDateBefore) {
-        $aConfig = $this->getPaginatedQuestionListConfig();
-        $aConfig["where"] = "question_date BETWEEN :date_after AND :date_before";
+        $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo AND question_libel LIKE :libel AND question_date >= :date_after AND question_date <= :date_before";
         $values = array(
-            "date_after" => $aDateAfter,
-            "date_before" => $aDateBefore
+            "pseudo" => !empty($sPseudo) ? "%" . $sPseudo . "%" : "%",
+            "libel" => !empty($sLibel) ? "%" . $sLibel . "%" : "%",
+            "date_after" => !empty($dDateAfter) ? $dDateAfter : "2016-01-01",
+            "date_before" => !empty($dDateBefore) ? $dDateBefore : date("Y-m-d")
         );
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }

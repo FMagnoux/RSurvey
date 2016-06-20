@@ -231,7 +231,7 @@ class User extends SQL implements JsonSerializable
     }
 
     public function loginUser(){
-        $requete = $this->db->prepare('select usr_id , role_id from User where usr_mail = :usr_mail and usr_password = :usr_password');
+        $requete = $this->db->prepare('select usr_id, role_id from User where usr_mail = :usr_mail and usr_password = :usr_password and usr_active = 1');
         $requete->execute (array(
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
@@ -354,7 +354,8 @@ class User extends SQL implements JsonSerializable
     public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
             "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
-            "table" => $this->sTable
+            "table" => $this->sTable,
+            "where" => "usr_active = 1"
         ));
     }
 

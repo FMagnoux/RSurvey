@@ -40,6 +40,11 @@ class UserController extends SuperController
 
     const ERROR_BROKENLINK = "Le lien a expiré.";
 
+    const ERROR_NOTFOUND ="Aucun résultat n'a été trouvé.";
+
+    const ERROR_DESACTIVATE = "L'utilisateur n'a pas été désactivé.";
+    const SUCCESS_DESACTIVATE = "L'utilisateur a été désactivé.";
+
     //private static $sSender = "R Survey";
     //private static $sFrom = "no-reply@r-survey.com";
 
@@ -289,8 +294,15 @@ class UserController extends SuperController
      * Liste de users paginés
      */
     public function listUsers() {
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedUserList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+        if(!$this->isAdmin()) return false;
+        $this->page = "admin/listUsers";
+        $oPagination = $this->oEntity->getPaginatedUserList(10, isset($_GET["page"]) ? $_GET["page"] : 1);
+        if(count($oPagination->getAData()) == 0) {
+            $this->page = "admin/error";
+            $this->view(array(self::ERROR => self::ERROR_NOTFOUND));
+            return false;
+        }
+        $this->view(array("oPagination" => $oPagination));
     }
 
     /**
@@ -298,9 +310,14 @@ class UserController extends SuperController
      * @return bool
      */
     public function desactivateUser() {
-        $id = $this->checkPostId();
-        if($id == 0) return false;
-        return $this->oEntity->activateDesactivate($id, 0);
+        if(!$this->isAdmin()) return false;
+        $iId = $this->checkPostId();
+        if($iId == 0 || !$this->oEntity->activateDesactivate($iId, 0)) {
+            echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));
+            return false;
+        }
+        echo json_encode(array(self::SUCCESS, self::SUCCESS_DESACTIVATE));
+        return true;
     }
 
     /**
@@ -308,6 +325,7 @@ class UserController extends SuperController
      * @return bool
      */
     public function activateUser() {
+        if(!$this->isAdmin()) return false;
         $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 1);
@@ -417,20 +435,20 @@ class UserController extends SuperController
             || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
         )
         {
-            echo json_encode(array(self::ERROR, self::ERROR_CHECKPASSWORD));
+            $this->view(array(self::ERROR => self::ERROR_CHECKPASSWORD));
             return false;
         }
         $id = $this->checkToken();
         if(!$id) {
-            echo json_encode(array(self::ERROR, self::ERROR_BROKENLINK));
+            $this->view(array(self::ERROR => self::ERROR_BROKENLINK));
             return false;
         }
         // Changer le mot de passe et le token
         if(!$this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken())) {
-            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            $this->view(array(self::ERROR => self::ERROR_INTERNAL));
             return false;
         }
-        echo json_encode(array(self::SUCCESS, self::SUCCESS_PASSWORDCHANGED));
+        $this->view(array(self::SUCCESS => self::SUCCESS_PASSWORDCHANGED));
         return true;
     }
 

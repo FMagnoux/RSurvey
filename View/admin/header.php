@@ -29,8 +29,8 @@
             <!-- Navigation. We hide it in small screens. -->
             <nav class="mdl-navigation mdl-layout--large-screen-only">
                 <a id="newSurvey" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Ecrire un sondage</a>
-                <a id="login" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Se Connecter</a>
-                <a id="signup" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Créer un compte</a>
+                <a id="disconnect" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
+                   href="disconnect.html">Se Déconnecter</a>
 
                 <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="#contact">Contact</a>
             </nav>
@@ -39,9 +39,9 @@
             </label>
         </div>
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--white mdl-shadow--12dp">
-            <a href="#scroll-tab-1" class="mdl-layout__tab is-active mdl-color-text--black">Tous les sondages</a>
-            <a href="#scroll-tab-2" class="mdl-layout__tab mdl-color-text--black">Tous les utilisateurs</a>
-            <a href="#scroll-tab-3" class="mdl-layout__tab mdl-color-text--black">Toutes les zones</a>
+            <a href="./administration.html" class="mdl-layout__tab <?php if($this->page == "admin/listQuestions") echo "is-active" ?> mdl-color-text--black">Tous les sondages</a>
+            <a href="./administration-users.html" class="mdl-layout__tab <?php if($this->page == "admin/listUsers") echo "is-active" ?> mdl-color-text--black">Tous les utilisateurs</a>
+            <a href="./administration-zones.html" class="mdl-layout__tab <?php if($this->page == "admin/listZones") echo "is-active" ?> mdl-color-text--black">Toutes les zones</a>
 
         </div>
         </header>
@@ -55,3 +55,4 @@
         </nav>
     </div>
     <div class="mdl-layout__content">
+        <div class="page-content">

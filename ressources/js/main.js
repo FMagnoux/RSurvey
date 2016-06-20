@@ -14,7 +14,7 @@ var contentForgotPassword = "<form id='formForgotPassword' action='#'> <div clas
 
 var newSurveyRequest = function() {
   var sQuestionLibelValue = $("#newSurveyQuestion").val();
-  var aQuestionChoixValues = []
+  var aQuestionChoixValues = [];
   var iIdSubValue = $(".newSurveychoiceZone:checked").val();
   var newSurveychoice1 = $('#newSurveychoice1').val();
   var newSurveychoice2 = $('#newSurveychoice2').val();
@@ -23,10 +23,8 @@ var newSurveyRequest = function() {
   if(newSurveychoice1 != '') {aQuestionChoixValues.push(newSurveychoice1);}
   if(newSurveychoice2 != '') {aQuestionChoixValues.push(newSurveychoice2);}
   if(newSurveychoice3 != '') {aQuestionChoixValues.push(newSurveychoice3);}
+  if(aQuestionChoixValues[0] == undefined) {aQuestionChoixValues.push(null);}
 
-console.log(sQuestionLibelValue);
-console.log(aQuestionChoixValues);
-console.log(iIdSubValue);
 
 $.ajax({
   url: 'creer-sondage.html',
@@ -36,11 +34,25 @@ $.ajax({
 })
 .done(function(e) {
   console.log("success");
-  console.log(e[1]);
+  console.log(e)
+
+  if(e[0] == "success") {
+    hideDialog($('#orrsDiag'));
+    showDialog({
+        title: "<span class='mdl-color-text--green-800'>"+e[1]+"</span>",
+        text: "<div class=mdl-typography--text-center> Cliquez ici pour acceder à votre sondage <a target=_blank href=http://localhost/rsurvey/"+e[2]+">http://localhost/rsurvey/"+e[2]+"</a> <p class=shareButtonsContainer ><a class=shareButton target=_blank href=https://www.facebook.com/sharer/sharer.php?app_id=113869198637480&sdk=joey&u="+encodeURI("http://localhost/rsurvey/"+e[2])+"><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800'>Partager sur Facebook !</button></a><a class=shareButton target=_blank href=https://twitter.com/intent/tweet?text="+encodeURI("Je viens de créer un sondage ! "+sQuestionLibelValue+" http://localhost/rsurvey/"+e[2])+"><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-500'>Partager sur Twitter !</button></a></p></div>",
+        negative: false,
+        positive:false
+    });
+
+  }
+  else if(e[0] =="error") {
+    $('#formNewSurvey').prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+  }
 })
 .fail(function(e) {
   console.log("error");
-  console.log(e[1]);
+  console.log(e.responseText);
 })
 .always(function(e) {
   console.log("complete");
@@ -50,18 +62,31 @@ $.ajax({
 }
 
 
-var signupRequest = function() {
-  var datas = $('#formSignup').serialize();
+var ajaxRequestSerialize = function(idForm,urlDest) {
+  var datas = $('#'+idForm).serialize();
   $.ajax({
-    url: 'inscription.html',
+    url: urlDest,
     type: 'POST',
     dataType: 'json',
     data: datas
   })
   .done(function(e) {
     console.log("success");
-    console.info(e[1]);
+    if(e[0] == "success") {
+      hideDialog($('#orrsDiag'));
+      showDialog({
+          title: "<span class='mdl-color-text--green-800'>"+e[1]+"</span>",
+          text: "",
+          negative: false,
+          positive:false
+      });
+      setTimeout(function(){ location.reload(true); }, 4000);
 
+    }
+    else if(e[0] =="error") {
+      $('#'+idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>"+e[1]+"</span>");
+
+    }
   })
   .fail(function(e) {
     console.log("error");
@@ -73,53 +98,11 @@ var signupRequest = function() {
 }
 
 
-var loginRequest = function() {
-    var datas = $('#formLogin').serialize();
-  $.ajax({
-    url: 'login.html',
-    type: 'POST',
-    dataType: 'json',
-    data: datas
-  })
-  .done(function(e) {
-    console.log("success");
-    console.info(e[1]);
 
-  })
-  .fail(function(e) {
-    console.log("error");
-    console.warn(e.responseText);
-  })
-  .always(function(e) {
-    console.log("complete");
-  });
-}
-
-
-var forgotPassowrdRequest = function() {
-  var datas = $('#formForgotPassword').serialize();
-  $.ajax({
-    url: 'mot-de-passe-oublie.html',
-    type: 'POST',
-    dataType: 'json',
-    data: datas
-  })
-  .done(function(e) {
-    console.log("success");
-    console.info(e[1]);
-
-  })
-  .fail(function(e) {
-    console.log("error");
-    console.warn(e);
-
-  })
-  .always(function(e) {
-    console.log("complete");
-  });
+var updateUserRequest = function() {
+  console.log('EDIT');
 
 }
-
 /*DOCUMENT READY*/
 
 $(document).ready(function() {
@@ -127,14 +110,18 @@ $(document).ready(function() {
   $('#newSurvey').click(function(event) {
       event.preventDefault();
       showDialog({
+        onLoaded:function(e){
+          $('#positive').off('click');
+          $('#positive').click(function() {
+            $('#errorForm').remove()
+            newSurveyRequest();
+          });
+        },
           title: "<span class='mdl-color-text--blue-800'>Ajouter un sondage</span>",
           text: contentNewSurvey,
           negative: false,
           positive: {
-              title: 'Ajouter un sondage',
-              onClick: function(e) {
-                  newSurveyRequest();
-              }
+              title: 'Ajouter un sondage'
           }
       });
   });
@@ -145,7 +132,8 @@ $(document).ready(function() {
           onLoaded:function(e){
             $('#positive').off('click');
             $('#positive').click(function() {
-              loginRequest();
+              $('#errorForm').remove()
+              ajaxRequestSerialize('formLogin','login.html');
             });
           },
           title: "<span class='mdl-color-text--blue-800'>Se connecter</span>",
@@ -154,14 +142,18 @@ $(document).ready(function() {
               title: 'Mot de passe oublié ?',
               onClick: function() {
                   showDialog({
+                    onLoaded:function(e){
+                      $('#positive').off('click');
+                      $('#positive').click(function() {
+                        $('#errorForm').remove()
+                        ajaxRequestSerialize('formForgotPassword','mot-de-passe-oublie.html');
+                      });
+                    },
                       title: "<span class='mdl-color-text--blue-800'>Mot de passe oublié ?</span>",
                       text: contentForgotPassword,
                       negative: false,
                       positive: {
-                          title: 'Envoyer',
-                          onClick: function() {
-                              forgotPassowrdRequest();
-                          }
+                          title: 'Envoyer'
                       }
                   });
               }
@@ -175,15 +167,24 @@ $(document).ready(function() {
   $('#signup').click(function(event) {
       event.preventDefault();
       showDialog({
+        onLoaded:function(e){
+          $('#positive').off('click');
+          $('#positive').click(function() {
+            $('#errorForm').remove()
+            ajaxRequestSerialize('formSignup','inscription.html');
+          });
+        },
           title: "<span class='mdl-color-text--blue-800'>Créer un compte</span>",
           text: contentSignup,
           negative: false,
           positive: {
-              title: 'Créer un compte',
-              onClick: function() {
-                  signupRequest();
-              }
+              title: 'Créer un compte'
           }
       });
+  });
+
+  $('#updateUser').click(function(event) {
+    event.preventDefault();
+    updateUserRequest();
   });
 });

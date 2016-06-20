@@ -45,6 +45,8 @@
                <?php
             }
             ?>
+            <a id="updateUser" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Modifier son compte</a>
+
             <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="#contact">Contact</a>
          </nav>
          <label class="mdl-button mdl-js-button mdl-button--icon">

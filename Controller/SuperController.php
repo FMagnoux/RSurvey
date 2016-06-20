@@ -26,6 +26,15 @@ class SuperController
         $this->view();
     }
 
+    public function isAdmin() {
+        if(!empty($_SESSION["iIdRole"]) && $_SESSION["iIdRole"] < 2) {
+            return true;
+        }
+        $this->page = "commun/forbidden";
+        $this->view();
+        return false;
+    }
+
     public function checkLogin()
     {
         if(isset($_SESSION['iIdUser']) && !empty($_SESSION['iIdUser'])){
@@ -73,6 +82,7 @@ class SuperController
     }
     
     public function checkId($id) {
+        $id = $this->decrypt($id);
         $id = intval($id);
         if($id > 0) return $id;
         return 0;
