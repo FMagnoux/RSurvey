@@ -1,3 +1,5 @@
+</div>
+</div>
 <footer class="mdl-mini-footer">
     <div class="mdl-mini-footer__left-section">
         <div class="mdl-logo">Rsurvey</div>
@@ -13,6 +15,8 @@
 <script src="ressources/js/material.min.js"></script>
 <script src="ressources/js/jquery-modal-mdl.js"></script>
 <script src="ressources/js/main.js"></script>
+<script src="ressources/js/admin.js"></script>
+<?php $this->insertFiles($aJs, $aJsFileNames, '<script src="./ressources/js/', '.js"></script>'); ?>
 
 </body>
 </html>
