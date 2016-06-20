@@ -10,6 +10,7 @@ class UserController extends SuperController
 {
     private $oEntity;
     private static $sCleSalage = "=9Y[Ec9i";
+    private static $lenght = 255;
 
     const SUCCESS = "success";
     const ERROR = "error";
@@ -210,7 +211,7 @@ class UserController extends SuperController
     }
 
     public function filterEmail($sUsrMail){
-        if(!empty($sUsrMail)){
+        if(!empty($sUsrMail) && strlen($sUsrMail)<self::$lenght){
             if (filter_var($sUsrMail,FILTER_VALIDATE_EMAIL)){
                 return true;
             }
@@ -230,7 +231,7 @@ class UserController extends SuperController
      * @return bool
      */
     public function checkPseudo(){
-        if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo'])){
+        if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo']) && strlen($_POST['sUsrPseudo'])<self::$lenght){
             $sUsrPseudo = $_POST['sUsrPseudo'];
             if($this->oEntity->checkPseudo(htmlspecialchars($sUsrPseudo))){
                 return true;
@@ -362,7 +363,7 @@ class UserController extends SuperController
      */
     public function forgottenPassword() {
         $this->setJsonData();
-        if($this->filterEmail($_POST["sMail"]) !== true) {
+        if(empty($_POST["sMail"]) || $this->filterEmail($_POST["sMail"]) !== true) {
             echo json_encode(array(self::ERROR, self::ERROR_FILTERMAIL));
             return false;
         }

@@ -35,6 +35,8 @@
                ?>
                <a id="disconnect" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
                   href="disconnect.html">Se Déconnecter</a>
+               <a id="updateUser" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Modifier son compte</a>
+
                <?php
             }
             else {
@@ -45,7 +47,6 @@
                <?php
             }
             ?>
-            <a id="updateUser" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Modifier son compte</a>
 
             <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="#contact">Contact</a>
          </nav>
