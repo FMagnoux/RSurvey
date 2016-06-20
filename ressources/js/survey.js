@@ -21,8 +21,9 @@ function getMap() {
     $('#cloreSurveyButton').click(function(e) {
       cloreSurvey('yo');
     });
-    createMap("centermap",e)
 
+    createMap("centermap",e)
+    sharingCreator(e[0].iQuestionId,e[0].sQuestionLibel);
   })
   .fail(function() {
     console.log("error");
@@ -161,6 +162,19 @@ var cloreSurvey = function(e) {
     console.log("complete");
   });
 
+}
+
+var sharingCreator = function(url,sQuestionLibelValue) {
+      $('#fab').click(function(event) {
+        showDialog({
+            title: "<span class='mdl-color-text--green-800'>Partager ce sondage !</span>",
+            text: sharingGenerator(url,sQuestionLibelValue),
+            negative: false,
+            positive: {
+                title: 'Retour'
+            }
+        });
+      });
 }
 
 $(document).ready(function() {
