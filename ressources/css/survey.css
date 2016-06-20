@@ -1,0 +1,66 @@
+  /* SONDAGES */
+
+.card-wide.mdl-card {
+  width: 100%;
+}
+.card-wide > .mdl-card__title {
+  color: #fff;
+  height: 65px;
+  background:bottom right 15% no-repeat #D81B60;
+}
+.card-wide > .mdl-card__menu {
+  color: #fff;
+}
+
+
+
+#centermap {
+  height: 950px;
+}
+.leaflet-control-zoom {
+  display:none;
+}
+.mdl-card__supporting-text {
+  margin:auto;
+}
+
+.survey-box {
+  margin:auto;
+}
+#fab {
+  position: fixed;
+  display: block;
+  right: 0;
+  bottom: 0;
+  margin-right: 40px;
+  margin-bottom: 40px;
+  z-index: 900;
+}
+
+.navigateButton {
+margin-top: 50vh;
+text-align: center;
+}
+
+.navigatePrev {
+  float:right;
+}
+
+.navigateLeft {
+  float: left;
+}
+
+.answerButton0 {
+  min-width: 100px;
+  margin-right:24px;
+}
+
+.answerButton1 {
+  min-width: 100px;
+  margin-right:24px;
+background-color:#2196F3 !important;
+}
+
+.answerButton2 {
+  min-width: 100px;
+}
