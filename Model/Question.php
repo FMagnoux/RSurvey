@@ -248,32 +248,19 @@ class Question extends SQL implements JsonSerializable
         }
     }
 
-    public function getNextPreviousQuestion($next){
-        $operateur = "";
-        $fonction = "";
+    public function getNextPreviousQuestion($operateur , $fonction){
 
-        if($next=="true"){
-            $operateur = ">";
-            $fonction = "MIN";
-        }
-        else {
-            $operateur = "<";
-            $fonction = "MAX";
-        }
+
         $requete = $this->db->prepare('
-        select
-            question_id ,
-            question_libel ,
-            '.$fonction.'(question_date) as question_date ,
-            question_close ,
-            usr_id ,
-            sub_id
-        from Question
-        where
-            question_active = :question_active
-        and
-            question_date '.$operateur.' :question_date
-         ') ;
+        select q2.*
+        from Question q2
+        where q2.question_date = (
+            select '.$fonction.'(q1.question_date)
+            from Question q1
+            where q1.question_date '.$operateur.' :question_date
+            and q1.question_active = :question_active 
+            )
+            ') ;
 
         $requete->execute (array(
             ':question_active'=>self::$active,
