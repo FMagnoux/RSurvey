@@ -172,6 +172,7 @@ class Question extends SQL implements JsonSerializable
         return $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
             ':question_active'=>self::$active,
+            ':question_libel' => $this->sQuestionLibel
         ));
     }
 
