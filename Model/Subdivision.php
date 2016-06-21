@@ -140,7 +140,7 @@ class Subdivision extends SQL implements JsonSerializable
     {
         return [
             'iSubId' => $this->iSubId,
-            'sSubLibel' => utf8_encode($this->sSubLibel),
+            'sSubLibel' => $this->sSubLibel,
             'bSubActive' => $this->bSubActive,
             'oZoneId' => $this->oZoneId
         ];

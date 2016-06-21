@@ -406,7 +406,7 @@ class Question extends SQL implements JsonSerializable
     {
         return [
             'iQuestionId' => $this->iQuestionId,
-            'sQuestionLibel' => utf8_encode($this->sQuestionLibel),
+            'sQuestionLibel' => $this->sQuestionLibel,
             'dQuestionDate' => $this->dQuestionDate,
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,
