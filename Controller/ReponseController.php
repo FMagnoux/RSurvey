@@ -53,7 +53,7 @@ class ReponseController extends SuperController
 
     public function answerQuestion(){
         $this->oEntity->setIChoixId(intval($_POST['iIdChoix']));
-        $this->oEntity->setIReponseSubcode(intval($_POST['iSubCode']));
+        $this->oEntity->setIReponseSubcode($_POST['iSubCode']);
         // Récupérer le numéro de la question
         require_once "./Model/Choix.php";
         $oChoix = new Choix();
