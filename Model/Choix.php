@@ -165,8 +165,7 @@ class Choix extends SQL implements JsonSerializable
                 $oChoix->setIChoixId($result['choix_id']);
                 $oChoix->setSChoixLibel($result['choix_libel']);
                 $oChoix->setIQuestionId($result['question_id']);
-
-                $aChoix[$oChoix->getIChoixId()] = $oChoix;
+                array_push($aChoix,$oChoix);
             }
             return $aChoix;
         }
