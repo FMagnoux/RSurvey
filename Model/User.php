@@ -349,7 +349,7 @@ class User extends SQL implements JsonSerializable
         return array(
             "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
             "table" => $this->sTable,
-            "where" => "usr_active = 1"
+            "where" => "usr_active = 1 and usr_id !=".$_SESSION['iIdUser']
         );
     }
 
