@@ -54,10 +54,10 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
                 "iIdChoix" => -1,
                 "sChoixLibel" => "Merde"
             )*/
-            array(
+            /*array(
                 "iIdChoix" => 32,
                 "sChoixLibel" => "Merde"
-            )
+            )*/
         );
         /*$_POST['aChoix'][0]["iIdChoix"] = 5;
         $_POST['aChoix'][0]["sChoixLibel"] = "choix1";

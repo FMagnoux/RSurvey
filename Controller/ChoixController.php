@@ -35,6 +35,7 @@ class ChoixController extends SuperController
         // Recupere les choix du sondage en base
         $this->oEntity->setIQuestionId($iIdQuestion);
         $aResultChoix = $this->oEntity->getChoixQuestion();
+        $aChoixToCreate = array();
         
         // Vérifie l'existence des choix entre la base et les POST
         for($i = 0 ; $i<count($aChoix);$i++) {
@@ -55,16 +56,20 @@ class ChoixController extends SuperController
             else {
                 $this->oEntity = $this->oEntity->setIQuestionId($iIdQuestion)
                 ->setSChoixLibel($aChoix[$i]->getSChoixLibel());
+
+                array_push($aChoixToCreate, $this->oEntity->getSChoixLibel());
                 
-                if(!$this->oEntity->createChoix()){
-                    $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
-                }
                 if(!$aChoix[$i]->desactiveChoix()) {
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
                     return json_encode($returnjson);
                 }
             }
+        }
+
+        $sResult = $this->createChoix($aChoixToCreate, $iIdQuestion);
+        if(!empty($sResult) && is_string($sResult)) {
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            return json_encode($returnjson);
         }
         
         /*for ($j = 0;$j<count($aResultChoix);$j++){
@@ -75,9 +80,9 @@ class ChoixController extends SuperController
                     return json_encode($returnjson);
                 }
             }
-        }
+        }*/
         $returnjson = array(self::SUCCESS, self::SUCCESS_UPDATE);
-        return json_encode($returnjson);*/
+        return json_encode($returnjson);
     }
 
 
