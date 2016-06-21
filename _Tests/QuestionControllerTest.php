@@ -36,7 +36,31 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
     {
         $_GET["id"] = 2;
         $questionController = new QuestionController();
-        $questionController->listQuestionsByIdUser();
+        //$questionController->listQuestionsByIdUser();
+    }
+    
+    public function test_updateQuestion() {
+        $_POST['iIdQuestion'] = "610b6bad1a67c201";
+        $_POST['aChoix'] = array(
+            array(
+                "iIdChoix" => 5,
+                "sChoixLibel" => "choix1"
+            ),
+            array(
+                "iIdChoix" => 6,
+                "sChoixLibel" => "choix2"
+            )
+        );
+        /*$_POST['aChoix'][0]["iIdChoix"] = 5;
+        $_POST['aChoix'][0]["sChoixLibel"] = "choix1";
+        $_POST['aChoix'][1]["iIdChoix"] = 6;
+        $_POST['aChoix'][1]["sChoixLibel"] = "choix2";*/
+        $_POST['sQuestionLibel'] = "Update question 4 ?";
+        $_POST['iIdZone'] = 1;
+        $_SESSION['iIdUser'] = 1;
+
+        $oQuestionController = new QuestionController();
+        $this->assertTrue($oQuestionController->updateQuestion());
     }
 }
 

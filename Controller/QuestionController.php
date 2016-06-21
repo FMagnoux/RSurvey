@@ -99,36 +99,54 @@ class QuestionController extends SuperController
      */
     public function updateQuestion(){
         require_once "./Controller/ChoixController.php";
-
-        // Vérifie le format de la question
-        if($this->checkQuestion()) {
-            // Vérifie que la question est changée
-            if($this->checkChangeQuestion()){
-                // Met à jour la question
-                if(!$this->oEntity->changeQuestion()){
-                    $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                    echo json_encode($returnjson);
-                }
-                $aChoix = array();
-                for ($i=0;$i<count($_POST['aChoix']);$i++){
-                    $oChoix = new Choix();
-                    if(!empty($_POST['aChoix'][$i]['sChoixLibel']) && !empty($_POST['aChoix'][$i]['iIdChoix'])){
-                        $oChoix->setSChoixLibel($_POST['aChoix'][$i]['sChoixLibel']);
-                        $oChoix->setIChoixId($_POST['aChoix'][$i]['iIdChoix']);
-
-                        array_push($aChoix,$oChoix);
-                    }
-                    else {
-                        $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
-                        return json_encode($returnjson);
-                    }
-                }
-                $oChoixController = new ChoixController();
-                return $oChoixController->updateChoix($aChoix,$_POST['iIdQuestion']);
+        if(!empty($_POST["iIdQuestion"])) {
+            $this->oEntity->setIQuestionId(intval($this->decrypt($_POST["iIdQuestion"])));
+            if($this->oEntity->getIQuestionId() <= 0) {
+                $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                echo json_encode($returnjson);
+                return false;
             }
         }
         else {
-            return $this->checkQuestion();
+            $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
+        // Vérifie le format de la question
+        if($this->checkQuestion()) {
+            $this->oEntity->setSQuestionLibel($_POST['sQuestionLibel']);
+            // Vérifie que la question est changée
+            if($this->checkChangeQuestion()) {
+                // Met à jour la question
+                if (!$this->oEntity->changeQuestion()) {
+                    // Message d'erreur si la requête SQL a échoué
+                    $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                    echo json_encode($returnjson);
+                    return false;
+                }
+            }
+            $aChoix = array();
+            for ($i=0;$i<count($_POST['aChoix']);$i++){
+                require_once "./Model/Choix.php";
+                $oChoix = new Choix();
+                if(!empty($_POST['aChoix'][$i]['sChoixLibel']) && !empty($_POST['aChoix'][$i]['iIdChoix'])){
+                    $oChoix->setSChoixLibel($_POST['aChoix'][$i]['sChoixLibel']);
+                    $oChoix->setIChoixId($_POST['aChoix'][$i]['iIdChoix']);
+                    array_push($aChoix,$oChoix);
+                }
+                else {
+                    $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
+                    echo json_encode($returnjson);
+                    return false;
+                }
+            }
+            $oChoixController = new ChoixController();
+            echo $oChoixController->updateChoix($aChoix,$this->oEntity->getIQuestionId());
+            return true;
+        }
+        else {
+            echo $this->checkQuestion();
+            return false;
         }
     }
 
