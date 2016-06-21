@@ -44,11 +44,19 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
         $_POST['aChoix'] = array(
             array(
                 "iIdChoix" => 5,
-                "sChoixLibel" => "choix1"
+                "sChoixLibel" => "Trump"
             ),
             array(
                 "iIdChoix" => 6,
-                "sChoixLibel" => "choix2"
+                "sChoixLibel" => "Clinton"
+            ),
+            /*array(
+                "iIdChoix" => -1,
+                "sChoixLibel" => "Merde"
+            )*/
+            array(
+                "iIdChoix" => 32,
+                "sChoixLibel" => "Merde"
             )
         );
         /*$_POST['aChoix'][0]["iIdChoix"] = 5;

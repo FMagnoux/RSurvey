@@ -60,10 +60,14 @@ class ChoixController extends SuperController
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
                     return json_encode($returnjson);
                 }
+                if(!$aChoix[$i]->desactiveChoix()) {
+                    $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                    return json_encode($returnjson);
+                }
             }
         }
         
-        for ($j = 0;$j<count($aResultChoix);$j++){
+        /*for ($j = 0;$j<count($aResultChoix);$j++){
             if(!array_key_exists($aResultChoix[$i]->getIChoixId(),$aChoix)){
                 $this->oEntity->setIChoixId($aResultChoix[$i]->getIChoixId());
                 if(!$this->oEntity->desactiveChoix()){
@@ -73,7 +77,7 @@ class ChoixController extends SuperController
             }
         }
         $returnjson = array(self::SUCCESS, self::SUCCESS_UPDATE);
-        return json_encode($returnjson);
+        return json_encode($returnjson);*/
     }
 
 
