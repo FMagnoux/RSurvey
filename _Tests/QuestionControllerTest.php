@@ -50,20 +50,16 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
                 "iIdChoix" => 6,
                 "sChoixLibel" => "Clinton"
             ),
-            /*array(
+            array(
                 "iIdChoix" => -1,
-                "sChoixLibel" => "Merde"
-            )*/
+                "sChoixLibel" => "Trol"
+            )
             /*array(
                 "iIdChoix" => 32,
                 "sChoixLibel" => "Merde"
             )*/
         );
-        /*$_POST['aChoix'][0]["iIdChoix"] = 5;
-        $_POST['aChoix'][0]["sChoixLibel"] = "choix1";
-        $_POST['aChoix'][1]["iIdChoix"] = 6;
-        $_POST['aChoix'][1]["sChoixLibel"] = "choix2";*/
-        $_POST['sQuestionLibel'] = "Update question 4 ?";
+        $_POST['sQuestionLibel'] = "Update question 5 ?";
         $_POST['iIdZone'] = 1;
         $_SESSION['iIdUser'] = 1;
 

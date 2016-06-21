@@ -36,12 +36,16 @@ class ChoixController extends SuperController
         $this->oEntity->setIQuestionId($iIdQuestion);
         $aResultChoix = $this->oEntity->getChoixQuestion();
         $aChoixToCreate = array();
+        $aChoixMatched = array();
         
         // Vérifie l'existence des choix entre la base et les POST
         for($i = 0 ; $i<count($aChoix);$i++) {
 
             // Si il match
             if(array_key_exists($aChoix[$i]->getIChoixId(),$aResultChoix)){
+                // Se souvenir des keys qui sont matchés
+                array_push($aChoixMatched, $aChoix[$i]->getIChoixId());
+
                 require_once "./Controller/ReponseController.php";
                 $oReponseController = new ReponseController();
 
@@ -70,6 +74,21 @@ class ChoixController extends SuperController
         if(!empty($sResult) && is_string($sResult)) {
             $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
             return json_encode($returnjson);
+        }
+
+        // Si le formulaire en POST a moins d'items que celui en base, ça veut dire que l'utilisateur a supprimé un choix
+        if(count($aChoix) < count($aResultChoix)) {
+            // Supprimer les keys matchés une à une pour n'avoir que celui le choix en trop
+            foreach ($aChoixMatched as $a) {
+                unset($aResultChoix[$a]);
+            }
+            // Désactiver le choix qui reste
+            foreach($aResultChoix as $a) {
+                if(!$a->desactiveChoix()) {
+                    $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                    return json_encode($returnjson);
+                }
+            }
         }
         
         /*for ($j = 0;$j<count($aResultChoix);$j++){
