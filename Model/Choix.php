@@ -166,7 +166,7 @@ class Choix extends SQL implements JsonSerializable
                 $oChoix->setSChoixLibel($result['choix_libel']);
                 $oChoix->setIQuestionId($result['question_id']);
 
-                array_push($aChoix,$oChoix);
+                $aChoix[$oChoix->getIChoixId()] = $oChoix;
             }
             return $aChoix;
         }
@@ -175,7 +175,7 @@ class Choix extends SQL implements JsonSerializable
     public function updateChoix(){
         $requete = $this->db->prepare('update Choix set choix_libel = :choix_libel where choix_id = :choix_id and choix_active = :choix_active') ;
         return $requete->execute (array(
-            ':question_id'=>$this->getIQuestionId(),
+            ':choix_id'=>$this->getIChoixId(),
             ':choix_active'=>self::$bActive,
             ':choix_libel'=>$this->getSChoixLibel(),
         ));

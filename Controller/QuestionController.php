@@ -126,6 +126,12 @@ class QuestionController extends SuperController
                 }
             }
             $aChoix = array();
+            $iNbChoix = count($_POST['aChoix']);
+            if($iNbChoix > 3 || $iNbChoix < 2) {
+                $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                echo json_encode($returnjson);
+                return false;
+            }
             for ($i=0;$i<count($_POST['aChoix']);$i++){
                 require_once "./Model/Choix.php";
                 $oChoix = new Choix();
@@ -141,8 +147,7 @@ class QuestionController extends SuperController
                 }
             }
             $oChoixController = new ChoixController();
-            echo $oChoixController->updateChoix($aChoix,$this->oEntity->getIQuestionId());
-            return true;
+            return $oChoixController->updateChoix($aChoix,$this->oEntity->getIQuestionId());
         }
         else {
             echo $this->checkQuestion();
