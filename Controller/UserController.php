@@ -238,7 +238,7 @@ class UserController extends SuperController
      */
     public function checkPseudo(){
         if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo'])){
-            if(strlen($_POST['sUsrPseudo'])<self::$lenght){
+            if(strlen($_POST['sUsrPseudo'])>self::$lenght){
                 $returnjson = array(self::ERROR,self::ERROR_LENGHTPSEUDO);
                 return json_encode($returnjson);
             }

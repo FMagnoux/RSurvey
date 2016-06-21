@@ -91,7 +91,7 @@ function createMap(mapPosition,datas) {
 
 function customStyle(feature) {
   if(feature.properties && feature.properties.nom){
-    var rgb = {};
+    var rgb = [];
     var total=0;
     $(datas[1]).each(function(i){
       if (typeof this.aReponse[feature.properties.code] !== "undefined") {
@@ -102,20 +102,13 @@ function customStyle(feature) {
 
 
     var totalRgb = 0;
-    var formatRgb = [];
-    for(var i in rgb) { totalRgb += rgb[i]; }
-    console.warn(totalRgb);
-    $(datas[1]).each(function(i){
-      if(typeof rgb[this.iChoixId] !== "undefined"){
-        console.log(rgb[this.iChoixId]);
-        formatRgb.push(Math.round(rgb[this.iChoixId]/totalRgb*255));
-      }
-      else {
-        formatRgb.push(0);
-      }
-    });
-    console.log(formatRgb);
-    return {fillColor:"rgb("+formatRgb[0]+","+formatRgb[1]+","+formatRgb[2]+")",fillOpacity:1}
+    console.log(rgb);
+    var backgroundcolors = ['#ff4081','#009688','#2196F3'];
+    
+    var maxValue = Math.max.apply(null,rgb);
+    console.log(rgb.indexOf(1))
+
+
   }
 }
   mapContent.addTo(map);
