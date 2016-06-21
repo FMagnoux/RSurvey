@@ -9,10 +9,7 @@ function getMap() {
   })
   .done(function(e) {
     console.log("success");
-<<<<<<< HEAD
-=======
     console.info(e);
->>>>>>> origin/master
     test = e;
     var userSession = e[2];
     var userQuestion = e[0].oUsrId.iUsrId;
