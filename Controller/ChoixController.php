@@ -31,7 +31,12 @@ class ChoixController extends SuperController
 
 
     public function updateChoix($aChoix,$iIdQuestion){
-
+        if(count($aChoix) <= 1 || count($aChoix) > 3   ){
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
+        
         // Recupere les choix du sondage en base
         $this->oEntity->setIQuestionId($iIdQuestion);
         $aResultChoix = $this->oEntity->getChoixQuestion();
@@ -53,7 +58,8 @@ class ChoixController extends SuperController
                 $this->oEntity->setIChoixId($aChoix[$i]->getIChoixId());
                 if(!$this->oEntity->updateChoix() || !$oReponseController->resetVotes($this->oEntity->getIChoixId())){
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
             // Si il ne match pas on crée la ligne en base
@@ -65,7 +71,8 @@ class ChoixController extends SuperController
                 
                 if(!$aChoix[$i]->desactiveChoix()) {
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
         }
@@ -73,7 +80,8 @@ class ChoixController extends SuperController
         $sResult = $this->createChoix($aChoixToCreate, $iIdQuestion);
         if(!empty($sResult) && is_string($sResult)) {
             $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-            return json_encode($returnjson);
+            echo json_encode($returnjson);
+            return false;
         }
 
         // Si le formulaire en POST a moins d'items que celui en base, ça veut dire que l'utilisateur a supprimé un choix
@@ -86,7 +94,8 @@ class ChoixController extends SuperController
             foreach($aResultChoix as $a) {
                 if(!$a->desactiveChoix()) {
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
         }
@@ -101,7 +110,8 @@ class ChoixController extends SuperController
             }
         }*/
         $returnjson = array(self::SUCCESS, self::SUCCESS_UPDATE);
-        return json_encode($returnjson);
+        echo json_encode($returnjson);
+        return true;
     }
 
 

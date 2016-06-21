@@ -147,8 +147,7 @@ class QuestionController extends SuperController
                 }
             }
             $oChoixController = new ChoixController();
-            echo $oChoixController->updateChoix($aChoix,$this->oEntity->getIQuestionId());
-            return true;
+            return $oChoixController->updateChoix($aChoix,$this->oEntity->getIQuestionId());
         }
         else {
             echo $this->checkQuestion();
