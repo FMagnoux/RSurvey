@@ -47,7 +47,8 @@ class SuperController
     }
 
     public function disconnectUser(){
-        unset($_SESSION);
+        unset($_SESSION["iIdRole"]);
+        unset($_SESSION["iIdUser"]);
         session_destroy();
         header('Location: ./');
     }
