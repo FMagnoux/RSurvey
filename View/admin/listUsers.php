@@ -1,3 +1,4 @@
+<?php require_once './View/admin/filterUsers.php' ?>
 
 <?php foreach ($oPagination->getAData() as $oUser) : ?>
     <div class=" container-card section--center mdl-grid mdl-grid--no-spacing mdl-shadow--2dp">
@@ -18,4 +19,4 @@
     </div>
 <?php endforeach; ?>
 
-<?php $oPagination->view("./administration-users/page-", ".html");
+<?php $oPagination->view($sUrlStart, ".html");

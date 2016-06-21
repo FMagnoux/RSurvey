@@ -31,16 +31,26 @@ class ChoixController extends SuperController
 
 
     public function updateChoix($aChoix,$iIdQuestion){
-
+        if(count($aChoix) <= 1 || count($aChoix) > 3   ){
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
+        
         // Recupere les choix du sondage en base
         $this->oEntity->setIQuestionId($iIdQuestion);
         $aResultChoix = $this->oEntity->getChoixQuestion();
+        $aChoixToCreate = array();
+        $aChoixMatched = array();
         
         // Vérifie l'existence des choix entre la base et les POST
         for($i = 0 ; $i<count($aChoix);$i++) {
 
             // Si il match
             if(array_key_exists($aChoix[$i]->getIChoixId(),$aResultChoix)){
+                // Se souvenir des keys qui sont matchés
+                array_push($aChoixMatched, $aChoix[$i]->getIChoixId());
+
                 require_once "./Controller/ReponseController.php";
                 $oReponseController = new ReponseController();
 
@@ -48,22 +58,49 @@ class ChoixController extends SuperController
                 $this->oEntity->setIChoixId($aChoix[$i]->getIChoixId());
                 if(!$this->oEntity->updateChoix() || !$oReponseController->resetVotes($this->oEntity->getIChoixId())){
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
             // Si il ne match pas on crée la ligne en base
             else {
                 $this->oEntity = $this->oEntity->setIQuestionId($iIdQuestion)
                 ->setSChoixLibel($aChoix[$i]->getSChoixLibel());
+
+                array_push($aChoixToCreate, $this->oEntity->getSChoixLibel());
                 
-                if(!$this->oEntity->createChoix()){
+                if(!$aChoix[$i]->desactiveChoix()) {
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
+                }
+            }
+        }
+
+        $sResult = $this->createChoix($aChoixToCreate, $iIdQuestion);
+        if(!empty($sResult) && is_string($sResult)) {
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
+
+        // Si le formulaire en POST a moins d'items que celui en base, ça veut dire que l'utilisateur a supprimé un choix
+        if(count($aChoix) < count($aResultChoix)) {
+            // Supprimer les keys matchés une à une pour n'avoir que celui le choix en trop
+            foreach ($aChoixMatched as $a) {
+                unset($aResultChoix[$a]);
+            }
+            // Désactiver le choix qui reste
+            foreach($aResultChoix as $a) {
+                if(!$a->desactiveChoix()) {
+                    $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
         }
         
-        for ($j = 0;$j<count($aResultChoix);$j++){
+        /*for ($j = 0;$j<count($aResultChoix);$j++){
             if(!array_key_exists($aResultChoix[$i]->getIChoixId(),$aChoix)){
                 $this->oEntity->setIChoixId($aResultChoix[$i]->getIChoixId());
                 if(!$this->oEntity->desactiveChoix()){
@@ -71,9 +108,10 @@ class ChoixController extends SuperController
                     return json_encode($returnjson);
                 }
             }
-        }
+        }*/
         $returnjson = array(self::SUCCESS, self::SUCCESS_UPDATE);
-        return json_encode($returnjson);
+        echo json_encode($returnjson);
+        return true;
     }
 
 
