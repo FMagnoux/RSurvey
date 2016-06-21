@@ -20,7 +20,7 @@ abstract class SQL
             $port ='3306';
             $database ='rsurvey';
             $user = 'root';
-            $password = 'mysql';
+            $password = '';
             $dns = $engine.':port='.$port.';dbname='.$database.";host=".$host;
             $this->db = new PDO($dns, $user, $password);
             $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
