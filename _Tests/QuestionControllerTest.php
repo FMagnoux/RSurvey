@@ -44,20 +44,20 @@ class QuestionControllerTest extends PHPUnit_Framework_TestCase
         $_POST['aChoix'] = array(
             array(
                 "iIdChoix" => 5,
-                "sChoixLibel" => "Trump"
+                "sChoixLibel" => "Trumpe"
             ),
             array(
                 "iIdChoix" => 6,
                 "sChoixLibel" => "Clinton"
             ),
-            array(
+            /*array(
                 "iIdChoix" => -1,
-                "sChoixLibel" => "Trol"
-            ),
-            array(
+                "sChoixLibel" => "Ma gueule"
+            ),*/
+            /*array(
                 "iIdChoix" => 35,
                 "sChoixLibel" => "Merde"
-            )
+            )*/
         );
         $_POST['sQuestionLibel'] = "Update question 5 ?";
         $_POST['iIdZone'] = 1;
