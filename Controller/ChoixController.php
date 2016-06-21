@@ -28,8 +28,16 @@ class ChoixController extends SuperController
     public function desactiveChoix($aChoix){
             $this->oEntity->desactiveChoix($aChoix);
     }
-
-
+    
+    private function browseResultChoix($iSearch, $aResultChoix) {
+        foreach($aResultChoix as $key => $a) {
+            if($a->getIChoixId() == $iSearch) {
+                return $key;
+            }
+        }
+        return -1;
+    }
+    
     public function updateChoix($aChoix,$iIdQuestion){
         if(count($aChoix) <= 1 || count($aChoix) > 3   ){
             $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
@@ -40,6 +48,11 @@ class ChoixController extends SuperController
         // Recupere les choix du sondage en base
         $this->oEntity->setIQuestionId($iIdQuestion);
         $aResultChoix = $this->oEntity->getChoixQuestion();
+        if(empty($aResultChoix)) {
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
         $aChoixToCreate = array();
         $aChoixMatched = array();
         
@@ -47,9 +60,10 @@ class ChoixController extends SuperController
         for($i = 0 ; $i<count($aChoix);$i++) {
 
             // Si il match
-            if(array_key_exists($aChoix[$i]->getIChoixId(),$aResultChoix)){
+            $iMatched = $this->browseResultChoix($aChoix[$i]->getIChoixId(), $aResultChoix);
+            if($iMatched >= 0){
                 // Se souvenir des keys qui sont matchés
-                array_push($aChoixMatched, $aChoix[$i]->getIChoixId());
+                array_push($aChoixMatched, $iMatched);
 
                 require_once "./Controller/ReponseController.php";
                 $oReponseController = new ReponseController();
