@@ -362,25 +362,29 @@ class UserController extends SuperController
     public function updateUser(){
         if($this->checkEmail() && !is_string($this->checkEmail())){
             if ($this->checkPassword(false) && !is_string($this->checkPassword(false))){
-                $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
+                $this->oEntity
                     ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
                     ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
                     ->setIUsrId($_SESSION['iIdUser']);
                 if ($this->oEntity->updateUser()){
                     $returnjson = array(self::SUCCESS,self::SUCCESS_UPDATE);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return true;
                 }
                 else {
                     $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
             else {
-                $this->checkPassword(false);
+                echo $this->checkPassword(false);
+                return false;
             }
         }
         else {
-            return $this->checkEmail();
+            echo $this->checkEmail();
+            return false;
         }
     }
 
