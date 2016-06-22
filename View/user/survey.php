@@ -10,16 +10,16 @@
                             <h2 id="titleSurvey" class="mdl-card__title-text mdl-typography--font-bold"></h2>
                         </div>
                         <div class="mdl-card__supporting-text">
-                            <div id="centermap"></div>
+                            <div id="centermap" class="hideMap"></div>
                         </div>
 
                         <div class="mdl-card__actions mdl-card--border">
-                            
+
                             <a id="cloreSurveyButton" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--red-500">Clore ce sondage
                             </a>
                         </div>
                         <div class="mdl-card__menu">
-                            <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">Voir les réponses</a>
+                            <a id="toggleResponse" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">Voir les réponses</a>
                         </div>
                     </div>
                 </div>

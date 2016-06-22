@@ -27,7 +27,13 @@ function getMap() {
       console.log(e);
       cloreSurvey(e[0].iQuestionId);
     });
-
+    $('#toggleResponse').click(function(event) {
+      $('#centermap').toggleClass('hideMap');
+      $(this).text('Masquer les réponses');
+      if($('#centermap').hasClass('hideMap')) {
+        $(this).text('Voir les réponses');
+      }
+    });
     createMap("centermap",e)
     sharingCreator(e[0].iQuestionId,e[0].sQuestionLibel);
   })
@@ -55,12 +61,14 @@ function createMap(mapPosition,datas) {
   });
 
   var map = L.map(mapPosition,{
-    dragging:false,
+    dragging:true,
     touchZoom:true,
-    doubleClickZoom:false,
-    scrollWheelZoom:false,
-    boxZoom:false,
-    keyboard:false
+    doubleClickZoom:true,
+    scrollWheelZoom:true,
+    boxZoom:true,
+    keyboard:true,
+    minZoom:6.5,
+    maxZoom:10
   }).setView([46.5, 2.234], 6.5);
   var mapContent = new L.geoJson(null,{
     onEachFeature: onEachFeature,
@@ -92,21 +100,29 @@ function createMap(mapPosition,datas) {
 function customStyle(feature) {
   if(feature.properties && feature.properties.nom){
     var rgb = [];
-    var total=0;
+    var tempArray = [];
+    var backgroundColors = ['#ff4081','#009688','#2196F3'];
+    var associativeBackgroundColors = [];
     $(datas[1]).each(function(i){
       if (typeof this.aReponse[feature.properties.code] !== "undefined") {
         console.log(this.aReponse[feature.properties.code]);
         rgb[this.aReponse[feature.properties.code].iChoixId] = parseInt(this.aReponse[feature.properties.code].iReponseVotes);
+        associativeBackgroundColors[this.aReponse[feature.properties.code].iChoixId] = backgroundColors[i];
+
       }
     });
 
-
-    var totalRgb = 0;
+    for(var i in rgb) {tempArray.push(rgb[i]);}
+    var maxValue = Math.max.apply(null,tempArray);
+    var color = associativeBackgroundColors[rgb.indexOf(maxValue)];
     console.log(rgb);
-    var backgroundcolors = ['#ff4081','#009688','#2196F3'];
-    
-    var maxValue = Math.max.apply(null,rgb);
-    console.log(rgb.indexOf(1))
+    console.log(tempArray);
+    console.info(rgb.indexOf(maxValue));
+    if (typeof color === "undefined") {
+          var color = "#E0E0E0";
+    }
+
+  return {fillColor:color,color:"black",opacity:1,weight:2,fillOpacity:1}
 
 
   }
