@@ -9,7 +9,9 @@ function getMap() {
   })
   .done(function(e) {
     console.log("success");
-    console.info(e);
+    if(e[0] && e[0] == "error") {
+        window.location = "./404.html";
+    }
     test = e;
     var userSession = e[2];
     var sQuestionLibelValue = e[0].sQuestionLibel;
