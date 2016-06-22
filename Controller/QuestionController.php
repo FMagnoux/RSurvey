@@ -98,7 +98,21 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function updateQuestion(){
-      $_POST['aChoix'] = json_decode($_POST['aChoix']);
+        if(!empty($_POST['aChoix'])) {
+            $_POST['aChoix'] = json_decode($_POST['aChoix']);
+        }
+        else {
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
+        //var_dump($_POST['aChoix']);
+        if(!empty($_POST['aChoix']->aQuestionChoixValues)) {
+            foreach ($_POST['aChoix']->aQuestionChoixValues as $key => $a) {
+                $_POST['aChoix']->aQuestionChoixValues[$key] = get_object_vars($a);
+            }
+            $_POST['aChoix'] = $_POST['aChoix']->aQuestionChoixValues;
+        }
         require_once "./Controller/ChoixController.php";
         if(!empty($_POST["iIdQuestion"])) {
             $this->oEntity->setIQuestionId(intval($this->decrypt($_POST["iIdQuestion"])));
@@ -114,7 +128,7 @@ class QuestionController extends SuperController
             return false;
         }
         // Vérifie le format de la question
-        if($this->checkQuestion()) {
+        if($this->checkQuestion() && !is_string($this->checkQuestion())) {
             $this->oEntity->setSQuestionLibel($_POST['sQuestionLibel']);
             // Vérifie que la question est changée
             if($this->checkChangeQuestion()) {

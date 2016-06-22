@@ -90,12 +90,13 @@ class ChoixController extends SuperController
                 }
             }
         }
-
-        $sResult = $this->createChoix($aChoixToCreate, $iIdQuestion);
-        if(!empty($sResult) && is_string($sResult)) {
-            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
-            echo json_encode($returnjson);
-            return false;
+        if(!empty($aChoixToCreate)) {
+            $sResult = $this->createChoix($aChoixToCreate, $iIdQuestion);
+            if($sResult !== true) {
+                $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                echo json_encode($returnjson);
+                return false;
+            }
         }
 
         // Si le formulaire en POST a moins d'items que celui en base, ça veut dire que l'utilisateur a supprimé un choix
@@ -140,7 +141,7 @@ class ChoixController extends SuperController
         foreach ($aQuestionChoix as $sQuestionChoix){
             $this->oEntity->setSChoixLibel($sQuestionChoix)
                 ->setIQuestionId($iIdQuestion);
-            if($this->checkLenChoix($sQuestionChoix)) {
+            if($this->checkLenChoix($sQuestionChoix) && !is_string($this->checkLenChoix($sQuestionChoix))) {
 
                 if (!$this->oEntity->createChoix()) {
                     $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
