@@ -75,9 +75,9 @@ function createMap(mapPosition,datas) {
     dragging:true,
     touchZoom:true,
     doubleClickZoom:false,
-    scrollWheelZoom:true,
-    boxZoom:true,
-    keyboard:true,
+    scrollWheelZoom:false,
+    boxZoom:false,
+    keyboard:false,
     minZoom:6.5,
     maxZoom:10
   }).setView([46.5, 2.234], 6.5);
