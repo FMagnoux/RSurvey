@@ -8,14 +8,16 @@ function getMap() {
     dataType: 'json'
   })
   .done(function(e) {
-    console.log("success");
-    console.info(e);
+    if(e[0] && e[0] == "error") {
+      window.location = "./404.html";
+    }
     test = e;
     var userSession = e[2];
     var sQuestionLibelValue = e[0].sQuestionLibel;
     var userQuestion = e[0].oUsrId.iUsrId;
     if(userSession != userQuestion || e[0].bQuestionClose == "1"){
       $("#cloreSurveyButton").hide();
+      $("#updateSurveyButton").hide();
     }
     var dateSurvey = e[0].dQuestionDate.date;
     $('.navigateButton').click(function() {
@@ -99,7 +101,6 @@ function createMap(mapPosition,datas) {
                   $('.answerButton').click(function(e) {
                     e.preventDefault();
                     hideDialog($('#orrsDiag'));
-                    console.log(this);
                     var iChoixIdValue = $(this).data().ichoixid;
                     var iSubCodeValue = feature.properties.code;
                     sendAnswer(iChoixIdValue,iSubCodeValue);
@@ -118,7 +119,6 @@ function customStyle(feature) {
     var associativeBackgroundColors = [];
     $(datas[1]).each(function(i){
       if (typeof this.aReponse[feature.properties.code] !== "undefined") {
-        console.log(this.aReponse[feature.properties.code]);
         rgb[this.aReponse[feature.properties.code].iChoixId] = parseInt(this.aReponse[feature.properties.code].iReponseVotes);
         associativeBackgroundColors[this.aReponse[feature.properties.code].iChoixId] = backgroundColors[i];
 
@@ -129,8 +129,6 @@ function customStyle(feature) {
     console.log(tempArray);
     var maxValue = Math.max.apply(null,tempArray);
     var color = associativeBackgroundColors[rgb.indexOf(maxValue)];
-    console.log(rgb);
-    console.log(tempArray);
     console.info(rgb.indexOf(maxValue));
     if (typeof color === "undefined") {
           var color = "#E0E0E0";
@@ -271,7 +269,6 @@ var updateSurveyRequest = function(datas) {
   var newSurveychoice1 = $('#newSurveychoice1').val();
   var newSurveychoice2 = $('#newSurveychoice2').val();
   var newSurveychoice3 = $('#newSurveychoice3').val();
-console.log(oQuestionChoixValues);
 
   if (newSurveychoice1 != '') {
     var iIdChoix = {};
@@ -301,8 +298,6 @@ console.log(oQuestionChoixValues);
       oQuestionChoixValues.aQuestionChoixValues.push(null);
   }
 
-console.log(JSON.stringify(oQuestionChoixValues));
-
 $.ajax({
   url: 'update-question.html',
   type: 'POST',
@@ -312,8 +307,7 @@ $.ajax({
 })
 .done(function(e) {
   console.log("success");
-  console.log(e[0]);
-  console.log(e[1]);
+  console.log(e);
   $('.alertUpdateSurvey').text(e[1]).toggleClass('mdl-color-text--red-800').toggleClass('mdl-color-text--green-800');
   location.reload(true);
 })

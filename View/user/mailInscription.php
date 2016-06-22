@@ -8,7 +8,7 @@ $aMail["message"] = "
    <title>".$aMail["subject"]."</title>
   </head>
   <body>
-    <p><a href='".$_SERVER["HTTP_HOST"].dirname($_SERVER['PHP_SELF'])."/".$sId."/".$sToken."'>Cliquez ici</a> pour activer votre compte.</p>
+    <p><a href='".$_SERVER["HTTP_HOST"].dirname($_SERVER['PHP_SELF'])."/confirmer-compte/".$sId."/".$sToken."'>Cliquez ici</a> pour activer votre compte.</p>
   </body>
 </html>
 ";

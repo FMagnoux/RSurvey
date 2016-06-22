@@ -116,7 +116,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function getReponse(){
-        $requete = $this->db->prepare('select reponse_id from Reponse where reponse_subcode = :reponse_subcode and choix_id = :choix_id') ;
+        $requete = $this->db->prepare('select reponse_id from Reponse where reponse_subcode = :reponse_subcode and choix_id = :choix_id and reponse_votes > 0') ;
         $requete->execute (array(
             ':reponse_subcode'=>$this->getIReponseSubcode(),
             ':choix_id'=>$this->getIChoixId(),
