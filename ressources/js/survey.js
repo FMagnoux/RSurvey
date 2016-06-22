@@ -27,7 +27,6 @@ function getMap() {
     $("#titleSurvey").text(sQuestionLibelValue);
     $(document).attr("title", sQuestionLibelValue);
     $('meta[name=description]').attr('content', 'Répondez à ce sondage !'+sQuestionLibelValue);
-    console.log("trol " + sQuestionLibelValue);
     e[1].forEach(function(e,i){
       var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton hide choiceButton"+i+"'></button>").text(e.sChoixLibel);
       $(".mdl-card__title").append(button);
