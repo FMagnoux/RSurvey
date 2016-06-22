@@ -8,7 +8,7 @@ $aMail["message"] = "
    <title>".$aMail["subject"]."</title>
   </head>
   <body>
-    <p><a href='http://r-survey.com/mot-de-passe-oublie/".$sId."/".$sToken."'>Cliquez ici</a> pour réinitialiser votre mot de passe.</p>
+    <p><a href='".$_SERVER["HTTP_HOST"].dirname($_SERVER['PHP_SELF'])."/mot-de-passe-oublie/".$sId."/".$sToken."'>Cliquez ici</a> pour réinitialiser votre mot de passe.</p>
   </body>
 </html>
 ";

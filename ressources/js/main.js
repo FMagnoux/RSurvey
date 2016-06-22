@@ -13,6 +13,7 @@ var contentForgotPassword = "<form id='formForgotPassword' action='#'> <div clas
 
 /*MODELS DEFINTION */
 
+
 var newSurveyRequest = function() {
     var sQuestionLibelValue = $("#newSurveyQuestion").val();
     var aQuestionChoixValues = [];
@@ -152,7 +153,7 @@ var updateUserRequest = function() {
 
 
     }
-
+    /*DOCUMENT READY*/
 
 
 var sharingGenerator = function(url,sQuestionLibelValue) {
@@ -200,8 +201,26 @@ var closeSurveyRequest = function(question) {
         });
 }
 
-
-/*DOCUMENT READY*/
+var contactFormRequest = function(e) {
+    $.ajax({
+        url: 'contact.html',
+        type: 'POST',
+        dataType: 'json',
+        data: {sMessage: e.target.sMessage.value, sEmail: e.target.sEmail.value}
+    })
+        .done(function(e) {
+            console.log("success");
+            alert(e[1]);
+        })
+        .fail(function(e) {
+            console.log("error");
+            console.log(e.responseText)
+        })
+        .always(function() {
+            console.log("complete");
+        });
+    return false;
+}
 
 $(document).ready(function() {
 
@@ -274,4 +293,6 @@ $(document).ready(function() {
     $('.close-survey').click(function(event) {
         closeSurveyRequest(this);
     });
+
+    $("#contactForm").submit(contactFormRequest);
 });

@@ -15,7 +15,7 @@ class ChoixController extends SuperController
 
     const ERROR_EMPTYCHOIX = "Un des choix n'est pas renseigné.";
     const ERROR_LENCHOIX = "Un des choix est trop long.";
-    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de <a href=\"./#contact\">contacter</a> l'administrateur.";
 
     const SUCCESS_UPDATE = "Le sondage à été modifié.";
 

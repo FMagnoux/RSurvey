@@ -24,3 +24,19 @@ $aJsFileNames = array(
     2 => "leaflet",
     3 => "survey"
 );
+
+$aMetaTitles = array(
+    "user/survey" => "Répondez au sondage",
+    "user/listQuestions" => "Mes sondages",
+    "user/error" => "Erreur",
+    "user/errorFilterQuestions" => "Erreur",
+    "commun/404" => "Erreur 404",
+);
+
+$aMetaDescription = array(
+    "user/survey" => "Répondez au sondage",
+    "user/listQuestions" => "Liste de tous les sondages que j'ai créé.",
+    "user/error" => "Erreur",
+    "user/errorFilterQuestions" => "Erreur. Aucun résultat n'a été trouvé.",
+    "commun/404" => "La page que vous avez demandé n'existe pas.",
+);

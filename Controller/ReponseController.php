@@ -14,7 +14,7 @@ class ReponseController extends SuperController
     const SUCCESS = "success";
     const ERROR = "error";
 
-    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de <a href=\"./#contact\">contacter</a> l'administrateur.";
     const ERROR_ALREADYVOTED = "Vous avez déjà voté pour ce sondage.";
     const ERROR_CLOSED = "Ce sondage est clos.";
     const SUCCESS_VOTE = "Votre vote a été enregistré.";
