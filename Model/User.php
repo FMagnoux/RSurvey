@@ -400,9 +400,9 @@ class User extends SQL implements JsonSerializable
     {
         return [
             'iUsrId' => $this->iUsrId,
-            'sUsrPseudo' => utf8_encode($this->sUsrPseudo),
+            'sUsrPseudo' => $this->sUsrPseudo,
             'sUsrMail' => $this->sUsrMail,
-            'sUsrPassword' => utf8_encode($this->sUsrPassword),
+            'sUsrPassword' => $this->sUsrPassword,
             'sUsrToken' => $this->sUsrToken,
             'bUsrActive' => $this->bUsrActive,
             'iRoleId' => $this->iRoleId,

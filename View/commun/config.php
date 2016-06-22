@@ -2,7 +2,9 @@
 
 $aCss = array(
     "user/survey" => array(0, 1),
-    "commun/index" => array(2)
+    "commun/index" => array(2),
+    "user/listQuestions" => array(3),
+    "user/filterQuestions" => array(3),
 );
 
 $aJs = array(
@@ -12,7 +14,8 @@ $aJs = array(
 $aCssFileNames = array(
     0 => "leaflet",
     1 => "survey",
-    2 => "home"
+    2 => "home",
+    3 => "admin"
 );
 
 $aJsFileNames = array(

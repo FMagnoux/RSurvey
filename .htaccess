@@ -6,6 +6,8 @@ RewriteEngine On
 
 #Accueil
 RewriteRule ^$ index.php?ctrl=Super&action=home [L]
+# 404
+RewriteRule ^404.html$ index.php?ctrl=Super&action=error [L]
 # Question
 RewriteRule ^creer-sondage.html$ index.php?ctrl=Question&action=createQuestion [L]
 RewriteRule ^administration.html$ index.php?ctrl=Question&action=listQuestions [L]
@@ -15,12 +17,13 @@ RewriteRule ^administration-filtre.html$ index.php?ctrl=Question&action=listQues
 RewriteRule ^administration-filtre/pseudo:([a-zA-Z0-9\-]*)\/libel:([a-zA-Z0-9\-]*)\/dateAfter:([0-9\-]*)\/dateBefore:([0-9\-]*)\/page-([0-9]*)\.html$ index.php?ctrl=Question&action=listQuestionsFilter&sPseudo=$1&sLibel=$2&dDateAfter=$3&dDateBefore=$4&page=$5 [L]
 RewriteRule ^mes-sondages.html$ index.php?ctrl=Question&action=userListQuestionsByIdUser&page=$1 [L]
 RewriteRule ^mes-sondages/page-([0-9]+)\.html$ index.php?ctrl=Question&action=userListQuestionsByIdUser&page=$1 [L]
+RewriteRule ^mes-sondages-filtre.html$ index.php?ctrl=Question&action=userListQuestionsFilter&page=$1 [L]
+RewriteRule ^mes-sondages-filtre/libel:([a-zA-Z0-9\-]*)\/dateAfter:([0-9\-]*)\/dateBefore:([0-9\-]*)\/page-([0-9]*)\.html$ index.php?ctrl=Question&action=userListQuestionsFilter&sLibel=$1&dDateAfter=$2&dDateBefore=$3&page=$4 [L]
 RewriteRule ^desactivate-question.html$ index.php?ctrl=Question&action=desactivateQuestion [L]
 RewriteRule ^answer-question.html$ index.php?ctrl=Reponse&action=answerQuestion [L]
 RewriteRule ^change-question.html$ index.php?ctrl=Question&action=getNextPreviousQuestion [L]
 RewriteRule ^close-question.html$ index.php?ctrl=Question&action=closeQuestion [L]
 RewriteRule ^update-question.html$ index.php?ctrl=Question&action=updateQuestion [L]
-
 # Zone
 RewriteRule ^administration-zones.html$ index.php?ctrl=Subdivision&action=listSubdivisions [L]
 RewriteRule ^administration-zones/page-([0-9]+)\.html$ index.php?ctrl=Subdivision&action=listSubdivisions&page=$1 [L]
@@ -39,6 +42,7 @@ RewriteRule ^mot-de-passe-oublie/([a-zA-Z0-9]*)\/([a-zA-Z0-9\-]*)$ index.php?ctr
 RewriteRule ^confirmer-compte/([a-zA-Z0-9]*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=User&action=confirmUser&id=$1&token=$2 [L]
 RewriteRule ^desactivate-user.html$ index.php?ctrl=User&action=desactivateUser [L]
 RewriteRule ^update-user.html$ index.php?ctrl=User&action=updateUser [L]
+RewriteRule ^get-user.html$ index.php?ctrl=User&action=getUser [L]
 
 # Lien vers un sondage
 RewriteRule ^([a-zA-Z0-9]*)$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]

@@ -1,7 +1,4 @@
-<form class="mdl-typography--text-center" action="./administration-filtre.html" method="post">
-    <div class="mdl-textfield mdl-js-textfield">
-        <input class="mdl-textfield__input" type="text" name="sPseudo" placeholder="Pseudo" <?php if(!empty($sPseudo)) echo "value='".$sPseudo."'" ?>>
-    </div>
+<form class="mdl-typography--text-center" action="./mes-sondages-filtre.html" method="post">
     <div class="mdl-textfield mdl-js-textfield">
         <input class="mdl-textfield__input" type="text" name="sLibel" placeholder="Libellé" <?php if(!empty($sLibel)) echo "value='".$sLibel."'" ?>>
     </div>

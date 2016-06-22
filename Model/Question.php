@@ -199,6 +199,8 @@ class Question extends SQL implements JsonSerializable
           on s.sub_id = q.sub_id
         inner join Zone z
           on z.zone_id = s.zone_id
+        inner join User u 
+          on u.usr_id = q.usr_id
         where
             q.question_active = :question_active
         and
@@ -207,12 +209,15 @@ class Question extends SQL implements JsonSerializable
             s.sub_active = :sub_active
         and
             z.zone_active = :zone_active
+        and 
+            u.usr_active = :usr_active    
          ') ;
         $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
             ':question_active'=>self::$active,
             ':sub_active'=>self::$active,
-            ':zone_active'=>self::$active
+            ':zone_active'=>self::$active,
+            ':usr_active'=>self::$active
         ));
         $results = $requete->fetchAll();
         if(empty($results)){
@@ -347,7 +352,7 @@ class Question extends SQL implements JsonSerializable
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
 
-    public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore) {
+    public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore, $iIdUser = null) {
         $aConfig = $this->getPaginatedQuestionListConfig();
         $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo AND question_libel LIKE :libel AND question_date >= :date_after AND question_date <= :date_before";
         $datetime = new DateTime('tomorrow');
@@ -357,6 +362,10 @@ class Question extends SQL implements JsonSerializable
             "date_after" => !empty($dDateAfter) ? $dDateAfter : "2016-01-01",
             "date_before" => !empty($dDateBefore) ? $dDateBefore : $datetime->format('Y-m-d H:i:s')
         );
+        if(!empty($iIdUser)) {
+            $aConfig["where"] .= " AND ".$this->table.".usr_id = :id";
+            $values["id"] = $iIdUser;
+        }
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
     
@@ -401,7 +410,7 @@ class Question extends SQL implements JsonSerializable
     {
         return [
             'iQuestionId' => $this->iQuestionId,
-            'sQuestionLibel' => utf8_encode($this->sQuestionLibel),
+            'sQuestionLibel' => $this->sQuestionLibel,
             'dQuestionDate' => $this->dQuestionDate,
             'bQuestionActive' => $this->bQuestionActive,
             'bQuestionClose' => $this->bQuestionClose,
