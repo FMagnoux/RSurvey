@@ -45,6 +45,7 @@ RewriteRule ^update-user.html$ index.php?ctrl=User&action=updateUser [L]
 RewriteRule ^get-user.html$ index.php?ctrl=User&action=getUser [L]
 # Contact
 RewriteRule ^contact.html$ index.php?ctrl=Contact&action=sendQuestion [L]
+RewriteRule ^get-user.html$ index.php?ctrl=User&action=getUserSession [L]
 
 # Lien vers un sondage
 RewriteRule ^([a-zA-Z0-9]*)$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]

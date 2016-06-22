@@ -1,16 +1,17 @@
 console.log("I'm main !");
 
 /*VIEW DEFINTION */
-var contentNewSurvey = "<form id='formNewSurvey' action='#'> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' id='newSurveyQuestion' type='text' name='sQuestionLibel'> <label class='mdl-textfield__label'>Question (100 caractères max)</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' id='newSurveychoice1' type='text' name='choice1'> <label class='mdl-textfield__label'>Choix 1 (Obligatoire)</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' id='newSurveychoice2' type='text' name='choice2'> <label class='mdl-textfield__label'>Choix 2 (Obligatoire)</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' id='newSurveychoice3' type='text' name='choice3'> <label class='mdl-textfield__label'>Choix 3 (Optionnel)</label> </div> <label class='mdl-radio mdl-js-radio mdl-js-ripple-effect' for='option-1'> <input type='radio' id='option-1' class='mdl-radio__button newSurveychoiceZone' name='iIdSub' value='1' checked> <span class='mdl-radio__label'>France-Departements</span> </label> <label class='mdl-radio mdl-js-radio mdl-js-ripple-effect' for='option-2'> <input type='radio' id='option-2' class='mdl-radio__button newSurveychoiceZone' name='iIdSub' value='2'> <span class='mdl-radio__label'>USA-Etats</span> </label> </form>"
+var contentNewSurvey = "<form id='formNewSurvey' action='#'> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='sQuestionLibel mdl-textfield__input' id='newSurveyQuestion' type='text' name='sQuestionLibel'> <label class='mdl-textfield__label'>Question (100 caractères max)</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' id='newSurveychoice1' type='text' name='choice1'> <label class='mdl-textfield__label'>Choix 1 (Obligatoire)</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' id='newSurveychoice2' type='text' name='choice2'> <label class='mdl-textfield__label'>Choix 2 (Obligatoire)</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' id='newSurveychoice3' type='text' name='choice3'> <label class='mdl-textfield__label'>Choix 3 (Optionnel)</label> </div> <label class='mdl-radio mdl-js-radio mdl-js-ripple-effect' for='option-1'> <input type='radio' id='option-1' class='mdl-radio__button newSurveychoiceZone' name='iIdSub' value='1' checked> <span class='mdl-radio__label'>France-Departements</span> </label> <label class='mdl-radio mdl-js-radio mdl-js-ripple-effect' for='option-2'> <input type='radio' id='option-2' class='mdl-radio__button newSurveychoiceZone' name='iIdSub' value='2'> <span class='mdl-radio__label'>USA-Etats</span> </label> </form>"
 
 var contentLogin = "<form id='formLogin' action='#'> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='mail' name='sUsrMail'> <label class='mdl-textfield__label'>Mail</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='password' name='sUsrPassword'> <label class='mdl-textfield__label'>Mot de passe</label> </div></form>"
 
 var contentSignup = "<form id='formSignup' action='#'> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='text' name='sUsrPseudo'> <label class='mdl-textfield__label'>Pseudo</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='mail' name='sUsrMail'> <label class='mdl-textfield__label'>Mail</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='password' name='sUsrPassword'> <label class='mdl-textfield__label'>Mot de passe</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='password' name='sUsrConfirmPassword'> <label class='mdl-textfield__label'>Valider le mot de passe</label> </div> </form>"
 
+var contentUpdateUser = "<form id='formUpdateUser' action='#'> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='sUsrMail mdl-textfield__input' type='mail' name='sUsrMail'> <label class='mdl-textfield__label'>Mail</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='password' name='sUsrPassword'> <label class='mdl-textfield__label'>Mot de passe</label> </div><div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='password' name='sUsrConfirmPassword'> <label class='mdl-textfield__label'>Confirmer le mot de passe</label> </div></form>"
+
 var contentForgotPassword = "<form id='formForgotPassword' action='#'> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='mail' name='sMail'> <label class='mdl-textfield__label'>Mail</label> </div></form>"
 
 /*MODELS DEFINTION */
-
 
 var newSurveyRequest = function() {
     var sQuestionLibelValue = $("#newSurveyQuestion").val();
@@ -111,10 +112,47 @@ var ajaxRequestSerialize = function(idForm, urlDest) {
 
 
 var updateUserRequest = function() {
-        console.log('EDIT');
+        $.ajax({
+          url: 'get-user.html',
+          type: 'POST',
+          dataType: 'json',
+          data: {},
+        })
+        .done(function(e) {
+          console.log("success");
+          console.log(e);
+          var datasUser = e;
+          event.preventDefault();
+          showDialog({
+              onLoaded: function(e) {
+                  $('#positive').off('click');
+                  $('.sUsrMail').val(datasUser.sUsrMail).parent().addClass('is-dirty');
+
+                  $('#positive').click(function() {
+                      $('#errorForm').remove()
+                      ajaxRequestSerialize('formUpdateUser', 'update-user.html');
+                  });
+              },
+              title: "<span class='mdl-color-text--blue-800'>Modifier son compte</span>",
+              text:contentUpdateUser,
+              positive: {
+                  title: 'Modifier son compte'
+              }
+          });
+
+        })
+        .fail(function(e) {
+          console.log("error");
+          console.log(e.responseText);
+
+        })
+        .always(function() {
+          console.log("complete");
+        });
+
 
     }
-    /*DOCUMENT READY*/
+
 
 
 var sharingGenerator = function(url,sQuestionLibelValue) {
@@ -182,6 +220,8 @@ var contactFormRequest = function(e) {
         });
     return false;
 }
+
+/*DOCUMENT READY*/
 
 $(document).ready(function() {
 

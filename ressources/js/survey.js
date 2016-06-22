@@ -21,13 +21,23 @@ function getMap() {
       var isTrue = $(this).data().next;
       navigateButtons(isTrue,dateSurvey);
     });
-    $("#titleSurvey").text(test[0].sQuestionLibel);
+    $("#titleSurvey").text(e[0].sQuestionLibel);
+    $(document).attr("title", e[0].sQuestionLibel);
 
     $('#cloreSurveyButton').click(function(event) {
       console.log(e);
       cloreSurvey(e[0].iQuestionId);
     });
-
+    $('#toggleResponse').click(function(event) {
+      $('#centermap').toggleClass('hideMap');
+      $(this).text('Masquer les réponses');
+      if($('#centermap').hasClass('hideMap')) {
+        $(this).text('Voir les réponses');
+      }
+    });
+    $('#updateSurveyButton').click(function(event) {
+      updateSurvey(e);
+    });
     createMap("centermap",e)
     sharingCreator(e[0].iQuestionId,e[0].sQuestionLibel);
   })
@@ -55,12 +65,14 @@ function createMap(mapPosition,datas) {
   });
 
   var map = L.map(mapPosition,{
-    dragging:false,
+    dragging:true,
     touchZoom:true,
-    doubleClickZoom:false,
-    scrollWheelZoom:false,
-    boxZoom:false,
-    keyboard:false
+    doubleClickZoom:true,
+    scrollWheelZoom:true,
+    boxZoom:true,
+    keyboard:true,
+    minZoom:6.5,
+    maxZoom:10
   }).setView([46.5, 2.234], 6.5);
   var mapContent = new L.geoJson(null,{
     onEachFeature: onEachFeature,
@@ -92,21 +104,29 @@ function createMap(mapPosition,datas) {
 function customStyle(feature) {
   if(feature.properties && feature.properties.nom){
     var rgb = [];
-    var total=0;
+    var tempArray = [];
+    var backgroundColors = ['#ff4081','#009688','#2196F3'];
+    var associativeBackgroundColors = [];
     $(datas[1]).each(function(i){
       if (typeof this.aReponse[feature.properties.code] !== "undefined") {
         console.log(this.aReponse[feature.properties.code]);
         rgb[this.aReponse[feature.properties.code].iChoixId] = parseInt(this.aReponse[feature.properties.code].iReponseVotes);
+        associativeBackgroundColors[this.aReponse[feature.properties.code].iChoixId] = backgroundColors[i];
+
       }
     });
 
-
-    var totalRgb = 0;
+    for(var i in rgb) {tempArray.push(rgb[i]);}
+    var maxValue = Math.max.apply(null,tempArray);
+    var color = associativeBackgroundColors[rgb.indexOf(maxValue)];
     console.log(rgb);
-    var backgroundcolors = ['#ff4081','#009688','#2196F3'];
-    
-    var maxValue = Math.max.apply(null,rgb);
-    console.log(rgb.indexOf(1))
+    console.log(tempArray);
+    console.info(rgb.indexOf(maxValue));
+    if (typeof color === "undefined") {
+          var color = "#E0E0E0";
+    }
+
+  return {fillColor:color,color:"black",opacity:1,weight:2,fillOpacity:1}
 
 
   }
@@ -195,6 +215,86 @@ var cloreSurvey = function(e) {
 
 }
 
+var updateSurvey = function(datas) {
+  event.preventDefault();
+  showDialog({
+      onLoaded: function(e) {
+
+          $('.sQuestionLibel').val([datas[0].sQuestionLibel]).parent().addClass('is-dirty');
+          $('#newSurveychoice1').val([datas[1][0].sChoixLibel]).parent().addClass('is-dirty');
+          $('#newSurveychoice2').val([datas[1][1].sChoixLibel]).parent().addClass('is-dirty');
+          $('#newSurveychoice3').val([datas[1][2].sChoixLibel]).parent().addClass('is-dirty');
+
+          $('#positive').off('click');
+          $('#positive').click(function() {
+              $('#errorForm').remove()
+              updateSurveyRequest(datas);
+          });
+      },
+      title: "<span class='mdl-color-text--blue-800'> Modifer un sondage</span>",
+      text: "<p class='mdl-color-text--red-800'> Attention ! Toutes les réponses seront effacées</p>"+contentNewSurvey,
+      negative: false,
+      positive: {
+          title: 'Modifier un sondage'
+      }
+  });
+}
+
+var updateSurveyRequest = function(datas) {
+  var iIdQuestionValue = datas[0].iQuestionId;
+  var sQuestionLibelValue = $("#newSurveyQuestion").val();
+  var oQuestionChoixValues = {"aQuestionChoixValues":[]};
+  var iIdSubValue = $(".newSurveychoiceZone:checked").val();
+  var newSurveychoice1 = $('#newSurveychoice1').val();
+  var newSurveychoice2 = $('#newSurveychoice2').val();
+  var newSurveychoice3 = $('#newSurveychoice3').val();
+console.log(oQuestionChoixValues);
+
+  if (newSurveychoice1 != '') {
+    var iIdChoix = {};
+    iIdChoix["iIdChoix"] = datas[1][0].iChoixId;
+    iIdChoix["sChoixLibel"] = newSurveychoice1;
+    oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
+  }
+  if (newSurveychoice2 != '') {
+    var iIdChoix = {};
+    iIdChoix["iIdChoix"] = datas[1][1].iChoixId;
+    iIdChoix["sChoixLibel"] = newSurveychoice2;
+    oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
+  }
+  if (newSurveychoice3 != '') {
+    var iIdChoix = {};
+    iIdChoix["iIdChoix"] = datas[1][2].iChoixId;
+    iIdChoix["sChoixLibel"] = newSurveychoice3;
+    oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
+  }
+  if (oQuestionChoixValues.aQuestionChoixValues[0] == undefined) {
+      oQuestionChoixValues.aQuestionChoixValues.push(null);
+  }
+
+console.log(JSON.stringify(oQuestionChoixValues));
+
+$.ajax({
+  url: 'update-question.html',
+  type: 'POST',
+  dataType: 'json',
+  data: {iIdQuestion: iIdQuestionValue,sQuestionLibel:sQuestionLibelValue,aChoix:JSON.stringify(oQuestionChoixValues)
+  }
+})
+.done(function(e) {
+  console.log("success");
+  console.log(e[0]);
+})
+.fail(function(e) {
+  console.log("error");
+  console.log(e.responseText);
+})
+.always(function() {
+  console.log("complete");
+});
+
+
+}
 var sharingCreator = function(url,sQuestionLibelValue) {
       $('#fab').click(function(event) {
         showDialog({

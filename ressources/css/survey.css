@@ -13,19 +13,23 @@
 }
 
 
-
+.leaflet-container {
+  background-color:#FFF;
+}
 #centermap {
   height: 950px;
 }
-.leaflet-control-zoom {
-  display:none;
-}
+
 .mdl-card__supporting-text {
   margin:auto;
 }
 
 .survey-box {
   margin:auto;
+}
+
+.hideMap path.leaflet-clickable {
+    fill: #00BCD4;
 }
 #fab {
   position: fixed;

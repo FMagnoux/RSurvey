@@ -57,10 +57,7 @@ class UserController extends SuperController
         $this->oEntity = new User();
     }
 
-    public function getUser($iIdUser = null){
-        if (isset($_POST['iIdUser']) && !empty($_POST['iIdUser'])){
-            $iIdUser = $_POST['iIdUser'];
-        }
+    public function getUser($iIdUser){
         $this->oEntity->setIUsrId($iIdUser);
         return $this->oEntity->getUser();
     }
@@ -236,6 +233,16 @@ class UserController extends SuperController
 
     }
 
+    public function getUserSession(){
+      if($this->checkLogin()){
+            $this->oEntity->setIUsrId($_SESSION['iIdUser']);
+            $userSession =  $this->oEntity->getUser();
+            echo json_encode($userSession);
+            return ;
+
+      }
+    }
+
     /**
      * @return bool
      */
@@ -318,7 +325,7 @@ class UserController extends SuperController
         }
         $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration-users/page-"));
     }
-    
+
     public function searchUsersByPseudo() {
         if(!$this->isAdmin()) return false;
         if(!empty($_POST)) extract($_POST);
