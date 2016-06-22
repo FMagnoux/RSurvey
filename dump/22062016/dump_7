@@ -119,8 +119,8 @@ CREATE TABLE `Subdivision` (
 --
 
 INSERT INTO `Subdivision` (`sub_id`, `sub_libel`, `sub_active`, `zone_id`) VALUES
-(1, 'Région', 1, 1),
-(2, 'Département', 1, 1);
+(1, 'RÃ©gion', 1, 1),
+(2, 'DÃ©partement', 1, 1);
 
 -- --------------------------------------------------------
 
