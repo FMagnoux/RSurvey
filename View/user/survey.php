@@ -1,4 +1,3 @@
-<?php print_r($_SESSION)?>
             <div class="mdl-grid">
                 <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet">
                   <button data-next="false" class=" navigateButton navigatePrev mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
@@ -15,10 +14,10 @@
                         </div>
 
                         <div class="mdl-card__actions mdl-card--border">
+                            <a id="cloreSurveyButton" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--red-500">Clore ce sondage</a>
+                            <a id="updateSurveyButton" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--blue-500">Mettre à jour ce sondage</a>
 
-                            <a id="cloreSurveyButton" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--red-500">Clore ce sondage
-                            </a>
-                        </div>
+                          </div>
                         <div class="mdl-card__menu">
                             <a id="toggleResponse" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-color-text--white">Voir les réponses</a>
                         </div>

@@ -34,6 +34,9 @@ function getMap() {
         $(this).text('Voir les réponses');
       }
     });
+    $('#updateSurveyButton').click(function(event) {
+      updateSurvey(e);
+    });
     createMap("centermap",e)
     sharingCreator(e[0].iQuestionId,e[0].sQuestionLibel);
   })
@@ -211,6 +214,86 @@ var cloreSurvey = function(e) {
 
 }
 
+var updateSurvey = function(datas) {
+  event.preventDefault();
+  showDialog({
+      onLoaded: function(e) {
+
+          $('.sQuestionLibel').val([datas[0].sQuestionLibel]).parent().addClass('is-dirty');
+          $('#newSurveychoice1').val([datas[1][0].sChoixLibel]).parent().addClass('is-dirty');
+          $('#newSurveychoice2').val([datas[1][1].sChoixLibel]).parent().addClass('is-dirty');
+          $('#newSurveychoice3').val([datas[1][2].sChoixLibel]).parent().addClass('is-dirty');
+
+          $('#positive').off('click');
+          $('#positive').click(function() {
+              $('#errorForm').remove()
+              updateSurveyRequest(datas);
+          });
+      },
+      title: "<span class='mdl-color-text--blue-800'> Modifer un sondage</span>",
+      text: "<p class='mdl-color-text--red-800'> Attention ! Toutes les réponses seront effacées</p>"+contentNewSurvey,
+      negative: false,
+      positive: {
+          title: 'Modifier un sondage'
+      }
+  });
+}
+
+var updateSurveyRequest = function(datas) {
+  var iIdQuestionValue = datas[0].iQuestionId;
+  var sQuestionLibelValue = $("#newSurveyQuestion").val();
+  var oQuestionChoixValues = {"aQuestionChoixValues":[]};
+  var iIdSubValue = $(".newSurveychoiceZone:checked").val();
+  var newSurveychoice1 = $('#newSurveychoice1').val();
+  var newSurveychoice2 = $('#newSurveychoice2').val();
+  var newSurveychoice3 = $('#newSurveychoice3').val();
+console.log(oQuestionChoixValues);
+
+  if (newSurveychoice1 != '') {
+    var iIdChoix = {};
+    iIdChoix["iIdChoix"] = datas[1][0].iChoixId;
+    iIdChoix["sChoixLibel"] = newSurveychoice1;
+    oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
+  }
+  if (newSurveychoice2 != '') {
+    var iIdChoix = {};
+    iIdChoix["iIdChoix"] = datas[1][1].iChoixId;
+    iIdChoix["sChoixLibel"] = newSurveychoice2;
+    oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
+  }
+  if (newSurveychoice3 != '') {
+    var iIdChoix = {};
+    iIdChoix["iIdChoix"] = datas[1][2].iChoixId;
+    iIdChoix["sChoixLibel"] = newSurveychoice3;
+    oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
+  }
+  if (oQuestionChoixValues.aQuestionChoixValues[0] == undefined) {
+      oQuestionChoixValues.aQuestionChoixValues.push(null);
+  }
+
+console.log(JSON.stringify(oQuestionChoixValues));
+
+$.ajax({
+  url: 'update-question.html',
+  type: 'POST',
+  dataType: 'json',
+  data: {iIdQuestion: iIdQuestionValue,sQuestionLibel:sQuestionLibelValue,aChoix:JSON.stringify(oQuestionChoixValues)
+  }
+})
+.done(function(e) {
+  console.log("success");
+  console.log(e[0]);
+})
+.fail(function(e) {
+  console.log("error");
+  console.log(e.responseText);
+})
+.always(function() {
+  console.log("complete");
+});
+
+
+}
 var sharingCreator = function(url,sQuestionLibelValue) {
       $('#fab').click(function(event) {
         showDialog({

@@ -60,7 +60,7 @@ class QuestionController extends SuperController
         }
 
         $oQuestion = $this->oEntity->getNextPreviousQuestion($operateur,$fonction);
-        
+
         if(!$oQuestion && $next == "true"){
             $operateur = "<";
             $fonction = "MIN";
@@ -98,6 +98,7 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function updateQuestion(){
+      $_POST['aChoix'] = json_decode($_POST['aChoix']);
         require_once "./Controller/ChoixController.php";
         if(!empty($_POST["iIdQuestion"])) {
             $this->oEntity->setIQuestionId(intval($this->decrypt($_POST["iIdQuestion"])));
@@ -397,7 +398,7 @@ class QuestionController extends SuperController
         $this->page = "admin/listQuestions";
         $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStart" => "./administration/page-", "sUrlEnd" => ".html"));
     }
-    
+
     public function userListQuestionsFilter() {
         $this->page = "user/listQuestions";
         $this->helperListQuestionsFilter("user/errorFilterQuestions", $_SESSION["iIdUser"]);
