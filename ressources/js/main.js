@@ -13,6 +13,7 @@ var contentForgotPassword = "<form id='formForgotPassword' action='#'> <div clas
 
 /*MODELS DEFINTION */
 
+
 var newSurveyRequest = function() {
     var sQuestionLibelValue = $("#newSurveyQuestion").val();
     var aQuestionChoixValues = [];
@@ -152,7 +153,7 @@ var updateUserRequest = function() {
 
 
     }
-
+    /*DOCUMENT READY*/
 
 
 var sharingGenerator = function(url,sQuestionLibelValue) {
@@ -200,8 +201,11 @@ var closeSurveyRequest = function(question) {
         });
 }
 
+<<<<<<< HEAD
 
 /*DOCUMENT READY*/
+=======
+>>>>>>> origin/front
 var contactFormRequest = function(e) {
     $.ajax({
         url: 'contact.html',
