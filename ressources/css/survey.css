@@ -29,7 +29,7 @@
 }
 
 .hideMap path.leaflet-clickable {
-    fill: #00BCD4;
+    fill: #757575;
 }
 #fab {
   position: fixed;
@@ -66,6 +66,24 @@ background-color:#009688 !important;
 }
 
 .answerButton2 {
+  min-width: 100px;
+  background-color : #2196F3 !important;
+}
+
+.choiceButton0 {
+  min-width: 100px;
+  margin-right:24px;
+  margin-left:24px;
+  background-color: #ff4081 !important;
+}
+
+.choiceButton1 {
+  min-width: 100px;
+  margin-right:24px;
+background-color:#009688 !important;
+}
+
+.choiceButton2 {
   min-width: 100px;
   background-color : #2196F3 !important;
 }
