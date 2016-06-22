@@ -6,6 +6,8 @@ RewriteEngine On
 
 #Accueil
 RewriteRule ^$ index.php?ctrl=Super&action=home [L]
+# 404
+RewriteRule ^404.html$ index.php?ctrl=Super&action=error [L]
 # Question
 RewriteRule ^creer-sondage.html$ index.php?ctrl=Question&action=createQuestion [L]
 RewriteRule ^administration.html$ index.php?ctrl=Question&action=listQuestions [L]
@@ -20,7 +22,6 @@ RewriteRule ^answer-question.html$ index.php?ctrl=Reponse&action=answerQuestion 
 RewriteRule ^change-question.html$ index.php?ctrl=Question&action=getNextPreviousQuestion [L]
 RewriteRule ^close-question.html$ index.php?ctrl=Question&action=closeQuestion [L]
 RewriteRule ^update-question.html$ index.php?ctrl=Question&action=updateQuestion [L]
-
 # Zone
 RewriteRule ^administration-zones.html$ index.php?ctrl=Subdivision&action=listSubdivisions [L]
 RewriteRule ^administration-zones/page-([0-9]+)\.html$ index.php?ctrl=Subdivision&action=listSubdivisions&page=$1 [L]

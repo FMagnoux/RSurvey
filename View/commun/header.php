@@ -23,7 +23,7 @@
    <div class="mdl-layout__header mdl-shadow--12dp">
       <div class="mdl-layout__header-row mdl-color--white">
          <!-- Title -->
-         <img class="imgLogo" src="ressources/media/img/logov1.svg" alt="Logo">
+         <a href="./" title="Retour à l'accueil"><img class="imgLogo" src="ressources/media/img/logov1.svg" alt="Logo"></a>
          <span class="mdl-layout-title mdl-color-text--grey-600 mdl-typography--font-bold">RSurvey</span>
          <!-- Add spacer, to align navigation to the right -->
          <div class="mdl-layout-spacer"></div>
