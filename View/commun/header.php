@@ -36,7 +36,7 @@
                <a id="disconnect" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
                   href="disconnect.html">Se Déconnecter</a>
                <a id="updateUser" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Modifier son compte</a>
-
+               <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="./mes-sondages.html">Mes sondages</a>
                <?php
             }
             else {

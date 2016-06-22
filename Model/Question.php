@@ -352,7 +352,7 @@ class Question extends SQL implements JsonSerializable
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
 
-    public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore) {
+    public function getPaginatedFilteredQuestionList($iMaxItems, $iCurrentPage, $sPseudo, $sLibel, $dDateAfter, $dDateBefore, $iIdUser = null) {
         $aConfig = $this->getPaginatedQuestionListConfig();
         $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo AND question_libel LIKE :libel AND question_date >= :date_after AND question_date <= :date_before";
         $datetime = new DateTime('tomorrow');
@@ -362,6 +362,10 @@ class Question extends SQL implements JsonSerializable
             "date_after" => !empty($dDateAfter) ? $dDateAfter : "2016-01-01",
             "date_before" => !empty($dDateBefore) ? $dDateBefore : $datetime->format('Y-m-d H:i:s')
         );
+        if(!empty($iIdUser)) {
+            $aConfig["where"] .= " AND ".$this->table.".usr_id = :id";
+            $values["id"] = $iIdUser;
+        }
         return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $values);
     }
     

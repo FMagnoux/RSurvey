@@ -397,15 +397,23 @@ class QuestionController extends SuperController
         $this->page = "admin/listQuestions";
         $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStart" => "./administration/page-", "sUrlEnd" => ".html"));
     }
+    
+    public function userListQuestionsFilter() {
+        $this->page = "user/listQuestions";
+        $this->helperListQuestionsFilter("user/errorFilterQuestions", $_SESSION["iIdUser"]);
+    }
+
+    public function listQuestionsFilter() {
+        if(!$this->isAdmin()) return false;
+        $this->page = "admin/listQuestions";
+        $this->helperListQuestionsFilter("admin/errorFilterQuestions");
+    }
 
     /**
      * Faire une recherche sur les questions
      * @return bool
      */
-    public function listQuestionsFilter() {
-        if(!$this->isAdmin()) return false;
-        $this->page = "admin/listQuestions";
-
+    private function helperListQuestionsFilter($sError, $iIdUser = null) {
         if(!empty($_POST)) extract($_POST);
         else if(!empty($_GET)) extract($_GET);
 
@@ -434,9 +442,9 @@ class QuestionController extends SuperController
             $dDateBefore = "";
         }
 
-        $oPagination = $this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore);
+        $oPagination = $this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore, $iIdUser);
         if(count($oPagination->getAData()) == 0) {
-            $this->page = "admin/errorFilterQuestions";
+            $this->page = $sError;
             $this->view(
                 array(
                     self::ERROR => self::ERROR_QUESTIONKO,
@@ -448,17 +456,18 @@ class QuestionController extends SuperController
             );
             return false;
         }
-
-        $this->view(
-            array(
-                "oPagination" => $oPagination,
-                "sPseudo" => $sPseudo,
-                "sLibel" => $sLibel,
-                "dDateAfer" => $dDateAfter,
-                "dDateBefore" => $dDateBefore,
-                "sUrlStart" => "./administration-filtre/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-"
-            )
+        $aConfig = array(
+            "oPagination" => $oPagination,
+            "sPseudo" => $sPseudo,
+            "sLibel" => $sLibel,
+            "dDateAfer" => $dDateAfter,
+            "dDateBefore" => $dDateBefore,
+            "sUrlStart" => "./administration-filtre/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-"
         );
+        if(!empty($iIdUser)) {
+            $aConfig["sUrlStart"] = "./mes-sondages-filtre/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-";
+        }
+        $this->view($aConfig);
         return true;
     }
 
@@ -489,7 +498,7 @@ class QuestionController extends SuperController
             return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
         }
         $this->page = "user/listQuestions";
-        return $this->view(array("oPagination" => $oPagination));
+        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./mes-sondages/page-"));
     }
 
     /**
