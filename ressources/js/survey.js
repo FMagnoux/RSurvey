@@ -26,7 +26,7 @@ function getMap() {
     $(document).attr("title", sQuestionLibelValue);
     $('meta[name=description]').attr('content', 'Répondez à ce sondage !'+sQuestionLibelValue);
     e[1].forEach(function(e,i){
-      var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton choiceButton"+i+"'></button>").text(e.sChoixLibel);
+      var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton hide choiceButton"+i+"'></button>").text(e.sChoixLibel);
       $(".mdl-card__title").append(button);
     });
 
@@ -36,6 +36,8 @@ function getMap() {
     });
     $('#toggleResponse').click(function(event) {
       $('#centermap').toggleClass('hideMap');
+      $('.choiceButton').toggleClass('hide');
+
       $(this).text('Masquer les réponses');
       if($('#centermap').hasClass('hideMap')) {
         $(this).text('Voir les réponses');
@@ -73,9 +75,9 @@ function createMap(mapPosition,datas) {
     dragging:true,
     touchZoom:true,
     doubleClickZoom:false,
-    scrollWheelZoom:true,
-    boxZoom:true,
-    keyboard:true,
+    scrollWheelZoom:false,
+    boxZoom:false,
+    keyboard:false,
     minZoom:6.5,
     maxZoom:10
   }).setView([46.5, 2.234], 6.5);
@@ -166,7 +168,7 @@ var sendAnswer = function(c,s) {
     if (e[0] == "error") {
       showDialog({
           title: "<span class='mdl-color-text--red-800'>Erreur</span>",
-          text: "<p class='mdl-color-text--red-800'>Vous avez déjà voté pour cette région</p>",
+          text: "<p class='mdl-color-text--red-800'>"+e[1]+"</p>",
           negative: false,
           positive: {
               title: 'Ok'
@@ -232,7 +234,6 @@ var cloreSurvey = function(e) {
 }
 
 var updateSurvey = function(datas) {
-  event.preventDefault();
   showDialog({
       onLoaded: function(e) {
 
@@ -250,7 +251,7 @@ var updateSurvey = function(datas) {
           });
       },
       title: "<span class='mdl-color-text--blue-800'> Modifer un sondage</span>",
-      text: "<p class='mdl-color-text--red-800'> Attention ! Toutes les réponses seront effacées</p>"+contentNewSurvey,
+      text: "<p class=' alertUpdateSurvey mdl-color-text--red-800'> Attention ! Toutes les réponses seront effacées</p>"+contentNewSurvey,
       negative: false,
       positive: {
           title: 'Modifier un sondage'
@@ -308,6 +309,9 @@ $.ajax({
 .done(function(e) {
   console.log("success");
   console.log(e[0]);
+  console.log(e[1]);
+  $('.alertUpdateSurvey').text(e[1]).toggleClass('mdl-color-text--red-800').toggleClass('mdl-color-text--green-800');
+  location.reload(true);
 })
 .fail(function(e) {
   console.log("error");
