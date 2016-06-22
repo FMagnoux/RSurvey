@@ -1,4 +1,3 @@
-
 console.log("I'm survey !");
 
 function getMap() {
@@ -8,8 +7,9 @@ function getMap() {
     dataType: 'json'
   })
   .done(function(e) {
-    console.log("success");
-    console.info(e);
+    if(e[0] && e[0] == "error") {
+      window.location = "./404.html";
+    }
     test = e;
     var userSession = e[2];
     var sQuestionLibelValue = e[0].sQuestionLibel;
@@ -27,6 +27,7 @@ function getMap() {
     $("#titleSurvey").text(sQuestionLibelValue);
     $(document).attr("title", sQuestionLibelValue);
     $('meta[name=description]').attr('content', 'Répondez à ce sondage !'+sQuestionLibelValue);
+    console.log("trol " + sQuestionLibelValue);
     e[1].forEach(function(e,i){
       var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton hide choiceButton"+i+"'></button>").text(e.sChoixLibel);
       $(".mdl-card__title").append(button);
