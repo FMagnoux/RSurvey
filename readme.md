@@ -5,6 +5,10 @@ Pour installer le projet :
 - Allez dans le fichier .htaccess. Trouvez la ligne ErrorDocument 404 /RSurvey/index.php?ctrl=Super&action=error et adaptez le chemin à votre environnement.
 - Allez dans le fichier ressources/js/main.js, trouvez la variable linkToWebsite en tout début de fichier et placez l'adresse vers le site web ou le localhost.
 
+Pour se connecter au projet :
+- Utilisez un compte utilisateur avec les identifiants suivants : user@gmail.com / user
+- Utilisez un compte administrateur avec les identifiants suivants : admin@gmail.com / admin
+
 Si vous installez le projet en localhost, la fonction permettant d'envoyer des e-mails ne fonctionnera pas. Ainsi vous ne pourrez pas activer un compte utilisateur ou générer un nouveau mot de passe en cas d'oubli. Il sera alors seulement possible d'activer un compte en procédant manuellement :
 Pour activer un compte utilisateur, trouvez votre utilisateur dans la table User et mettez son champ usr_active à 1.
 
