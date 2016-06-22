@@ -19,9 +19,7 @@
 #centermap {
   height: 950px;
 }
-.leaflet-control-zoom {
-  display:none;
-}
+
 .mdl-card__supporting-text {
   margin:auto;
 }

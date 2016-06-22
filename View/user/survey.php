@@ -1,3 +1,4 @@
+<?php print_r($_SESSION)?>
             <div class="mdl-grid">
                 <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet">
                   <button data-next="false" class=" navigateButton navigatePrev mdl-button mdl-js-button mdl-button--icon mdl-button--colored">

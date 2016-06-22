@@ -111,9 +111,45 @@ var ajaxRequestSerialize = function(idForm, urlDest) {
 
 
 var updateUserRequest = function() {
-        console.log('EDIT');
+        $.ajax({
+          url: 'get-user.html',
+          type: 'POST',
+          dataType: 'json',
+          data: {},
+        })
+        .done(function(e) {
+          console.log("success");
+          console.log(e);
+          event.preventDefault();
+          showDialog({
+              onLoaded: function(e) {
+                  $('#positive').off('click');
+                  $('#positive').click(function() {
+                      $('#errorForm').remove()
+                      ajaxRequestSerialize('formUpdateUser', 'update-user.html');
+                  });
+              },
+              title: "<span class='mdl-color-text--blue-800'>Modifier son compte</span>",
+              text: "<form id='formUpdateUser' action='#'> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='mail' name='sUsrMail' value="+e.sUsrMail+"> <label class='mdl-textfield__label'>Mail</label> </div> <div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='password' name='sUsrPassword'> <label class='mdl-textfield__label'>Mot de passe</label> </div><div class='mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label'> <input class='mdl-textfield__input' type='password' name='sUsrConfirmPassword'> <label class='mdl-textfield__label'>Confirmer le mot de passe</label> </div></form>",
+              positive: {
+                  title: 'Modifier son compte'
+              }
+          });
+
+        })
+        .fail(function(e) {
+          console.log("error");
+          console.log(e.responseText);
+
+        })
+        .always(function() {
+          console.log("complete");
+        });
+
 
     }
+
+
     /*DOCUMENT READY*/
 
 
