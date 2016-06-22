@@ -12,6 +12,7 @@ function getMap() {
     console.info(e);
     test = e;
     var userSession = e[2];
+    var sQuestionLibelValue = e[0].sQuestionLibel;
     var userQuestion = e[0].oUsrId.iUsrId;
     if(userSession != userQuestion || e[0].bQuestionClose == "1"){
       $("#cloreSurveyButton").hide();
@@ -21,7 +22,13 @@ function getMap() {
       var isTrue = $(this).data().next;
       navigateButtons(isTrue,dateSurvey);
     });
-    $("#titleSurvey").text(test[0].sQuestionLibel);
+    $("#titleSurvey").text(sQuestionLibelValue);
+    $(document).attr("title", sQuestionLibelValue);
+    $('meta[name=description]').attr('content', 'Répondez à ce sondage !'+sQuestionLibelValue);
+    e[1].forEach(function(e,i){
+      var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton choiceButton"+i+"'></button>").text(e.sChoixLibel);
+      $(".mdl-card__title").append(button);
+    });
 
     $('#cloreSurveyButton').click(function(event) {
       console.log(e);
@@ -58,7 +65,6 @@ function createMap(mapPosition,datas) {
   var choices = $("<form action='#' class='survey-box'></form>");
   $(containerChoice).append(choices);
   datas[1].forEach(function(e,i){
-    console.log(e)
     var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect answerButton answerButton"+i+"'></button>").text(e.sChoixLibel);
     $(choices).append(button);
   });
@@ -66,7 +72,7 @@ function createMap(mapPosition,datas) {
   var map = L.map(mapPosition,{
     dragging:true,
     touchZoom:true,
-    doubleClickZoom:true,
+    doubleClickZoom:false,
     scrollWheelZoom:true,
     boxZoom:true,
     keyboard:true,
@@ -137,6 +143,7 @@ function customStyle(feature) {
   success: function(data) {
       $(data.features).each(function(key, data) {
         mapContent.addData(data);
+
       });
   }
   }).error(function() {});
@@ -156,6 +163,16 @@ var sendAnswer = function(c,s) {
   .done(function(e) {
     console.log("success");
     console.log(e);
+    if (e[0] == "error") {
+      showDialog({
+          title: "<span class='mdl-color-text--red-800'>Erreur</span>",
+          text: "<p class='mdl-color-text--red-800'>Vous avez déjà voté pour cette région</p>",
+          negative: false,
+          positive: {
+              title: 'Ok'
+          }
+      });
+    }
   })
   .fail(function(e) {
     console.log("error");

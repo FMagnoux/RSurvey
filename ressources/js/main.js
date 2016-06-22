@@ -200,10 +200,8 @@ var closeSurveyRequest = function(question) {
         });
 }
 
-<<<<<<< HEAD
 
 /*DOCUMENT READY*/
-=======
 var contactFormRequest = function(e) {
     $.ajax({
         url: 'contact.html',
@@ -224,7 +222,6 @@ var contactFormRequest = function(e) {
         });
     return false;
 }
->>>>>>> refs/remotes/origin/master
 
 $(document).ready(function() {
 
