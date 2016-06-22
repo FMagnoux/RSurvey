@@ -19,6 +19,8 @@ class User extends SQL implements JsonSerializable
     private $iRoleId;
     private $sTable = "User";
 
+    private static $active = 1;
+
     /**
      * @return mixed
      */
@@ -167,6 +169,30 @@ class User extends SQL implements JsonSerializable
      * @param $sUsrPseudo
      * @return bool
      */
+
+    public function getUser(){
+        $requete = $this->db->prepare('select usr_id , usr_pseudo , usr_mail  from User where usr_id = :usr_id and usr_active = :usr_active');
+        $requete->execute (array(
+            ':usr_id'=>$this->getIUsrId(),
+            ':usr_active'=>self::$active,
+        ));
+        $results = $requete->fetchAll();
+        if (empty($results)){
+            return false;
+        }
+        else {
+            foreach ($results as $result){
+                $oUser = new User();
+
+                $oUser->setIUsrId($result['usr_id']);
+                $oUser->setSUsrPseudo($result['usr_pseudo']);
+                $oUser->setSUsrMail($result['usr_mail']);
+
+                return $oUser;
+            }
+        }
+    }
+
     public function checkPseudo($sUsrPseudo){
         $requete = $this->db->prepare('select usr_pseudo from User where usr_pseudo = :usr_pseudo');
         $requete->execute (array(
@@ -185,27 +211,39 @@ class User extends SQL implements JsonSerializable
      * @return bool
      */
     public function signinUser(){
-        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password)values(:usr_pseudo , :usr_mail , :usr_password)') ;
-        return $requete->execute (array(
+        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password, usr_token)values(:usr_pseudo , :usr_mail , :usr_password, :usr_token)') ;
+        if(!$requete->execute (array(
             ':usr_pseudo'=>$this->getSUsrPseudo(),
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
-        ));
-
+            ':usr_token' => $this->getSUsrToken()
+        ))) return false;
+        // Récupérer l'id de l'user qui vient d'être ajouté
+        $this->iUsrId = parent::select(
+            array(
+                "columns" => "usr_id",
+                "table" => $this->sTable,
+                "order" => "usr_id desc",
+                "limit" => 1
+            )
+        )["usr_id"];
+        return true;
     }
 
     public function loginUser(){
-        $requete = $this->db->prepare('select usr_id from User where usr_mail = :usr_mail and usr_password = :usr_password');
+        $requete = $this->db->prepare('select usr_id, role_id from User where usr_mail = :usr_mail and usr_password = :usr_password and usr_active = 1');
         $requete->execute (array(
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
         ));
-        $results = $requete->fetchAll();
+        $results = $requete->fetch();
         if (empty($results)){
             return false;
         }
         else {
-            return true;
+          $this->setIUsrId($results['usr_id']);
+          $this->setIRoleId($results['role_id']);
+          return true;
         }
     }
 
@@ -227,17 +265,111 @@ class User extends SQL implements JsonSerializable
     }
 
     /**
+     * Changer le token d'un utilisateur en fonction de son adresse mail
+     * @param $sToken
+     * @param $sMail
+     * @return bool
+     */
+    public function setTokenById($sToken, $iId) {
+        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token WHERE usr_id = :mail");
+        return $query->execute(array(
+            "token" => $sToken,
+            "mail" => $iId
+        ));
+    }
+
+    public function getTokenById($iId) {
+        return parent::select(
+            array(
+                "columns" => "usr_token",
+                "table" => $this->sTable,
+                "where" => "usr_id = :id",
+                "fetch" => true
+            ),
+            array(
+                "id" => $iId
+            )
+        )["usr_token"];
+    }
+
+    /**
+     * Mettre à jour le mot de passe dun user
+     * @param $iId
+     * @param $sPassword
+     * @param $sToken
+     * @return bool
+     */
+    public function setPasswordById($iId, $sPassword, $sToken) {
+        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token, usr_password = :password WHERE usr_id = :id");
+        return $query->execute(array(
+            "token" => $sToken,
+            "id" => $iId,
+            "password" => $sPassword
+        ));
+    }
+
+    /**
+     * Retourner l'id correspond à un mail
+     * @return array
+     */
+    public function getIdByEmail($sMail) {
+        return parent::select(
+            array(
+                "columns" => "usr_id",
+                "table" => $this->sTable,
+                "where" => "usr_mail = :mail",
+                "fetch" => true
+          ),
+            array(
+                "mail" => $sMail
+            )
+        )["usr_id"];
+    }
+
+    /**
+     * Retourne un objet User contenant le rôle
+     * @param $iId
+     * @return User
+     */
+    public function getUserRoleById($iId) {
+         return parent::select(
+            array(
+                "columns" => "role_id",
+                "table" => $this->sTable,
+                "where" => "usr_id = :id",
+                "fetch" => true
+            ),
+            array(
+                "id" => $iId
+            )
+        )["role_id"];
+    }
+    
+    private function getPaginatedConfig() {
+        return array(
+            "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
+            "table" => $this->sTable,
+            "where" => "usr_active = 1 and usr_id !=".$_SESSION['iIdUser']
+        );
+    }
+
+    /**
      * Liste paginée des users
      * @param $iMaxItems
      * @param $iCurrentPage
      * @return array<User>
      */
     public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
-            "columns" => '*',
-            "table" => $this->sTable,
-            null
-        ));
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $this->getPaginatedConfig());
+    }
+
+    public function getPaginatedUserListByPseudo($iMaxItems, $iCurrentPage, $sPseudo) {
+        $aConfig = $this->getPaginatedConfig();
+        $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo";
+        $aValues = array(
+            "pseudo" => !empty($sPseudo) ? "%" . $sPseudo . "%" : "%"
+        );
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $aValues);
     }
 
     /**
@@ -247,13 +379,13 @@ class User extends SQL implements JsonSerializable
      */
     public function toObject($array) {
         return (new User())
-            ->setIUsrId($array["usr_id"])
-            ->setSUsrPseudo($array["usr_pseudo"])
-            ->setSUsrMail($array["usr_mail"])
-            ->setSUsrPassword($array["usr_password"])
-            ->setSUsrToken($array["usr_token"])
-            ->setBUsrActive($array["usr_active"])
-            ->setIRoleId($array["role_id"])
+            ->setIUsrId(isset($array["usr_id"]) ? $array["usr_id"] : null)
+            ->setSUsrPseudo(isset($array["usr_pseudo"]) ? $array["usr_pseudo"] : null)
+            ->setSUsrMail(isset($array["usr_mail"]) ? $array["usr_mail"] : null)
+            ->setSUsrPassword(isset($array["usr_password"]) ? $array["usr_password"] : null)
+            ->setSUsrToken(isset($array["usr_token"]) ? $array["usr_token"] : null)
+            ->setBUsrActive(isset($array["usr_active"]) ? $array["usr_active"] : null)
+            ->setIRoleId(isset($array["role_id"]) ? $array["role_id"] : null)
             ;
     }
 
@@ -276,5 +408,5 @@ class User extends SQL implements JsonSerializable
             'iRoleId' => $this->iRoleId,
         ];
     }
-    
+
 }

@@ -118,12 +118,13 @@ class Subdivision extends SQL implements JsonSerializable
      * @return $this
      */
     public function toObject($array) {
+        require_once "./Model/Zone.php";
         $oZone = new Zone();
         $oZone = $oZone->toObject($array);
         return (new Subdivision())
-            ->setISubId($array["sub_id"])
-            ->setSSubLibel($array["sub_libel"])
-            ->setBSubActive($array["sub_active"])
+            ->setISubId(isset($array["sub_id"]) ? $array["sub_id"] : null)
+            ->setSSubLibel(isset($array["sub_libel"]) ? $array["sub_libel"] : null)
+            ->setBSubActive(isset($array["sub_active"]) ? $array["sub_active"] : null)
             ->setoZoneId($oZone)
         ;
     }

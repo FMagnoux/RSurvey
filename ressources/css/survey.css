@@ -1,4 +1,4 @@
-/* SONDAGES */
+  /* SONDAGES */
 
 .card-wide.mdl-card {
   width: 100%;
@@ -12,10 +12,6 @@
   color: #fff;
 }
 
-.mdl-navigation.mdl-layout--large-screen-only {
-  text-transform: uppercase;
-
-}
 
 
 #centermap {
@@ -27,6 +23,10 @@
 .mdl-card__supporting-text {
   margin:auto;
 }
+
+.survey-box {
+  margin:auto;
+}
 #fab {
   position: fixed;
   display: block;
@@ -35,4 +35,33 @@
   margin-right: 40px;
   margin-bottom: 40px;
   z-index: 900;
+}
+
+.navigateButton {
+margin-top: 50vh;
+text-align: center;
+}
+
+.navigatePrev {
+  float:right;
+}
+
+.navigateLeft {
+  float: left;
+}
+
+.answerButton0 {
+  min-width: 100px;
+  margin-right:24px;
+}
+
+.answerButton1 {
+  min-width: 100px;
+  margin-right:24px;
+background-color:#009688 !important;
+}
+
+.answerButton2 {
+  min-width: 100px;
+  background-color : #2196F3 !important;
 }

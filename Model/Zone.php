@@ -87,9 +87,9 @@ class Zone extends SQL implements JsonSerializable
      */
     public function toObject($array) {
         return (new Zone())
-            ->setIZoneId($array["zone_id"])
-            ->setSZoneLibel($array["zone_libel"])
-            ->setBZoneActive($array["zone_active"])
+            ->setIZoneId(isset($array["zone_id"]) ? $array["zone_id"] : null)
+            ->setSZoneLibel(isset($array["zone_libel"]) ? $array["zone_libel"] : null)
+            ->setBZoneActive(isset($array["zone_active"]) ? $array["zone_active"] : null)
         ;
     }
 

@@ -15,7 +15,15 @@ abstract class SQL
      */
     public function __construct() {
         try {
-            $this->db = new PDO('mysql:host=localhost;dbname=rsurvey;charset=utf8', 'root', 'mysql');
+            $engine = 'mysql';
+            $host = '127.0.0.1';
+            $port ='3306';
+            $database ='rsurvey';
+            $user = 'root';
+            $password = 'mysql';
+            $dns = $engine.':port='.$port.';dbname='.$database.";host=".$host;
+            $this->db = new PDO($dns, $user, $password);
+            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
@@ -30,12 +38,13 @@ abstract class SQL
     public function select($config, $values = null) {
         $sql = "SELECT " . $config["columns"] . " FROM " . $config["table"];
         if (!empty($config["join"])) {
-            if (count($config["join"]) <= 3) {
-                $sql .= " INNER JOIN " . $config["join"]["table"] . " ON " . $config["join"]["table"] . "." . $config["join"]["key"] . " = " . $config["table"] . "." . $config["join"]["foreignKey"];
-            } else {
+            if (!empty($config["join"][0]) && is_array($config["join"][0])) {
                 foreach ($config["join"] as $elt) {
                     $sql .= " INNER JOIN " . $elt["table"] . " ON " . $elt["table"] . "." . $elt["key"] . " = " . $config["table"] . "." . $elt["foreignKey"];
                 }
+            } else {
+                $sql .= " INNER JOIN " . $config["join"]["table"] . " ON " . $config["join"]["table"] . "." . $config["join"]["key"] . " = " . $config["table"] . "." . $config["join"]["foreignKey"];
+
             }
         }
         if (!empty($config["where"])) {
@@ -112,10 +121,10 @@ abstract class SQL
      * @param $aParams
      * @return array<Question>
      */
-    public function getPaginatedList($iMaxItems, $iCurrentPage, $aParams) {
+    public function getPaginatedList($iMaxItems, $iCurrentPage, $aParams, $aValues = null) {
         require_once './Model/Pagination.php';
         $pagination = new Pagination();
-        $pagination->setPagination($iMaxItems, $iCurrentPage, $aParams);
+        $pagination->setPagination($iMaxItems, $iCurrentPage, $aParams, $aValues);
         $pagination->setAData($this->toObjects($pagination->getAData()));
         return $pagination;
     }
