@@ -65,7 +65,7 @@ class ReponseController extends SuperController
             return false;
         }
         // Vérifier que l'utilisateur n'ait pas déjà répondu au sondage
-        if($this->alreadyVoted($oChoix->getIQuestionId())) {
+        if($this->alreadyVoted($oQuestion->getIQuestionId())) {
             $returnjson = array(self::ERROR,self::ERROR_ALREADYVOTED);
             echo json_encode($returnjson);
             return false;
@@ -74,7 +74,7 @@ class ReponseController extends SuperController
         if($this->oEntity->incrementReponse()) {
             $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
             echo json_encode($returnjson);
-            $this->rememberVote($oChoix->getIQuestionId());
+            $this->rememberVote($oQuestion->getIQuestionId());
             return true;
         }
         // Sinon, créer la réponse...
@@ -82,7 +82,7 @@ class ReponseController extends SuperController
         if($this->oEntity->createReponse()){
             $returnjson = array(self::SUCCESS,self::SUCCESS_VOTE);
             echo json_encode($returnjson);
-            $this->rememberVote($oChoix->getIQuestionId());
+            $this->rememberVote($oQuestion->getIQuestionId());
             return true;
         }
         else {
