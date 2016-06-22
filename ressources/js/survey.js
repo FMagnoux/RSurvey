@@ -126,6 +126,7 @@ function customStyle(feature) {
     });
 
     for(var i in rgb) {tempArray.push(rgb[i]);}
+    console.log(tempArray);
     var maxValue = Math.max.apply(null,tempArray);
     var color = associativeBackgroundColors[rgb.indexOf(maxValue)];
     console.log(rgb);
@@ -134,6 +135,7 @@ function customStyle(feature) {
     if (typeof color === "undefined") {
           var color = "#E0E0E0";
     }
+
 
   return {fillColor:color,color:"black",opacity:1,weight:2,fillOpacity:1}
 
