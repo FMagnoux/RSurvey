@@ -21,8 +21,8 @@ class ContactController extends SuperController
             echo json_encode(array(self::ERROR, self::ERROR_SENDING));
             return false;
         }
-        if(filter_var($_POST["sEmail"],FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(array(self::ERROR, self::ERROR_SENDING));
+        if(!filter_var($_POST["sEmail"],FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(array(self::ERROR, self::ERROR_MAILFORMAT));
             return false;
         }
         require_once "./Model/Mail.php";
