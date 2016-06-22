@@ -239,7 +239,9 @@ var updateSurvey = function(datas) {
           $('.sQuestionLibel').val([datas[0].sQuestionLibel]).parent().addClass('is-dirty');
           $('#newSurveychoice1').val([datas[1][0].sChoixLibel]).parent().addClass('is-dirty');
           $('#newSurveychoice2').val([datas[1][1].sChoixLibel]).parent().addClass('is-dirty');
-          $('#newSurveychoice3').val([datas[1][2].sChoixLibel]).parent().addClass('is-dirty');
+          if(typeof datas[1][2] !== "undefined") {
+            $('#newSurveychoice3').val([datas[1][2].sChoixLibel]).parent().addClass('is-dirty');
+          }
 
           $('#positive').off('click');
           $('#positive').click(function() {
@@ -280,7 +282,13 @@ console.log(oQuestionChoixValues);
   }
   if (newSurveychoice3 != '') {
     var iIdChoix = {};
-    iIdChoix["iIdChoix"] = datas[1][2].iChoixId;
+    if(typeof datas[1][2] !== "undefined") {
+      iIdChoix["iIdChoix"] = datas[1][2].iChoixId;
+
+    }
+    else {
+      iIdChoix["iIdChoix"] = -1
+    }
     iIdChoix["sChoixLibel"] = newSurveychoice3;
     oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
   }
