@@ -128,13 +128,20 @@ function customStyle(feature) {
 
     for(var i in rgb) {tempArray.push(rgb[i]);}
     var maxValue = Math.max.apply(null,tempArray);
-    if(maxValue == 0) {
-      var color = "#E0E0E0";
-    }
-    else {
-      var color = associativeBackgroundColors[rgb.indexOf(maxValue)];
 
-    }
+if(tempArray.length > 0) {
+  if(tempArray[0] == tempArray[1] || tempArray[0] == tempArray[2]) {
+    var color = "#FFF";
+  }
+  else {
+    var color = associativeBackgroundColors[rgb.indexOf(maxValue)];
+  }
+  if(maxValue == 0) {
+    var color = "#E0E0E0";
+  }
+}
+
+
     console.log(rgb);
     console.log(tempArray);
     console.info(rgb.indexOf(maxValue));
