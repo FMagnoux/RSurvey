@@ -35,14 +35,14 @@
                 <div id="contact" class="mdl-cell mdl-cell--8-col  mdl-card__supporting-text mdl-cell--2-offset-desktop">
                     <h3 class="mdl-typography--display-1-color-contrast">Une question ?</h3>
                     <p>Nous sommes à votre disposition si vous avez une question.</p>
-                    <form action="#">
+                    <form action="contact.html" method="post" id="contactForm">
 
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="email" name="email">
+                            <input class="mdl-textfield__input" type="email" name="sEmail">
                             <label class="mdl-textfield__label">Adresse Email</label>
                         </div>
                         <div class="mdl-textfield mdl-js-textfield mdl-textfield--full-width mdl-textfield--floating-label">
-                            <input class="mdl-textfield__input" type="text" name="content">
+                            <input class="mdl-textfield__input" type="text" name="sMessage">
                             <label class="mdl-textfield__label">Message</label>
                         </div>
                         <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect mdl-color--blue-800">Envoyer</button>

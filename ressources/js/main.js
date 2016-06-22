@@ -200,8 +200,31 @@ var closeSurveyRequest = function(question) {
         });
 }
 
+<<<<<<< HEAD
 
 /*DOCUMENT READY*/
+=======
+var contactFormRequest = function(e) {
+    $.ajax({
+        url: 'contact.html',
+        type: 'POST',
+        dataType: 'json',
+        data: {sMessage: e.target.sMessage.value, sEmail: e.target.sEmail.value}
+    })
+        .done(function(e) {
+            console.log("success");
+            alert(e[1]);
+        })
+        .fail(function(e) {
+            console.log("error");
+            console.log(e.responseText)
+        })
+        .always(function() {
+            console.log("complete");
+        });
+    return false;
+}
+>>>>>>> refs/remotes/origin/master
 
 $(document).ready(function() {
 
@@ -274,4 +297,6 @@ $(document).ready(function() {
     $('.close-survey').click(function(event) {
         closeSurveyRequest(this);
     });
+
+    $("#contactForm").submit(contactFormRequest);
 });

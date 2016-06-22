@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="description" content="">
+    <meta name="description" content="<?= isset($aMetaDescription[$this->page]) ? $aMetaDescription[$this->page] : "R Survey" ?>">
     <link rel="stylesheet" href="ressources/css/fonts.css">
     <link rel="stylesheet" href="ressources/css/material.min.css">
     <link rel="stylesheet" href="ressources/css/jquery-modal-mdl.css">
@@ -14,7 +14,7 @@
 
     <link rel="shortcut icon" type="image/x-icon" href="ressources/media/img/logov1.ico" />
     <link rel="icon" type="image/x-icon" href="ressources/media/img/logov1.ico" />
-    <title>R Survey</title>
+    <title><?= isset($aMetaTitles[$this->page]) ? $aMetaTitles[$this->page] : "R Survey" ?></title>
 </head>
 <body>
 
@@ -22,7 +22,7 @@
     <div class="mdl-layout__header mdl-shadow--12dp">
         <div class="mdl-layout__header-row mdl-color--white">
             <!-- Title -->
-            <img class="imgLogo" src="ressources/media/img/logov1.svg" alt="Logo">
+            <a href="./" title="Retour à l'accueil"><img class="imgLogo" src="ressources/media/img/logov1.svg" alt="Logo"></a>
             <span class="mdl-layout-title mdl-color-text--grey-600 mdl-typography--font-bold">RSurvey</span>
             <!-- Add spacer, to align navigation to the right -->
             <div class="mdl-layout-spacer"></div>
