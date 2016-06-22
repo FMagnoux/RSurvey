@@ -22,10 +22,8 @@ function getMap() {
       var isTrue = $(this).data().next;
       navigateButtons(isTrue,dateSurvey);
     });
-<<<<<<< HEAD
     $("#titleSurvey").text(e[0].sQuestionLibel);
     $(document).attr("title", e[0].sQuestionLibel);
-=======
     $("#titleSurvey").text(sQuestionLibelValue);
     $(document).attr("title", sQuestionLibelValue);
     $('meta[name=description]').attr('content', 'Répondez à ce sondage !'+sQuestionLibelValue);
@@ -33,7 +31,6 @@ function getMap() {
       var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton hide choiceButton"+i+"'></button>").text(e.sChoixLibel);
       $(".mdl-card__title").append(button);
     });
->>>>>>> refs/remotes/origin/front
 
     $('#cloreSurveyButton').click(function(event) {
       console.log(e);

@@ -153,8 +153,6 @@ var updateUserRequest = function() {
 
 
     }
-    /*DOCUMENT READY*/
-
 
 var sharingGenerator = function(url,sQuestionLibelValue) {
   return "<p class=shareButtonsContainer ><a class=shareButton target=_blank href=https://www.facebook.com/sharer/sharer.php?app_id=113869198637480&sdk=joey&u=" + encodeURI("http://localhost/rsurvey/" + url) + "><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800'>Partager sur Facebook !</button></a><a class=shareButton target=_blank href=https://twitter.com/intent/tweet?text=" + encodeURI("Je viens de créer un sondage ! " + sQuestionLibelValue + " http://localhost/rsurvey/" + url) + "><button class='mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-500'>Partager sur Twitter !</button></a></p>";
@@ -201,11 +199,7 @@ var closeSurveyRequest = function(question) {
         });
 }
 
-<<<<<<< HEAD
-=======
 
-
->>>>>>> refs/remotes/origin/front
 var contactFormRequest = function(e) {
     $.ajax({
         url: 'contact.html',
@@ -226,10 +220,7 @@ var contactFormRequest = function(e) {
         });
     return false;
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> refs/remotes/origin/front
 /*DOCUMENT READY*/
 
 $(document).ready(function() {
