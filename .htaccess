@@ -42,6 +42,7 @@ RewriteRule ^mot-de-passe-oublie/([a-zA-Z0-9]*)\/([a-zA-Z0-9\-]*)$ index.php?ctr
 RewriteRule ^confirmer-compte/([a-zA-Z0-9]*)\/([a-zA-Z0-9\-]*)$ index.php?ctrl=User&action=confirmUser&id=$1&token=$2 [L]
 RewriteRule ^desactivate-user.html$ index.php?ctrl=User&action=desactivateUser [L]
 RewriteRule ^update-user.html$ index.php?ctrl=User&action=updateUser [L]
+RewriteRule ^get-user.html$ index.php?ctrl=User&action=getUser [L]
 
 # Lien vers un sondage
 RewriteRule ^([a-zA-Z0-9]*)$ index.php?ctrl=Question&action=showQuestion&iIdQuestion=$1 [L]

@@ -57,7 +57,10 @@ class UserController extends SuperController
         $this->oEntity = new User();
     }
 
-    public function getUser($iIdUser){
+    public function getUser($iIdUser = null){
+        if (isset($_POST['iIdUser']) && !empty($_POST['iIdUser'])){
+            $iIdUser = $_POST['iIdUser'];
+        }
         $this->oEntity->setIUsrId($iIdUser);
         return $this->oEntity->getUser();
     }
