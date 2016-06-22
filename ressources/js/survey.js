@@ -12,6 +12,7 @@ function getMap() {
     console.info(e);
     test = e;
     var userSession = e[2];
+    var sQuestionLibelValue = e[0].sQuestionLibel;
     var userQuestion = e[0].oUsrId.iUsrId;
     if(userSession != userQuestion || e[0].bQuestionClose == "1"){
       $("#cloreSurveyButton").hide();
@@ -21,8 +22,18 @@ function getMap() {
       var isTrue = $(this).data().next;
       navigateButtons(isTrue,dateSurvey);
     });
+<<<<<<< HEAD
     $("#titleSurvey").text(e[0].sQuestionLibel);
     $(document).attr("title", e[0].sQuestionLibel);
+=======
+    $("#titleSurvey").text(sQuestionLibelValue);
+    $(document).attr("title", sQuestionLibelValue);
+    $('meta[name=description]').attr('content', 'Répondez à ce sondage !'+sQuestionLibelValue);
+    e[1].forEach(function(e,i){
+      var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton hide choiceButton"+i+"'></button>").text(e.sChoixLibel);
+      $(".mdl-card__title").append(button);
+    });
+>>>>>>> refs/remotes/origin/front
 
     $('#cloreSurveyButton').click(function(event) {
       console.log(e);
@@ -30,6 +41,8 @@ function getMap() {
     });
     $('#toggleResponse').click(function(event) {
       $('#centermap').toggleClass('hideMap');
+      $('.choiceButton').toggleClass('hide');
+
       $(this).text('Masquer les réponses');
       if($('#centermap').hasClass('hideMap')) {
         $(this).text('Voir les réponses');
@@ -59,7 +72,6 @@ function createMap(mapPosition,datas) {
   var choices = $("<form action='#' class='survey-box'></form>");
   $(containerChoice).append(choices);
   datas[1].forEach(function(e,i){
-    console.log(e)
     var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect answerButton answerButton"+i+"'></button>").text(e.sChoixLibel);
     $(choices).append(button);
   });
@@ -67,10 +79,10 @@ function createMap(mapPosition,datas) {
   var map = L.map(mapPosition,{
     dragging:true,
     touchZoom:true,
-    doubleClickZoom:true,
-    scrollWheelZoom:true,
-    boxZoom:true,
-    keyboard:true,
+    doubleClickZoom:false,
+    scrollWheelZoom:false,
+    boxZoom:false,
+    keyboard:false,
     minZoom:6.5,
     maxZoom:10
   }).setView([46.5, 2.234], 6.5);
@@ -138,6 +150,7 @@ function customStyle(feature) {
   success: function(data) {
       $(data.features).each(function(key, data) {
         mapContent.addData(data);
+
       });
   }
   }).error(function() {});
@@ -157,6 +170,16 @@ var sendAnswer = function(c,s) {
   .done(function(e) {
     console.log("success");
     console.log(e);
+    if (e[0] == "error") {
+      showDialog({
+          title: "<span class='mdl-color-text--red-800'>Erreur</span>",
+          text: "<p class='mdl-color-text--red-800'>"+e[1]+"</p>",
+          negative: false,
+          positive: {
+              title: 'Ok'
+          }
+      });
+    }
   })
   .fail(function(e) {
     console.log("error");
@@ -216,14 +239,15 @@ var cloreSurvey = function(e) {
 }
 
 var updateSurvey = function(datas) {
-  event.preventDefault();
   showDialog({
       onLoaded: function(e) {
 
           $('.sQuestionLibel').val([datas[0].sQuestionLibel]).parent().addClass('is-dirty');
           $('#newSurveychoice1').val([datas[1][0].sChoixLibel]).parent().addClass('is-dirty');
           $('#newSurveychoice2').val([datas[1][1].sChoixLibel]).parent().addClass('is-dirty');
-          $('#newSurveychoice3').val([datas[1][2].sChoixLibel]).parent().addClass('is-dirty');
+          if(typeof datas[1][2] !== "undefined") {
+            $('#newSurveychoice3').val([datas[1][2].sChoixLibel]).parent().addClass('is-dirty');
+          }
 
           $('#positive').off('click');
           $('#positive').click(function() {
@@ -232,7 +256,7 @@ var updateSurvey = function(datas) {
           });
       },
       title: "<span class='mdl-color-text--blue-800'> Modifer un sondage</span>",
-      text: "<p class='mdl-color-text--red-800'> Attention ! Toutes les réponses seront effacées</p>"+contentNewSurvey,
+      text: "<p class=' alertUpdateSurvey mdl-color-text--red-800'> Attention ! Toutes les réponses seront effacées</p>"+contentNewSurvey,
       negative: false,
       positive: {
           title: 'Modifier un sondage'
@@ -264,7 +288,13 @@ console.log(oQuestionChoixValues);
   }
   if (newSurveychoice3 != '') {
     var iIdChoix = {};
-    iIdChoix["iIdChoix"] = datas[1][2].iChoixId;
+    if(typeof datas[1][2] !== "undefined") {
+      iIdChoix["iIdChoix"] = datas[1][2].iChoixId;
+
+    }
+    else {
+      iIdChoix["iIdChoix"] = -1
+    }
     iIdChoix["sChoixLibel"] = newSurveychoice3;
     oQuestionChoixValues.aQuestionChoixValues.push(iIdChoix);
   }
@@ -284,6 +314,9 @@ $.ajax({
 .done(function(e) {
   console.log("success");
   console.log(e[0]);
+  console.log(e[1]);
+  $('.alertUpdateSurvey').text(e[1]).toggleClass('mdl-color-text--red-800').toggleClass('mdl-color-text--green-800');
+  location.reload(true);
 })
 .fail(function(e) {
   console.log("error");
