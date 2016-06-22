@@ -17,7 +17,7 @@ class QuestionController extends SuperController
     const ERROR_DISCONNECTED = "Vous devez être connecté pour voir cette page.";
     const ERROR_EMPTYQUESTION = "Vous n'avez pas renseigné de question.";
     const ERROR_QUESTIONLENGHT = "La question renseignée dépasse les 100 caractères.";
-    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de <a href=\"./#contact\">contacter</a> l'administrateur.";
     const ERROR_EMPTYZONE = "Vous n'avez pas renseigné de zone pour ce sondage.";
 
     const ERROR_EMPTYCHOIX = "Deux choix sont requis pour créer un sondage";

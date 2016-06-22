@@ -45,7 +45,9 @@
 
                <?php
             }
-            ?>
+            if(!empty($_SESSION['iIdRole']) && $_SESSION['iIdRole'] < 2 ) { ?>
+               <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="administration.html">Espace administrateur</a>
+            <?php } ?>
 
             <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="#contact">Contact</a>
          </nav>

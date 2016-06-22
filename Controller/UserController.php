@@ -39,7 +39,7 @@ class UserController extends SuperController
 
     const SUCCESS_UPDATE = "Votre profil a bien été mis à jour.";
 
-    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de <a href=\"./#contact\">contacter</a> l'administrateur.";
 
     const ERROR_BROKENLINK = "Le lien a expiré.";
 
