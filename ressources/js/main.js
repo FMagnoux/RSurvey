@@ -140,6 +140,28 @@ var newSurveyModal = function(event) {
     });
 }
 
+var closeSurveyRequest = function(question) {
+    $.ajax({
+        url: 'close-question.html',
+        type: 'POST',
+        dataType: 'json',
+        data: {iIdQuestion: question.id}
+    })
+        .done(function(e) {
+            console.log("success");
+            if(e[0] == "success") {
+                question.remove();
+            }
+        })
+        .fail(function(e) {
+            console.log("error");
+            console.log(e.responseText)
+        })
+        .always(function() {
+            console.log("complete");
+        });
+}
+
 $(document).ready(function() {
 
     $('#newSurvey').click(newSurveyModal);
@@ -206,5 +228,9 @@ $(document).ready(function() {
     $('#updateUser').click(function(event) {
         event.preventDefault();
         updateUserRequest();
+    });
+
+    $('.close-survey').click(function(event) {
+        closeSurveyRequest(this);
     });
 });
