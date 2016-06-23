@@ -9,7 +9,7 @@
 class QuestionController extends SuperController
 {
     private $oEntity;
-    private $iPagination = 1;
+    private $iPagination = 10;
 
     const SUCCESS = "success";
     const ERROR = "error";
