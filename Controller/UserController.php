@@ -397,7 +397,7 @@ class UserController extends SuperController
             }
         }
         else {
-            echo $this->checkEmail(false);
+            echo $this->checkEmail(true);
             return false;
         }
     }
