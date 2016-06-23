@@ -55,7 +55,7 @@ var newSurveyRequest = function() {
                 hideDialog($('#orrsDiag'));
                 showDialog({
                     title: "<span class='mdl-color-text--green-800'>" + e[1] + "</span>",
-                    text: "<div class=mdl-typography--text-center> Cliquez ici pour acceder à votre sondage <a target=_blank href=" + linkToWebsite + "/" + e[2] + linkToWebsite + "/" + e[2] + "</a>"+sharingGenerator(e[2],sQuestionLibelValue)+"</div>",
+                    text: "<div class=mdl-typography--text-center> Cliquez ici pour acceder à votre sondage <a target=_blank href='" + linkToWebsite + "/" + e[2] + "'>" + linkToWebsite + "/" + e[2] + "</a>"+sharingGenerator(e[2],sQuestionLibelValue)+"</div>",
                     negative: false,
                     positive: false
                 });
