@@ -234,6 +234,9 @@ var sendAnswer = function(c,s) {
           }
       });
     }
+    else {
+      location.reload(true);
+    }
   })
   .fail(function(e) {
     console.log("error");
