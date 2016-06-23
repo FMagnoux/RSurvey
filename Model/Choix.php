@@ -132,7 +132,7 @@ class Choix extends SQL implements JsonSerializable
     }
 
     public function createChoix(){
-        $requete = $this->db->prepare('insert into Choix (choix_libel, question_id)values(:choix_libel, :question_id)') ;
+        $requete = self::$db->prepare('insert into Choix (choix_libel, question_id)values(:choix_libel, :question_id)') ;
         return $requete->execute (array(
             ':choix_libel'=>$this->getSChoixLibel(),
             ':question_id'=>$this->getIQuestionId(),
@@ -140,7 +140,7 @@ class Choix extends SQL implements JsonSerializable
     }
 
     public function desactiveChoix(){
-        $requete = $this->db->prepare('update Choix set choix_active = :choix_active where choix_id = :choix_id') ;
+        $requete = self::$db->prepare('update Choix set choix_active = :choix_active where choix_id = :choix_id') ;
         return $requete->execute (array(
             ':choix_id'=>$this->getIChoixId(),
             ':choix_active'=>$this->getBChoixActive(),
@@ -149,7 +149,7 @@ class Choix extends SQL implements JsonSerializable
     }
 
     public function getChoixQuestion(){
-        $requete = $this->db->prepare('select choix_id , choix_libel , question_id from Choix where question_id = :question_id and choix_active = :choix_active') ;
+        $requete = self::$db->prepare('select choix_id , choix_libel , question_id from Choix where question_id = :question_id and choix_active = :choix_active') ;
         $requete->execute (array(
             ':question_id'=>$this->getIQuestionId(),
             ':choix_active'=>self::$bActive,
@@ -172,7 +172,7 @@ class Choix extends SQL implements JsonSerializable
     }
 
     public function updateChoix(){
-        $requete = $this->db->prepare('update Choix set choix_libel = :choix_libel where choix_id = :choix_id and choix_active = :choix_active') ;
+        $requete = self::$db->prepare('update Choix set choix_libel = :choix_libel where choix_id = :choix_id and choix_active = :choix_active') ;
         return $requete->execute (array(
             ':choix_id'=>$this->getIChoixId(),
             ':choix_active'=>self::$bActive,

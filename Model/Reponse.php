@@ -89,7 +89,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function createReponse(){
-        $requete = $this->db->prepare('insert into Reponse (reponse_votes, reponse_subcode, choix_id)values(:reponse_votes, :reponse_subcode, :choix_id)') ;
+        $requete = self::$db->prepare('insert into Reponse (reponse_votes, reponse_subcode, choix_id)values(:reponse_votes, :reponse_subcode, :choix_id)') ;
         return $requete->execute (array(
             ':reponse_votes'=>$this->getIReponseVotes(),
             ':reponse_subcode'=>$this->getIReponseSubcode(),
@@ -98,7 +98,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function incrementReponse() {
-        $requete = $this->db->prepare('update Reponse set reponse_votes = reponse_votes + 1 where choix_id = :choix_id and reponse_subcode = :reponse_subcode') ;
+        $requete = self::$db->prepare('update Reponse set reponse_votes = reponse_votes + 1 where choix_id = :choix_id and reponse_subcode = :reponse_subcode') ;
         $requete->execute (array(
             ':reponse_subcode'=>$this->getIReponseSubcode(),
             ':choix_id'=>$this->getIChoixId(),
@@ -107,7 +107,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function updateReponse(){
-        $requete = $this->db->prepare('update Reponse set reponse_votes = :reponse_votes where reponse_id = :reponse_id and reponse_subcode = :reponse_subcode') ;
+        $requete = self::$db->prepare('update Reponse set reponse_votes = :reponse_votes where reponse_id = :reponse_id and reponse_subcode = :reponse_subcode') ;
         return $requete->execute (array(
             ':reponse_votes'=>$this->getIReponseVotes(),
             ':reponse_subcode'=>$this->getIReponseSubcode(),
@@ -116,7 +116,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function getReponse(){
-        $requete = $this->db->prepare('select reponse_id from Reponse where reponse_subcode = :reponse_subcode and choix_id = :choix_id and reponse_votes > 0') ;
+        $requete = self::$db->prepare('select reponse_id from Reponse where reponse_subcode = :reponse_subcode and choix_id = :choix_id and reponse_votes > 0') ;
         $requete->execute (array(
             ':reponse_subcode'=>$this->getIReponseSubcode(),
             ':choix_id'=>$this->getIChoixId(),
@@ -133,7 +133,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function getLastVotes(){
-        $requete = $this->db->prepare('select reponse_votes from Reponse where reponse_subcode = :reponse_subcode and choix_id = :choix_id') ;
+        $requete = self::$db->prepare('select reponse_votes from Reponse where reponse_subcode = :reponse_subcode and choix_id = :choix_id') ;
         $requete->execute (array(
             ':reponse_subcode'=>$this->getIReponseSubcode(),
             ':choix_id'=>$this->getIChoixId(),
@@ -145,7 +145,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function getReponseQuestion(){
-        $requete = $this->db->prepare('select reponse_id , reponse_votes , reponse_subcode , choix_id from Reponse where choix_id = :choix_id order by reponse_subcode asc') ;
+        $requete = self::$db->prepare('select reponse_id , reponse_votes , reponse_subcode , choix_id from Reponse where choix_id = :choix_id order by reponse_subcode asc') ;
         $requete->execute (array(
             ':choix_id'=>$this->getIChoixId(),
         ));
@@ -169,7 +169,7 @@ class Reponse extends SQL implements JsonSerializable
     }
 
     public function resetVotes(){
-        $requete = $this->db->prepare('update Reponse set reponse_votes = :reponse_votes where choix_id = :choix_id') ;
+        $requete = self::$db->prepare('update Reponse set reponse_votes = :reponse_votes where choix_id = :choix_id') ;
         return $requete->execute (array(
             ':choix_id'=>$this->getIChoixId(),
             ':reponse_votes'=>self::$iResetVotes,

@@ -8,7 +8,7 @@
  */
 abstract class SQL
 {
-    protected $db;
+    protected static $db;
 
     /**
      * PDO constructor.
@@ -20,13 +20,17 @@ abstract class SQL
             $port ='3306';
             $database ='rsurvey';
             $user = 'root';
-            $password = 'mysql';
+            $password = '';
             $dns = $engine.':port='.$port.';dbname='.$database.";host=".$host;
-            $this->db = new PDO($dns, $user, $password);
-            $this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            self::$db = new PDO($dns, $user, $password);
+            self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (Exception $e) {
             die('Erreur : ' . $e->getMessage());
         }
+    }
+
+    public function getDb() {
+        return self::$db;
     }
 
     /**
@@ -59,7 +63,7 @@ abstract class SQL
         if (!empty($config["limit"])) {
             $sql .= " LIMIT " . $config["limit"];
         }
-        $req = $this->db->prepare($sql);
+        $req = self::$db->prepare($sql);
         $req->execute($values);
         //var_dump($req->queryString);
         //var_dump($array);
@@ -95,7 +99,7 @@ abstract class SQL
             $cpt++;
         }
         $sql .= ")";
-        $req = $this->db->prepare($sql);
+        $req = self::$db->prepare($sql);
         /*var_dump($sql);
         var_dump($columns);*/
         return $req->execute($columns);

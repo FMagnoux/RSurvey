@@ -152,7 +152,7 @@ class User extends SQL implements JsonSerializable
      * @return bool
      */
     public function checkEmail($sUsrEmail){
-        $requete = $this->db->prepare('select usr_mail from User where usr_mail = :usr_mail');
+        $requete = self::$db->prepare('select usr_mail from User where usr_mail = :usr_mail');
         $requete->execute (array(
             ':usr_mail'=>$sUsrEmail,
         ));
@@ -171,7 +171,7 @@ class User extends SQL implements JsonSerializable
      */
 
     public function getUser(){
-        $requete = $this->db->prepare('select usr_id , usr_pseudo , usr_mail  from User where usr_id = :usr_id and usr_active = :usr_active');
+        $requete = self::$db->prepare('select usr_id , usr_pseudo , usr_mail  from User where usr_id = :usr_id and usr_active = :usr_active');
         $requete->execute (array(
             ':usr_id'=>$this->getIUsrId(),
             ':usr_active'=>self::$active,
@@ -194,7 +194,7 @@ class User extends SQL implements JsonSerializable
     }
 
     public function checkPseudo($sUsrPseudo){
-        $requete = $this->db->prepare('select usr_pseudo from User where usr_pseudo = :usr_pseudo');
+        $requete = self::$db->prepare('select usr_pseudo from User where usr_pseudo = :usr_pseudo');
         $requete->execute (array(
             ':usr_pseudo'=>$sUsrPseudo,
         ));
@@ -211,7 +211,7 @@ class User extends SQL implements JsonSerializable
      * @return bool
      */
     public function signinUser(){
-        $requete = $this->db->prepare('insert into User (usr_pseudo , usr_mail , usr_password, usr_token)values(:usr_pseudo , :usr_mail , :usr_password, :usr_token)') ;
+        $requete = self::$db->prepare('insert into User (usr_pseudo , usr_mail , usr_password, usr_token)values(:usr_pseudo , :usr_mail , :usr_password, :usr_token)') ;
         if(!$requete->execute (array(
             ':usr_pseudo'=>$this->getSUsrPseudo(),
             ':usr_mail'=>$this->getSUsrMail(),
@@ -231,7 +231,7 @@ class User extends SQL implements JsonSerializable
     }
 
     public function loginUser(){
-        $requete = $this->db->prepare('select usr_id, role_id from User where usr_mail = :usr_mail and usr_password = :usr_password and usr_active = 1');
+        $requete = self::$db->prepare('select usr_id, role_id from User where usr_mail = :usr_mail and usr_password = :usr_password and usr_active = 1');
         $requete->execute (array(
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
@@ -248,7 +248,7 @@ class User extends SQL implements JsonSerializable
     }
 
     public function updateUser(){
-        $requete = $this->db->prepare('update User set usr_mail = :usr_mail , usr_password = :usr_password where usr_id = :usr_id');
+        $requete = self::$db->prepare('update User set usr_mail = :usr_mail , usr_password = :usr_password where usr_id = :usr_id');
         return $requete->execute (array(
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
@@ -257,7 +257,7 @@ class User extends SQL implements JsonSerializable
     }
 
     public function activateDesactivate($iId, $iActive) {
-        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_active = :active WHERE usr_id = :id");
+        $query = self::$db->prepare("UPDATE ".$this->sTable." SET usr_active = :active WHERE usr_id = :id");
         return $query->execute(array(
             "id" => $iId,
             "active" => $iActive
@@ -271,7 +271,7 @@ class User extends SQL implements JsonSerializable
      * @return bool
      */
     public function setTokenById($sToken, $iId) {
-        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token WHERE usr_id = :mail");
+        $query = self::$db->prepare("UPDATE ".$this->sTable." SET usr_token = :token WHERE usr_id = :mail");
         return $query->execute(array(
             "token" => $sToken,
             "mail" => $iId
@@ -300,7 +300,7 @@ class User extends SQL implements JsonSerializable
      * @return bool
      */
     public function setPasswordById($iId, $sPassword, $sToken) {
-        $query = $this->db->prepare("UPDATE ".$this->sTable." SET usr_token = :token, usr_password = :password WHERE usr_id = :id");
+        $query = self::$db->prepare("UPDATE ".$this->sTable." SET usr_token = :token, usr_password = :password WHERE usr_id = :id");
         return $query->execute(array(
             "token" => $sToken,
             "id" => $iId,

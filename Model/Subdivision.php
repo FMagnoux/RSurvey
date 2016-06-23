@@ -87,7 +87,7 @@ class Subdivision extends SQL implements JsonSerializable
     }
 
     public function activateDesactivate($iId, $iActive) {
-        $query = $this->db->prepare("UPDATE ".$this->sTable." SET sub_active = :active WHERE sub_id = :id");
+        $query = self::$db->prepare("UPDATE ".$this->sTable." SET sub_active = :active WHERE sub_id = :id");
         return $query->execute(array(
             "id" => $iId,
             "active" => $iActive
