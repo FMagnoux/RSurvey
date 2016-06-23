@@ -96,5 +96,10 @@ background-color:#009688 !important;
   #centermap {
     height: 600px;
   }
+  #titleSurvey {
+    font-size:16px;
+    position: relative;
+    top:-6px;
+  }
 
 }

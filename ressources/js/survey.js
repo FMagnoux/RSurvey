@@ -36,13 +36,15 @@ function getMap() {
       console.log(e);
       cloreSurvey(e[0].iQuestionId);
     });
+    if($(document).innerWidth() < 640) {$('#toggleResponse').html("<i class='material-icons'>remove_red_eye</i>");}
     $('#toggleResponse').click(function(event) {
       $('#centermap').toggleClass('hideMap');
       $('.choiceButton').toggleClass('hide');
-
-      $(this).text('Masquer les réponses');
+      if($(document).innerWidth() < 640) {$('#toggleResponse').html("<i class='material-icons'>panorama_fish_eye</i>");}
+      else{$(this).text('Masquer les réponses');}
       if($('#centermap').hasClass('hideMap')) {
-        $(this).text('Voir les réponses');
+        if($(document).innerWidth() < 640) {$('#toggleResponse').html("<i class='material-icons'>remove_red_eye</i>");}
+        else{$(this).text('Voir les réponses');}
       }
     });
     $('#updateSurveyButton').click(function(event) {
