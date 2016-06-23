@@ -28,15 +28,12 @@
             <div class="mdl-layout-spacer"></div>
             <!-- Navigation. We hide it in small screens. -->
             <nav class="mdl-navigation mdl-layout--large-screen-only">
-                <a id="newSurvey" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Ecrire un sondage</a>
-                <a id="disconnect" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
+                <a class="newSurvey mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Ecrire un sondage</a>
+                <a class="disconnect mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
                    href="disconnect.html">Se Déconnecter</a>
 
-                <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="#contact">Contact</a>
+                <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="./#contact">Contact</a>
             </nav>
-            <label class="mdl-button mdl-js-button mdl-button--icon">
-                <i class="material-icons mdl-color-text--grey-600 mdl-typography--font-bold">language</i>
-            </label>
         </div>
         <div class="mdl-layout__tab-bar mdl-js-ripple-effect mdl-color--white mdl-shadow--12dp">
             <a href="./administration.html" class="mdl-layout__tab <?php if($this->page == "admin/listQuestions") echo "is-active" ?> mdl-color-text--black">Tous les sondages</a>
@@ -49,9 +46,9 @@
     <div class="mdl-layout__drawer">
         <span class="mdl-layout-title">Administration</span>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link is-active" href="#scroll-tab-1">Ecrire un sondage</a>
-            <a class="mdl-navigation__link" href="#scroll-tab-2">Se connecter</a>
-            <a class="mdl-navigation__link" href="">Contact</a>
+            <a class="newSurvey mdl-navigation__link is-active" href="#scroll-tab-1">Ecrire un sondage</a>
+            <a class=" mdl-navigation__link" href="disconnect.html">Se déconnecter</a>
+            <a class="mdl-navigation__link" href="./#contact">Contact</a>
         </nav>
     </div>
     <div class="mdl-layout__content">

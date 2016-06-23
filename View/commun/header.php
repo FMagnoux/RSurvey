@@ -40,20 +40,20 @@
          <div class="mdl-layout-spacer"></div>
          <!-- Navigation. We hide it in small screens. -->
          <nav class="mdl-navigation mdl-layout--large-screen-only">
-            <a id="newSurvey" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Ecrire un sondage</a>
+            <a class="newSurvey mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Ecrire un sondage</a>
             <?php
             if(isset($_SESSION['iIdUser']) || !empty($_SESSION['iIdUser']) ) {
                ?>
-               <a id="disconnect" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
+               <a class="disconnect mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
                   href="disconnect.html">Se Déconnecter</a>
-               <a id="updateUser" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Modifier son compte</a>
+               <a  class="updateUser mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Modifier son compte</a>
                <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="./mes-sondages.html">Mes sondages</a>
                <?php
             }
             else {
                ?>
-               <a id="login" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Se Connecter</a>
-                  <a id="signup" class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Créer un compte</a>
+               <a  class="login mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Se Connecter</a>
+                  <a  class="signup mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Créer un compte</a>
 
                <?php
             }
@@ -80,20 +80,28 @@
    <div class="mdl-layout__drawer">
       <span class="mdl-layout-title">Menu</span>
       <nav class="mdl-navigation">
-         <a class="mdl-navigation__link" href="">Ecrire un sondage</a>
+         <a class="newSurvey mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Ecrire un sondage</a>
          <?php
          if(isset($_SESSION['iIdUser']) || !empty($_SESSION['iIdUser']) ) {
             ?>
-            <a id="disconnect" class="mdl-navigation__link" href="disconnect.html">Se déconnecter</a>
-
-            <?php
-         } else {
-            ?>
-            <a id="login" class="mdl-navigation__link" href="">Se connecter</a>
+            <a class="disconnect mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold"
+               href="disconnect.html">Se Déconnecter</a>
+            <a  class="updateUser mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Modifier son compte</a>
+            <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="./mes-sondages.html">Mes sondages</a>
             <?php
          }
-         ?>
-         <a class="mdl-navigation__link" href="">Contact</a>
+         else {
+            ?>
+            <a  class="login mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Se Connecter</a>
+            <a  class="signup mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="">Créer un compte</a>
+
+            <?php
+         }
+         if(!empty($_SESSION['iIdRole']) && $_SESSION['iIdRole'] < 2 ) { ?>
+            <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="administration.html">Espace administrateur</a>
+         <?php } ?>
+
+         <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="#contact">Contact</a>
       </nav>
    </div>
    <div class="mdl-layout__content">

@@ -35,7 +35,7 @@
             </div>
             <div class="mdl-color-text--white homepage-rubber">
                 <div class="rubber-font rubber-slogan">Déjà 1522 sondages en circulation</div>
-                <button id="newSurvey2" class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800">écrire un sondage</button>
+                <button class="newSurvey actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800">écrire un sondage</button>
 
             </div>
             <div class="mdl-grid">

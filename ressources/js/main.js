@@ -96,7 +96,7 @@ var ajaxRequestSerialize = function(idForm, urlDest) {
                 });
                 setTimeout(function() {
                     location.reload(true);
-                }, 4000);
+                }, 2000);
 
             } else if (e[0] == "error") {
                 $('#' + idForm).prepend("<span id='errorForm' class='mdl-color-text--red-800'>" + e[1] + "</span>");
@@ -209,7 +209,21 @@ var contactFormRequest = function(e) {
     })
         .done(function(e) {
             console.log("success");
-            alert(e[1]);
+            if(e[0] == "error"){
+                var color = "red";
+            }
+            else {
+                var color = "green";
+            }
+            showDialog({
+                title: "<span class='mdl-color-text--"+color+"-800'>" + e[1] + "</span>",
+                text: "",
+                negative: false,
+                positive: false
+            });
+            setTimeout(function() {
+                hideDialog($('#orrsDiag'));
+            }, 2000);
         })
         .fail(function(e) {
             console.log("error");
@@ -225,10 +239,9 @@ var contactFormRequest = function(e) {
 
 $(document).ready(function() {
 
-    $('#newSurvey').click(newSurveyModal);
-    $('#newSurvey2').click(newSurveyModal);
+    $('.newSurvey').click(newSurveyModal);
 
-    $('#login').click(function(event) {
+    $('.login').click(function(event) {
         event.preventDefault();
         showDialog({
             onLoaded: function(e) {
@@ -266,7 +279,7 @@ $(document).ready(function() {
         });
     });
 
-    $('#signup').click(function(event) {
+    $('.signup').click(function(event) {
         event.preventDefault();
         showDialog({
             onLoaded: function(e) {
@@ -286,7 +299,7 @@ $(document).ready(function() {
     });
 
 
-    $('#updateUser').click(function(event) {
+    $('.updateUser').click(function(event) {
         event.preventDefault();
         updateUserRequest();
     });
