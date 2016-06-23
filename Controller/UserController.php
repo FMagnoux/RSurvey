@@ -190,15 +190,19 @@ class UserController extends SuperController
     /**
      * @return bool
      */
-    public function checkEmail(){
+    public function checkEmail($bUpdateMail = false){
         if (isset($_POST['sUsrMail']) && !empty($_POST['sUsrMail'])){
             $sUsrMail = $_POST['sUsrMail'];
             if ($this->filterEmail($sUsrMail) && !is_string($this->filterEmail($sUsrMail))){
-                if($this->oEntity->checkEmail($sUsrMail)){
+                if($bUpdateMail && $this->oEntity->getEmailById($_SESSION["iIdUser"]) == $_POST['sUsrMail']) {
                     return true;
                 }
                 else {
-                    return json_encode(array(self::ERROR, self::ERROR_MAIL));
+                    if ($this->oEntity->checkEmail($sUsrMail)) {
+                        return true;
+                    } else {
+                        return json_encode(array(self::ERROR, self::ERROR_MAIL));
+                    }
                 }
             }
             else {
@@ -370,7 +374,7 @@ class UserController extends SuperController
     }
 
     public function updateUser(){
-        if($this->checkEmail() && !is_string($this->checkEmail())){
+        if($this->checkEmail(true) && !is_string($this->checkEmail(true))){
             if ($this->checkPassword(false) && !is_string($this->checkPassword(false))){
                 $this->oEntity
                     ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
@@ -393,7 +397,7 @@ class UserController extends SuperController
             }
         }
         else {
-            echo $this->checkEmail();
+            echo $this->checkEmail(false);
             return false;
         }
     }

@@ -327,6 +327,24 @@ class User extends SQL implements JsonSerializable
     }
 
     /**
+     * Retourner l'id correspond à un mail
+     * @return array
+     */
+    public function getEmailById($iId) {
+        return parent::select(
+            array(
+                "columns" => "usr_mail",
+                "table" => $this->sTable,
+                "where" => "usr_id = :id",
+                "fetch" => true
+            ),
+            array(
+                "id" => $iId
+            )
+        )["usr_mail"];
+    }
+
+    /**
      * Retourne un objet User contenant le rôle
      * @param $iId
      * @return User

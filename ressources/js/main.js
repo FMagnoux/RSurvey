@@ -124,7 +124,6 @@ var updateUserRequest = function() {
           console.log("success");
           console.log(e);
           var datasUser = e;
-          event.preventDefault();
           showDialog({
               onLoaded: function(e) {
                   $('#positive').off('click');
