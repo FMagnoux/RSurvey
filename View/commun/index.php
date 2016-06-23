@@ -4,6 +4,14 @@
                 <div class="logo-font homepage-sub-slogan">R Survey vous permet de créer des sondages et d'avoir les résultats région par région.</div>
                 <a href="./<?= $iId ?>" class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--green-800"><img src="ressources/media/img/rocket.png" style="max-height:31px;margin-top:-4px;margin-right:14px" alt="rocket">Voir un sondage Aléatoire !</a>
 
+                <div class="mdh-expandable-search mdl-cell--hide-phone">
+                    <i class="material-icons">search</i>
+                    <form action="./search.html">
+                        <input type="text" placeholder="Rechercher un Sondage" size="1">
+                    </form>
+                </div>
+
+
                 <a href="#middleLandingPage"><button id="homepage-fab" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--green-800"><i class="material-icons">expand_more</i></button></a>
             </div>
             <div class="mdl-grid" id="middleLandingPage">
