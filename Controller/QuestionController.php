@@ -9,7 +9,7 @@
 class QuestionController extends SuperController
 {
     private $oEntity;
-    private $iPagination = 10;
+    private $iPagination = 1;
 
     const SUCCESS = "success";
     const ERROR = "error";
@@ -509,7 +509,7 @@ class QuestionController extends SuperController
             return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
         }
         $this->page = "admin/listQuestions";
-        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration/".$_GET["id"]."", "sUrlEnd" => ".html"));
+        return $this->view(array("oPagination" => $oPagination, "sUrlStartForm" => "./administration-filtre", "sUrlStartPagination" => "./administration/".$_GET["id"], "sUrlEnd" => ".html"));
     }
 
     public function userListQuestionsByIdUser() {
