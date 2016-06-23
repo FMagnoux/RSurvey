@@ -375,13 +375,20 @@ class Question extends SQL implements JsonSerializable
                 "columns" => "question_id",
                 "table" => $this->table,
                 "join" => array(
-                    "table" => "Subdivision",
-                    "key" => "sub_id",
-                    "foreignKey" => "sub_id"
+                    0 => array(
+                        "table" => "Subdivision",
+                        "key" => "sub_id",
+                        "foreignKey" => "sub_id"
+                    ),
+                    1 => array(
+                        "table" => "User",
+                        "key" => "usr_id",
+                        "foreignKey" => "usr_id"
+                    )
                 ),
                 "order" => "RAND()",
                 "limit" => 1,
-                "where" => "question_active = 1 AND question_close = 0 AND sub_active = 1"
+                "where" => "question_active = 1 AND question_close = 0 AND sub_active = 1 AND usr_active = 1"
             )
         )["question_id"];
     }
