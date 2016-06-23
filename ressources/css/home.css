@@ -37,14 +37,6 @@
   font-weight: 500;
 }
 
-@media(max-width:900px){
-  .homepage-slogan {
-  font-size: 26px;
-  margin: 0 16px;
-  padding-top: 150px;
-}
-
-}
 
 .homepage-rubber {
   position: relative;
@@ -63,14 +55,32 @@ height: 250px;
 
 
 .homepage-french-map {
-  height: 400px;
+  max-height: 400px;
+  max-width: 100%;
 }
 
 .homepage-responsive {
-  height: 290px;
+  max-height: 290px;
+  max-width: 100%;
+  margin-left: 30px;
+
 }
 
 .container-image-responsive{
-  text-align: right;
+
   margin-top: 64px;
+}
+
+
+@media(max-width:900px){
+  .homepage-slogan {
+  font-size: 26px;
+  margin: 0 16px;
+  padding-top: 150px;
+}
+
+.rubber-slogan {
+  font-size: 26px;
+}
+
 }

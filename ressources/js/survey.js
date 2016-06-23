@@ -1,3 +1,4 @@
+
 console.log("I'm survey !");
 
 function getMap() {
@@ -7,9 +8,8 @@ function getMap() {
     dataType: 'json'
   })
   .done(function(e) {
-    if(e[0] && e[0] == "error") {
-      window.location = "./404.html";
-    }
+    console.log("success");
+    console.info(e);
     test = e;
     var userSession = e[2];
     var sQuestionLibelValue = e[0].sQuestionLibel;
@@ -30,7 +30,7 @@ function getMap() {
     $('meta[name=description]').attr('content', 'Répondez à ce sondage !'+sQuestionLibelValue);
     e[1].forEach(function(e,i){
       var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--accent mdl-js-ripple-effect mdl-color-text--white choiceButton hide choiceButton"+i+"'></button>").text(e.sChoixLibel);
-      $(".mdl-card__title").append(button);
+      $(".mdl-card__actions").append(button);
     });
 
     $('#cloreSurveyButton').click(function(event) {
@@ -66,31 +66,72 @@ function createMap(mapPosition,datas) {
   var zone = "zone"+iSubCode;
   var sQuestionLibel = datas[0].sQuestionLibel;
   var dataAjax = "ressources/data/"+zone+".geojson";
-  var containerChoice = $("<div></div>").text(sQuestionLibel);
-  var choices = $("<form action='#' class='survey-box'></form>");
-  $(containerChoice).append(choices);
-  datas[1].forEach(function(e,i){
-    var button = $("<button data-ichoixid="+e.iChoixId+" class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect answerButton answerButton"+i+"'></button>").text(e.sChoixLibel);
-    $(choices).append(button);
-  });
+if($(document).innerWidth() > 640) {
+  var isDragging = true;
+  var minZoomValue = 6.5;
+  var setViewValue = 6.5;
 
+}
+else {
+  var isDragging = false;
+  var minZoomValue = 5;
+  var setViewValue = 5;
+}
   var map = L.map(mapPosition,{
-    dragging:true,
+    dragging:isDragging,
     touchZoom:true,
     doubleClickZoom:false,
     scrollWheelZoom:false,
     boxZoom:false,
     keyboard:false,
-    minZoom:6.5,
+    minZoom:minZoomValue,
     maxZoom:10
-  }).setView([46.5, 2.234], 6.5);
+  }).setView([46.5, 2.234], setViewValue);
   var mapContent = new L.geoJson(null,{
     onEachFeature: onEachFeature,
     style: customStyle
   });
   function onEachFeature(feature, layer) {
     if (feature.properties && feature.properties.nom) {
+
     layer.on('click',function(){
+      var containerChoice = $("<div></div>").text(sQuestionLibel);
+      var choices = $("<form action='#' class='survey-box'></form>");
+      var oldFormatArray = [];
+      var newArray = [];
+      var total=0;
+
+      $(containerChoice).append(choices);
+
+
+      $(datas[1]).each(function(i){
+        var button = $("<button data-ichoixid="+this.iChoixId+" class='mdl-button mdl-js-button mdl-button--raised mdl-button--accent mdl-js-ripple-effect answerButton answerButton"+i+"'></button>").text(this.sChoixLibel);
+        $(choices).append(button);
+        if (typeof this.aReponse[feature.properties.code] !== "undefined") {
+          console.log(this.aReponse[feature.properties.code]);
+          oldFormatArray[this.aReponse[feature.properties.code].iChoixId] = parseInt(this.aReponse[feature.properties.code].iReponseVotes);
+        }
+
+      });
+
+      for(var i in oldFormatArray) {newArray.push(oldFormatArray[i]);}
+      for(var i in newArray) { total += newArray[i]; }
+      for(var i in newArray) { newArray[i] = newArray[i]*100/total; }
+        console.log(oldFormatArray)
+        if($('#centermap').hasClass('hideMap')===false) {
+          $(containerChoice).find('button').each(function(i){
+            console.log()
+            if(typeof oldFormatArray[$(this).data('ichoixid')] == 'undefined') {
+              $(this).append(" : 0%")
+            }
+            else {
+              console.log(total);
+
+              $(this).append(" : "+oldFormatArray[$(this).data('ichoixid')]*100/total+"%")
+            }
+          });
+        }
+
         showDialog({
                 title: feature.properties.nom,
                 text:$(containerChoice).html(),
@@ -104,6 +145,7 @@ function createMap(mapPosition,datas) {
                     var iChoixIdValue = $(this).data().ichoixid;
                     var iSubCodeValue = feature.properties.code;
                     sendAnswer(iChoixIdValue,iSubCodeValue);
+                    var newContainerChoice = $(containerChoice);
                   });
                 }
               });
@@ -122,13 +164,11 @@ function customStyle(feature) {
         console.log(this.aReponse[feature.properties.code]);
         rgb[this.aReponse[feature.properties.code].iChoixId] = parseInt(this.aReponse[feature.properties.code].iReponseVotes);
         associativeBackgroundColors[this.aReponse[feature.properties.code].iChoixId] = backgroundColors[i];
-
       }
     });
 
     for(var i in rgb) {tempArray.push(rgb[i]);}
     var maxValue = Math.max.apply(null,tempArray);
-
 if(tempArray.length > 0) {
   if(tempArray[0] == tempArray[1] || tempArray[0] == tempArray[2]) {
     var color = "#FFF";

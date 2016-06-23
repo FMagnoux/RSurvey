@@ -30,3 +30,16 @@ a.shareButton {
 p.shareButtonsContainer {
     margin-top: 24px;
 }
+
+ul.dc_pagination {
+    text-align: center;
+    margin: auto;
+    margin-bottom:16px;
+
+}
+
+ul.dc_pagination li {
+    list-style-type: none;
+    display:inline;
+    margin-left:12px
+}
