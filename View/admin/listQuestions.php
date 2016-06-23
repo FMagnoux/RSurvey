@@ -13,7 +13,6 @@
             </div>
             <div class="mdl-card__actions">
                 <a href="./<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="mdl-button" target="_blank">Acceder au sondage</a>
-                <a href="#" class="mdl-button">Partager le sondage</a>
                 <button id="<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="mdl-button mdl-color-text--red-500 desactivate-survey">Desactiver le sondage</button>
 
             </div>
