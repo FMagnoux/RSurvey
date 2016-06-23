@@ -3,10 +3,11 @@
                 <div class="logo-font homepage-slogan">Thé ou Café ?</div>
                 <div class="logo-font homepage-sub-slogan">R Survey vous permet de créer des sondages et d'avoir les résultats région par région.</div>
                 <a href="./<?= $iId ?>" class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--green-800"><img src="ressources/media/img/rocket.png" style="max-height:31px;margin-top:-4px;margin-right:14px" alt="rocket">Voir un sondage Aléatoire !</a>
+                
 
-                <button id="homepage-fab" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--green-800"><i class="material-icons">expand_more</i></button>
+                <a href="#middleLandingPage"><button id="homepage-fab" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-color--green-800"><i class="material-icons">expand_more</i></button></a>
             </div>
-            <div class="mdl-grid">
+            <div class="mdl-grid" id="middleLandingPage">
                 <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-card__supporting-text mdl-cell--2-offset-desktop ">
                     <h3 class="mdl-typography--display-1-color-contrast">Une nouvelle génération de sondages</h3>
                     <p>
@@ -33,7 +34,7 @@
                 </div>
             </div>
             <div class="mdl-color-text--white homepage-rubber">
-                <div class="rubber-font rubber-slogan">Déjà 1522 sondages en circulations</div>
+                <div class="rubber-font rubber-slogan">Déjà 1522 sondages en circulation</div>
                 <button id="newSurvey2" class=" actionButton mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent mdl-color--blue-800">écrire un sondage</button>
 
             </div>

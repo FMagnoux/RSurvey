@@ -12,11 +12,10 @@
 </div>
 <div class="mdl-card__actions">
     <a href="./<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="mdl-button" target="_blank">Acceder au sondage</a>
-    <a href="#" class="mdl-button">Partager le sondage</a>
     <?php if(!$oQuestion->getBQuestionClose()) : ?><button id="<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="close-survey mdl-button mdl-color-text--red-500 desactivate-survey">Clore le sondage</button><?php endif; ?>
 </div>
 </div>
 </div>
 <?php endforeach;
 
-$oPagination->view($sUrlStart, ".html");
+$oPagination->view($sUrlStartPagination . "/page-", ".html");

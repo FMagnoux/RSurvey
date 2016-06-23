@@ -63,7 +63,7 @@ if ($this->iNbPages > 1) {
                 if ($i == $this->iCurrentPage) {
                     $pagination .= "<li><span class=\"active\">{$i}</span></li>";
                 } else {
-                    $pagination .= "<li><a href=\"{$url}{$i}{$urlEnd}\">{$i}</a></li>";
+                    $pagination .= "<li><a href=\"{$urlStart}{$i}{$urlEnd}\">{$i}</a></li>";
                 }
             }
 
@@ -71,8 +71,8 @@ if ($this->iNbPages > 1) {
             $pagination .= '<li>&hellip;</li>';
 
             // et enfin les deux derniers num�ros
-            $pagination .= "<li><a href=\"{$url}{$penultimate}{$urlEnd}\">{$penultimate}</a></li>";
-            $pagination .= "<li><a href=\"{$url}{$this->iNbPages}{$urlEnd}\">{$this->iNbPages}</a></li>";
+            $pagination .= "<li><a href=\"{$urlStart}{$penultimate}{$urlEnd}\">{$penultimate}</a></li>";
+            $pagination .= "<li><a href=\"{$urlStart}{$this->iNbPages}{$urlEnd}\">{$this->iNbPages}</a></li>";
         }
         /**
          * Troncature 2 : on se situe dans la partie centrale de notre pagination, on tronque donc le d�but et la fin de la pagination.
@@ -81,7 +81,7 @@ if ($this->iNbPages > 1) {
          */ elseif ((($adj * 2) + 1 < $this->iCurrentPage) && ($this->iCurrentPage < $this->iNbPages - ($adj * 2))) {
             // Affichage des num�ros 1 et 2
             $pagination .= "<li><a href=\"{$urlStart}1{$urlEnd}\">1</a></li>";
-            $pagination .= "<li><a href=\"{$url}2{$urlEnd}\">2</a></li>";
+            $pagination .= "<li><a href=\"{$urlStart}2{$urlEnd}\">2</a></li>";
             $pagination .= '<li>&hellip;</li>';
 
             // les pages du milieu : les trois pr�c�dant la page courante, la page courante, puis les trois lui succ�dant
@@ -89,15 +89,15 @@ if ($this->iNbPages > 1) {
                 if ($i == $this->iCurrentPage) {
                     $pagination .= "<li><span class=\"active\">{$i}</span></li>";
                 } else {
-                    $pagination .= "<li><a href=\"{$url}{$i}{$urlEnd}\">{$i}</a></li>";
+                    $pagination .= "<li><a href=\"{$urlStart}{$i}{$urlEnd}\">{$i}</a></li>";
                 }
             }
 
             $pagination .= '<li>&hellip;</li>';
 
             // et les deux derniers num�ros
-            $pagination .= "<li><a href=\"{$url}{$penultimate}{$urlEnd}\">{$penultimate}</a></li>";
-            $pagination .= "<li><a href=\"{$url}{$this->iNbPages}{$urlEnd}\">{$this->iNbPages}</a></li>";
+            $pagination .= "<li><a href=\"{$urlStart}{$penultimate}{$urlEnd}\">{$penultimate}</a></li>";
+            $pagination .= "<li><a href=\"{$urlStart}{$this->iNbPages}{$urlEnd}\">{$this->iNbPages}</a></li>";
         }
         /**
          * Troncature 3 : on se situe dans la partie de droite, on tronque donc le d�but de la pagination.
@@ -106,7 +106,7 @@ if ($this->iNbPages > 1) {
          */ else {
             // Affichage des num�ros 1 et 2
             $pagination .= "<li><a href=\"{$urlStart}1{$urlEnd}\">1</a></li>";
-            $pagination .= "<li><a href=\"{$url}2{$urlEnd}\">2</a></li>";
+            $pagination .= "<li><a href=\"{$urlStart}2{$urlEnd}\">2</a></li>";
             $pagination .= '<li>&hellip;</li>';
 
             // puis des neuf derniers num�ros
@@ -114,7 +114,7 @@ if ($this->iNbPages > 1) {
                 if ($i == $this->iCurrentPage) {
                     $pagination .= "<li><span class=\"active\">{$i}</span></li>";
                 } else {
-                    $pagination .= "<li><a href=\"{$url}{$i}{$urlEnd}\">{$i}</a></li>";
+                    $pagination .= "<li><a href=\"{$urlStart}{$i}{$urlEnd}\">{$i}</a></li>";
                 }
             }
         }

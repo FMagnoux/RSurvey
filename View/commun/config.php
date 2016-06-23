@@ -5,6 +5,7 @@ $aCss = array(
     "commun/index" => array(2),
     "user/listQuestions" => array(3),
     "user/filterQuestions" => array(3),
+    "user/search" => array(3),
 );
 
 $aJs = array(

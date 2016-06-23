@@ -16,6 +16,7 @@ function getMap() {
     var userQuestion = e[0].oUsrId.iUsrId;
     if(userSession != userQuestion || e[0].bQuestionClose == "1"){
       $("#cloreSurveyButton").hide();
+      $("#updateSurveyButton").hide();
     }
     var dateSurvey = e[0].dQuestionDate.date;
     $('.navigateButton').click(function() {

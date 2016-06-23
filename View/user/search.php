@@ -8,12 +8,10 @@
                 <h2 class="mdl-card__title-text mdl-typography--font-bold mdl-color-text--white"><?= $oQuestion->getSQuestionLibel() ?></h2>
             </div>
             <div class="mdl-card__supporting-text">
-                Sondage créé par : <a href="./administration/<?= $this->encrypt($oQuestion->getOUsr()->getIUsrId()) ?>/page-1.html" title="Voir les sondages de cet auteur"><?= $oQuestion->getOUsr()->getSUsrPseudo() ?></a>.<br>
-                Le sondage est <?= $oQuestion->getBQuestionClose() ? "clos" : "ouvert" ?>.
+                Sondage créé par : <a href="./search/pseudo:<?= $oQuestion->getOUsr()->getSUsrPseudo() ?>/libel:/dateAfter:/dateBefore:/page-1.html" title="Voir les sondages de cet auteur"><?= $oQuestion->getOUsr()->getSUsrPseudo() ?></a>.<br>
             </div>
             <div class="mdl-card__actions">
                 <a href="./<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="mdl-button" target="_blank">Acceder au sondage</a>
-                <button id="<?= $this->encrypt($oQuestion->getIQuestionId()) ?>" class="mdl-button mdl-color-text--red-500 desactivate-survey">Desactiver le sondage</button>
 
             </div>
         </div>
