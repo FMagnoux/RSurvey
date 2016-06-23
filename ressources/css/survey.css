@@ -70,6 +70,7 @@ background-color:#009688 !important;
   background-color : #2196F3 !important;
 }
 
+
 .choiceButton.hide {
   display:none;
 }
@@ -89,4 +90,11 @@ background-color:#009688 !important;
 .choiceButton2 {
   min-width: 100px;
   background-color : #2196F3 !important;
+}
+
+@media (max-width:640px) {
+  #centermap {
+    height: 600px;
+  }
+
 }

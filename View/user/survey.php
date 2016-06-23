@@ -1,12 +1,12 @@
             <div class="mdl-grid">
-                <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet">
+                <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone">
                   <button data-next="false" class=" navigateButton navigatePrev mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                     <i class="material-icons">navigate_before</i>
                   </button>
                 </div>
                 <div class="mdl-cell mdl-cell--10-col">
                     <div id="containerCenter" class="card-wide mdl-card mdl-shadow--6dp">
-                        <div class="mdl-card__title mdl-color--blue-800">
+                        <div class="mdl-card__title mdl-color--green-800">
                             <h2 id="titleSurvey" class="mdl-card__title-text mdl-typography--font-bold"></h2>
                         </div>
                         <div class="mdl-card__supporting-text">
@@ -23,7 +23,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet">
+                <div class="mdl-cell mdl-cell--1-col mdl-cell--hide-tablet mdl-cell--hide-phone">
                   <button  data-next="true" class="navigateButton navigateNext mdl-button mdl-js-button mdl-button--icon mdl-button--colored">
                     <i class="material-icons">navigate_next</i>
                   </button>

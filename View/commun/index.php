@@ -13,17 +13,23 @@
                         Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
                     </p>
                 </div>
-                <div class="mdl-cell mdl-cell--6-col mdl-cell--8-col-tablet">
+                <div class="mdl-cell mdl-cell--1-col"></div>
+                <div class="mdl-cell mdl-cell--5-col mdl-cell--8-col-tablet">
                     <img class="homepage-french-map" src="ressources/media/img/homepage-french-map.png"  alt="Carte de France">
                 </div>
-                <div class=" container-image-responsive mdl-cell mdl-cell--5-col mdl-cell--8-col-tablet">
-                    <img class="homepage-responsive" src=" ressources/media/img/homepage-responsive.png" alt="Responsive">
-                </div>
+
+                <div class="mdl-cell mdl-cell--2-col"></div>
+
                 <div class="mdl-cell mdl-cell--4-col mdl-cell--8-col-tablet mdl-card__supporting-text no-padding ">
                     <h3 class="mdl-typography--display-1-color-contrast">Fonctionne sur toutes les plateformes </h3>
                     <p>
                         Excepteur reprehenderit sint exercitation ipsum consequat qui sit id velit elit. Velit anim eiusmod labore sit amet. Voluptate voluptate irure occaecat deserunt incididunt esse in. Sunt velit aliquip sunt elit ex nulla reprehenderit qui ut eiusmod ipsum do. Duis veniam reprehenderit laborum occaecat id proident nulla veniam. Duis enim deserunt voluptate aute veniam sint pariatur exercitation. Irure mollit est sit labore est deserunt pariatur duis aute laboris cupidatat. Consectetur consequat esse est sit veniam adipisicing ipsum enim irure.
                     </p>
+                </div>
+                <div class="mdl-cell mdl-cell--1-col"></div>
+
+                <div class=" container-image-responsive mdl-cell mdl-cell--5-col mdl-cell--8-col-tablet">
+                    <img class="homepage-responsive" src=" ressources/media/img/homepage-responsive.png" alt="Responsive">
                 </div>
             </div>
             <div class="mdl-color-text--white homepage-rubber">
