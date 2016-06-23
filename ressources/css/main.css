@@ -43,3 +43,7 @@ ul.dc_pagination li {
     display:inline;
     margin-left:12px
 }
+
+.mdl-navigation__link {
+    padding: 0px 16px !important;
+}

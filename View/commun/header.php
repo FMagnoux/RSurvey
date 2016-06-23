@@ -63,9 +63,18 @@
 
             <a class="mdl-navigation__link mdl-color-text--grey-600 mdl-typography--font-bold" href="#contact">Contact</a>
          </nav>
-         <label class="mdl-button mdl-js-button mdl-button--icon">
-            <i class="material-icons mdl-color-text--grey-600 mdl-typography--font-bold">language</i>
+         <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable
+                   mdl-textfield--floating-label mdl-textfield--align-right">
+         <label class="mdl-button mdl-js-button mdl-button--icon"
+                for="fixed-header-drawer-exp">
+           <i class="material-icons mdl-color-text--grey-600">search</i>
          </label>
+         <div class="mdl-textfield__expandable-holder mdl-color-text--grey-600">
+           <form action="./search.html" method="POST">
+           <input class="mdl-textfield__input" type="text" name="sLibel"
+                  id="fixed-header-drawer-exp"></form>
+         </div>
+       </div>
       </div>
    </div>
    <div class="mdl-layout__drawer">
