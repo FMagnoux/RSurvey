@@ -19,4 +19,4 @@
 </div>
 <?php endforeach;
 
-$oPagination->view($sUrlStart, ".html");
+$oPagination->view($sUrlStartPagination . "/page-", ".html");

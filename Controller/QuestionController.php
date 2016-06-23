@@ -410,25 +410,30 @@ class QuestionController extends SuperController
     public function listQuestions() {
         if(!$this->isAdmin()) return false;
         $this->page = "admin/listQuestions";
-        $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStart" => "./administration/page-", "sUrlEnd" => ".html"));
+        $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStartForm" => "./administration-filtre", "sUrlStartPagination" => "./administration", "sUrlEnd" => ".html"));
+    }
+    
+    public function searchQuestions() {
+        $this->page = "user/search";
+        $this->helperListQuestionsFilter("search", "search", "admin/errorFilterQuestions");
     }
 
     public function userListQuestionsFilter() {
         $this->page = "user/listQuestions";
-        $this->helperListQuestionsFilter("user/errorFilterQuestions", $_SESSION["iIdUser"]);
+        $this->helperListQuestionsFilter("mes-sondages-filtre", "mes-sondages-filtre", "user/errorFilterQuestions", $_SESSION["iIdUser"]);
     }
 
     public function listQuestionsFilter() {
         if(!$this->isAdmin()) return false;
         $this->page = "admin/listQuestions";
-        $this->helperListQuestionsFilter("admin/errorFilterQuestions");
+        $this->helperListQuestionsFilter("administration-filtre", "administration-filtre", "admin/errorFilterQuestions");
     }
 
     /**
      * Faire une recherche sur les questions
      * @return bool
      */
-    private function helperListQuestionsFilter($sError, $iIdUser = null) {
+    private function helperListQuestionsFilter($sUrlStartForm, $sUrlStartPagination, $sError, $iIdUser = null) {
         if(!empty($_POST)) extract($_POST);
         else if(!empty($_GET)) extract($_GET);
 
@@ -467,6 +472,8 @@ class QuestionController extends SuperController
                     "sLibel" => $sLibel,
                     "dDateAfer" => $dDateAfter,
                     "dDateBefore" => $dDateBefore,
+                    "sUrlStartPagination" => "./".$sUrlStartPagination."/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."",
+                    "sUrlStartForm" => $sUrlStartForm
                 )
             );
             return false;
@@ -477,10 +484,12 @@ class QuestionController extends SuperController
             "sLibel" => $sLibel,
             "dDateAfer" => $dDateAfter,
             "dDateBefore" => $dDateBefore,
-            "sUrlStart" => "./administration-filtre/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-"
+            "sUrlStartPagination" => "./".$sUrlStartPagination."/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."",
+            "sUrlStartForm" => $sUrlStartForm
         );
         if(!empty($iIdUser)) {
-            $aConfig["sUrlStart"] = "./mes-sondages-filtre/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."/page-";
+            $aConfig["sUrlStartPagination"] = "./".$sUrlStartPagination."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."";
+            $aConfig["sUrlStartForm"] = $sUrlStartForm;
         }
         $this->view($aConfig);
         return true;
@@ -500,7 +509,7 @@ class QuestionController extends SuperController
             return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
         }
         $this->page = "admin/listQuestions";
-        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration/".$_GET["id"]."/page-", "sUrlEnd" => ".html"));
+        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration/".$_GET["id"]."", "sUrlEnd" => ".html"));
     }
 
     public function userListQuestionsByIdUser() {
@@ -513,7 +522,7 @@ class QuestionController extends SuperController
             return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
         }
         $this->page = "user/listQuestions";
-        return $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./mes-sondages/page-"));
+        return $this->view(array("oPagination" => $oPagination, "sUrlStartForm" => "./mes-sondages", "sUrlStartPagination" => "./mes-sondages"));
     }
 
     /**

@@ -1,4 +1,4 @@
-<form class="mdl-typography--text-center" action="./administration-filtre.html" method="post">
+<form class="mdl-typography--text-center" action="<?= $sUrlStartForm ?>.html" method="post">
     <div class="mdl-textfield mdl-js-textfield">
         <input id="sPseudo" class="mdl-textfield__input" type="text" name="sPseudo" <?php if(!empty($sPseudo)) echo "value='".$sPseudo."'" ?>>
         <label for="sPseudo">Pseudo</label>
