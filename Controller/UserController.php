@@ -10,17 +10,20 @@ class UserController extends SuperController
 {
     private $oEntity;
     private static $sCleSalage = "=9Y[Ec9i";
+    private static $lenght = 255;
 
     const SUCCESS = "success";
     const ERROR = "error";
 
     const ERROR_PSEUDO = "Le pseudo indiqué est déjà utilisé par un autre utilisateur.";
     const ERROR_EMPTYPSEUDO = "Le pseudo n'est pas renseigné.";
+    const ERROR_LENGHTPSEUDO = "Le pseudo renseigné est trop grand.";
 
     const ERROR_MAIL = "L'adresse email indiquée est déjà utilisée par un autre utilisateur.";
     const ERROR_FILTERMAIL = "L'adresse email indiquée ne respecte pas le bon format d'email.";
     const ERROR_EMPTYMAIL = "L'adresse email n'est pas renseignée.";
     const ERROR_NOTEXISTMAIL = "L'email que vous avez renseigné n'existe pas.";
+    const ERROR_LENGHTMAIL = "L'email que vous avez renseigné est trop grande.";
     const ERROR_SENDMAIL = "Votre compte a été créé mais un problème est survenu lors de l'envoi de l'email de confirmation. Veuillez contacter un administrateur.";
     const SUCCESS_MAILSENT = "Suivez les instructions indiqués dans l'e-mail qui vous a été envoyé.";
 
@@ -36,9 +39,14 @@ class UserController extends SuperController
 
     const SUCCESS_UPDATE = "Votre profil a bien été mis à jour.";
 
-    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de <a href=\"./#contact\">contacter</a> l'administrateur.";
 
     const ERROR_BROKENLINK = "Le lien a expiré.";
+
+    const ERROR_NOTFOUND ="Aucun résultat n'a été trouvé.";
+
+    const ERROR_DESACTIVATE = "L'utilisateur n'a pas été désactivé.";
+    const SUCCESS_DESACTIVATE = "L'utilisateur a été désactivé.";
 
     //private static $sSender = "R Survey";
     //private static $sFrom = "no-reply@r-survey.com";
@@ -156,6 +164,7 @@ class UserController extends SuperController
                 if ($this->oEntity->loginUser()){
 
                     $_SESSION['iIdUser'] = $this->oEntity->getIUsrId();
+                    $_SESSION['iIdRole'] = $this->oEntity->getIRoleId();
                     $returnjson = array(self::SUCCESS,self::SUCCESS_LOGIN);
                     echo json_encode($returnjson);
                     return true;
@@ -181,15 +190,19 @@ class UserController extends SuperController
     /**
      * @return bool
      */
-    public function checkEmail(){
+    public function checkEmail($bUpdateMail = false){
         if (isset($_POST['sUsrMail']) && !empty($_POST['sUsrMail'])){
             $sUsrMail = $_POST['sUsrMail'];
             if ($this->filterEmail($sUsrMail) && !is_string($this->filterEmail($sUsrMail))){
-                if($this->oEntity->checkEmail($sUsrMail)){
+                if($bUpdateMail && $this->oEntity->getEmailById($_SESSION["iIdUser"]) == $_POST['sUsrMail']) {
                     return true;
                 }
                 else {
-                    return json_encode(array(self::ERROR, self::ERROR_MAIL));
+                    if ($this->oEntity->checkEmail($sUsrMail)) {
+                        return true;
+                    } else {
+                        return json_encode(array(self::ERROR, self::ERROR_MAIL));
+                    }
                 }
             }
             else {
@@ -205,6 +218,10 @@ class UserController extends SuperController
 
     public function filterEmail($sUsrMail){
         if(!empty($sUsrMail)){
+            if(strlen($sUsrMail)>self::$lenght){
+                $returnjson = array(self::ERROR,self::ERROR_LENGHTMAIL);
+                return json_encode($returnjson);
+            }
             if (filter_var($sUsrMail,FILTER_VALIDATE_EMAIL)){
                 return true;
             }
@@ -220,11 +237,25 @@ class UserController extends SuperController
 
     }
 
+    public function getUserSession(){
+      if($this->checkLogin()){
+            $this->oEntity->setIUsrId($_SESSION['iIdUser']);
+            $userSession =  $this->oEntity->getUser();
+            echo json_encode($userSession);
+            return ;
+
+      }
+    }
+
     /**
      * @return bool
      */
     public function checkPseudo(){
         if (isset($_POST['sUsrPseudo']) && !empty($_POST['sUsrPseudo'])){
+            if(strlen($_POST['sUsrPseudo'])>self::$lenght){
+                $returnjson = array(self::ERROR,self::ERROR_LENGHTPSEUDO);
+                return json_encode($returnjson);
+            }
             $sUsrPseudo = $_POST['sUsrPseudo'];
             if($this->oEntity->checkPseudo(htmlspecialchars($sUsrPseudo))){
                 return true;
@@ -288,8 +319,32 @@ class UserController extends SuperController
      * Liste de users paginés
      */
     public function listUsers() {
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedUserList(10, isset($_GET["page"]) ? $_GET["page"] : 1));
+        if(!$this->isAdmin()) return false;
+        $this->page = "admin/listUsers";
+        $oPagination = $this->oEntity->getPaginatedUserList(10, isset($_GET["page"]) ? $_GET["page"] : 1);
+        if(count($oPagination->getAData()) == 0) {
+            $this->page = "admin/error";
+            $this->view(array(self::ERROR => self::ERROR_NOTFOUND));
+            return false;
+        }
+        $this->view(array("oPagination" => $oPagination, "sUrlStart" => "./administration-users/page-"));
+    }
+
+    public function searchUsersByPseudo() {
+        if(!$this->isAdmin()) return false;
+        if(!empty($_POST)) extract($_POST);
+        else if(!empty($_GET)) extract($_GET);
+        $this->page = "admin/errorFilterUsers";
+        if(empty($sPseudo)) {
+            $sPseudo = "";
+        }
+        $oPagination = $this->oEntity->getPaginatedUserListByPseudo(10, isset($_GET["page"]) ? $_GET["page"] : 1, htmlspecialchars($sPseudo));
+        if(count($oPagination->getAData()) == 0) {
+            $this->view(array(self::ERROR => self::ERROR_NOTFOUND));
+            return false;
+        }
+        $this->page = "admin/listUsers";
+        $this->view(array("oPagination" => $oPagination, "sPseudo" => $sPseudo, "sUrlStart" => "./administration-filtre-users/pseudo:".$sPseudo."/page-"));
     }
 
     /**
@@ -297,9 +352,14 @@ class UserController extends SuperController
      * @return bool
      */
     public function desactivateUser() {
-        $id = $this->checkPostId();
-        if($id == 0) return false;
-        return $this->oEntity->activateDesactivate($id, 0);
+        if(!$this->isAdmin()) return false;
+        $iId = $this->checkPostId();
+        if($iId == 0 || !$this->oEntity->activateDesactivate($iId, 0)) {
+            echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));
+            return false;
+        }
+        echo json_encode(array(self::SUCCESS, self::SUCCESS_DESACTIVATE));
+        return true;
     }
 
     /**
@@ -307,33 +367,38 @@ class UserController extends SuperController
      * @return bool
      */
     public function activateUser() {
+        if(!$this->isAdmin()) return false;
         $id = $this->checkPostId();
         if($id == 0) return false;
         return $this->oEntity->activateDesactivate($id, 1);
     }
 
     public function updateUser(){
-        if($this->checkEmail() && !is_string($this->checkEmail())){
+        if($this->checkEmail(true) && !is_string($this->checkEmail(true))){
             if ($this->checkPassword(false) && !is_string($this->checkPassword(false))){
-                $this->oEntity->setSUsrPseudo(htmlspecialchars($_POST['sUsrPseudo']))
+                $this->oEntity
                     ->setSUsrMail(htmlspecialchars($_POST['sUsrMail']))
                     ->setSUsrPassword($this->cryptPassword(htmlspecialchars($_POST['sUsrPassword'])))
                     ->setIUsrId($_SESSION['iIdUser']);
                 if ($this->oEntity->updateUser()){
                     $returnjson = array(self::SUCCESS,self::SUCCESS_UPDATE);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return true;
                 }
                 else {
                     $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                    return json_encode($returnjson);
+                    echo json_encode($returnjson);
+                    return false;
                 }
             }
             else {
-                $this->checkPassword(false);
+                echo $this->checkPassword(false);
+                return false;
             }
         }
         else {
-            return $this->checkEmail();
+            echo $this->checkEmail(true);
+            return false;
         }
     }
 
@@ -343,7 +408,7 @@ class UserController extends SuperController
      */
     public function forgottenPassword() {
         $this->setJsonData();
-        if($this->filterEmail($_POST["sMail"]) !== true) {
+        if(empty($_POST["sMail"]) || $this->filterEmail($_POST["sMail"]) !== true) {
             echo json_encode(array(self::ERROR, self::ERROR_FILTERMAIL));
             return false;
         }
@@ -416,20 +481,20 @@ class UserController extends SuperController
             || $_POST['sUsrPassword'] != $_POST['sUsrConfirmPassword']
         )
         {
-            echo json_encode(array(self::ERROR, self::ERROR_CHECKPASSWORD));
+            $this->view(array(self::ERROR => self::ERROR_CHECKPASSWORD));
             return false;
         }
         $id = $this->checkToken();
         if(!$id) {
-            echo json_encode(array(self::ERROR, self::ERROR_BROKENLINK));
+            $this->view(array(self::ERROR => self::ERROR_BROKENLINK));
             return false;
         }
         // Changer le mot de passe et le token
         if(!$this->oEntity->setPasswordById($id, $this->cryptPassword(htmlspecialchars($_POST["sUsrPassword"])), $this->generateToken())) {
-            echo json_encode(array(self::ERROR, self::ERROR_INTERNAL));
+            $this->view(array(self::ERROR => self::ERROR_INTERNAL));
             return false;
         }
-        echo json_encode(array(self::SUCCESS, self::SUCCESS_PASSWORDCHANGED));
+        $this->view(array(self::SUCCESS => self::SUCCESS_PASSWORDCHANGED));
         return true;
     }
 

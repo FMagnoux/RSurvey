@@ -104,7 +104,7 @@ class Zone extends SQL implements JsonSerializable
     {
         return [
             'iZoneId' => $this->iZoneId,
-            'sZoneLibel' => utf8_decode($this->sZoneLibel),
+            'sZoneLibel' => $this->sZoneLibel,
             'bZoneActive' => $this->bZoneActive,
         ];
     }

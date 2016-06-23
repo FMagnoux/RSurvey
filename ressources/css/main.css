@@ -22,3 +22,28 @@
   .mdl-layout__drawer-button {display:none;}
   .mdl-layout__header-row {padding-left:24px;}
 }
+
+a.shareButton {
+    margin-right: 24px;
+}
+
+p.shareButtonsContainer {
+    margin-top: 24px;
+}
+
+ul.dc_pagination {
+    text-align: center;
+    margin: auto;
+    margin-bottom:16px;
+
+}
+
+ul.dc_pagination li {
+    list-style-type: none;
+    display:inline;
+    margin-left:12px
+}
+
+.mdl-navigation__link {
+    padding: 0px 16px !important;
+}

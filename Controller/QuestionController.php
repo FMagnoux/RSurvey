@@ -14,9 +14,10 @@ class QuestionController extends SuperController
     const SUCCESS = "success";
     const ERROR = "error";
 
+    const ERROR_DISCONNECTED = "Vous devez être connecté pour voir cette page.";
     const ERROR_EMPTYQUESTION = "Vous n'avez pas renseigné de question.";
     const ERROR_QUESTIONLENGHT = "La question renseignée dépasse les 100 caractères.";
-    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de contacter l'administrateur.";
+    const ERROR_INTERNAL = "Une erreur interne a été détectée , merci de <a href=\"./#contact\">contacter</a> l'administrateur.";
     const ERROR_EMPTYZONE = "Vous n'avez pas renseigné de zone pour ce sondage.";
 
     const ERROR_EMPTYCHOIX = "Deux choix sont requis pour créer un sondage";
@@ -30,6 +31,9 @@ class QuestionController extends SuperController
     const SUCCESS_UPDATEQUESTION = "Le sondage a été mis à jour.";
     const SUCCESS_CREATEQUESTION = "Le sondage a été crée.";
 
+    const ERROR_DESACTIVATE = "Le sondage n'a pas été désactivé.";
+    const SUCCESS_DESACTIVATE = "Le sondage a été désactivé.";
+
     private static $changeyes = 1;
     private static $nocreate = -1;
 
@@ -40,8 +44,34 @@ class QuestionController extends SuperController
     }
 
     public function getNextPreviousQuestion(){
+        $next = $_POST['next'];
+        $this->oEntity->setDQuestionDate(new DateTime($_POST['dDate']));
 
-        $oQuestion = $this->oEntity->getNextPreviousQuestion($_POST['next']);
+        $operateur = "";
+        $fonction = "";
+
+        if($next=="true"){
+            $operateur = ">";
+            $fonction = "MIN";
+        }
+        else {
+            $operateur = "<";
+            $fonction = "MAX";
+        }
+
+        $oQuestion = $this->oEntity->getNextPreviousQuestion($operateur,$fonction);
+
+        if(!$oQuestion && $next == "true"){
+            $operateur = "<";
+            $fonction = "MIN";
+
+        }
+        else if (!$oQuestion && $next == "false"){
+            $operateur = ">";
+            $fonction = "MAX";
+        }
+
+        $oQuestion = $this->oEntity->getNextPreviousQuestion($operateur,$fonction);
 
         require_once "./Controller/ChoixController.php";
         require_once "./Controller/ReponseController.php";
@@ -49,15 +79,16 @@ class QuestionController extends SuperController
 
         $oChoixController = new ChoixController();
         $oReponseController = new ReponseController();
-
         $oUserController = new UserController();
         $oUser = $oUserController->getUser($oQuestion->getOUsr());
         $aChoix = $oChoixController->getChoixQuestion($oQuestion->getIQuestionId());
-        $aReponse = $oReponseController->getReponseQuestion($aChoix);
+        foreach ($aChoix as $oChoix){
+            $oChoix->setAReponse($oReponseController->getReponseQuestion($oChoix->getIChoixId()));
+        }
 
         $oQuestion->setOUsr($oUser);
-
-        $returnjson = array($oQuestion,$aChoix,$aReponse);
+        $oQuestion->setIQuestionId($this->encrypt($oQuestion->getIQuestionId()));
+        $returnjson = array($oQuestion,$aChoix);
         echo json_encode($returnjson);
         return;
 
@@ -67,37 +98,75 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function updateQuestion(){
+        if(!empty($_POST['aChoix'])) {
+            $_POST['aChoix'] = json_decode($_POST['aChoix']);
+        }
+        else {
+            $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
+        //var_dump($_POST['aChoix']);
+        if(!empty($_POST['aChoix']->aQuestionChoixValues)) {
+            foreach ($_POST['aChoix']->aQuestionChoixValues as $key => $a) {
+                $_POST['aChoix']->aQuestionChoixValues[$key] = get_object_vars($a);
+            }
+            $_POST['aChoix'] = $_POST['aChoix']->aQuestionChoixValues;
+        }
         require_once "./Controller/ChoixController.php";
-
-        // Vérifie le format de la question
-        if($this->checkQuestion()) {
-            // Vérifie que la question est changée
-            if($this->checkChangeQuestion()){
-                // Met à jour la question
-                if(!$this->oEntity->changeQuestion()){
-                    $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-                    echo json_encode($returnjson);
-                }
-                $aChoix = array();
-                for ($i=0;$i<count($_POST['aChoix']);$i++){
-                    $oChoix = new Choix();
-                    if(!empty($_POST['aChoix'][$i]['sChoixLibel']) && !empty($_POST['aChoix'][$i]['iIdChoix'])){
-                        $oChoix->setSChoixLibel($_POST['aChoix'][$i]['sChoixLibel']);
-                        $oChoix->setIChoixId($_POST['aChoix'][$i]['iIdChoix']);
-
-                        array_push($aChoix,$oChoix);
-                    }
-                    else {
-                        $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
-                        return json_encode($returnjson);
-                    }
-                }
-                $oChoixController = new ChoixController();
-                return $oChoixController->updateChoix($aChoix,$_POST['iIdQuestion']);
+        if(!empty($_POST["iIdQuestion"])) {
+            $this->oEntity->setIQuestionId(intval($this->decrypt($_POST["iIdQuestion"])));
+            if($this->oEntity->getIQuestionId() <= 0) {
+                $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+                echo json_encode($returnjson);
+                return false;
             }
         }
         else {
-            return $this->checkQuestion();
+            $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
+            echo json_encode($returnjson);
+            return false;
+        }
+        // Vérifie le format de la question
+        if($this->checkQuestion() && !is_string($this->checkQuestion())) {
+            $this->oEntity->setSQuestionLibel($_POST['sQuestionLibel']);
+            // Vérifie que la question est changée
+            if($this->checkChangeQuestion()) {
+                // Met à jour la question
+                if (!$this->oEntity->changeQuestion()) {
+                    // Message d'erreur si la requête SQL a échoué
+                    $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                    echo json_encode($returnjson);
+                    return false;
+                }
+            }
+            $aChoix = array();
+            $iNbChoix = count($_POST['aChoix']);
+            if($iNbChoix > 3 || $iNbChoix < 2) {
+                $returnjson = array(self::ERROR, self::ERROR_INTERNAL);
+                echo json_encode($returnjson);
+                return false;
+            }
+            for ($i=0;$i<count($_POST['aChoix']);$i++){
+                require_once "./Model/Choix.php";
+                $oChoix = new Choix();
+                if(!empty($_POST['aChoix'][$i]['sChoixLibel']) && !empty($_POST['aChoix'][$i]['iIdChoix'])){
+                    $oChoix->setSChoixLibel($_POST['aChoix'][$i]['sChoixLibel']);
+                    $oChoix->setIChoixId($_POST['aChoix'][$i]['iIdChoix']);
+                    array_push($aChoix,$oChoix);
+                }
+                else {
+                    $returnjson = array(self::ERROR,self::ERROR_EMPTYCHOIX);
+                    echo json_encode($returnjson);
+                    return false;
+                }
+            }
+            $oChoixController = new ChoixController();
+            return $oChoixController->updateChoix($aChoix,$this->oEntity->getIQuestionId());
+        }
+        else {
+            echo $this->checkQuestion();
+            return false;
         }
     }
 
@@ -119,15 +188,25 @@ class QuestionController extends SuperController
      * @return string
      */
     public function closeQuestion(){
-        $this->oEntity->setIQuestionId($_POST['iIdQuestion']);
+      $id = $this->decrypt($_POST['iIdQuestion']);
+      $id = intval($id);
+      if($id <= 0) {
+          $returnjson = array(self::ERROR,self::ERROR_QUESTIONKO);
+          echo json_encode($returnjson);
+          return false;
+      }
+
+      $this->oEntity->setIQuestionId($id);
         $this->oEntity->setBQuestionClose(1);
         if($this->oEntity->closeQuestion()){
             $returnjson = array(self::SUCCESS,self::SUCCESS_CLOSEQUESTION);
-            return json_encode($returnjson);
+            echo json_encode($returnjson);
+            return;
         }
         else {
             $returnjson = array(self::ERROR,self::ERROR_INTERNAL);
-            return json_encode($returnjson);
+            echo json_encode($returnjson);
+            return;
         }
     }
 
@@ -179,7 +258,14 @@ class QuestionController extends SuperController
         }
 
         $oQuestion->setOUsr($oUser);
-        $returnjson = array($oQuestion,$aChoix);
+        $oQuestion->setIQuestionId($this->encrypt($oQuestion->getIQuestionId()));
+        if(!$this->checkLogin()){
+            $iIdUser = 0;
+        }
+        else {
+            $iIdUser = $_SESSION['iIdUser'];
+        }
+        $returnjson = array($oQuestion,$aChoix,$iIdUser);
         echo json_encode($returnjson);
         return;
     }
@@ -188,12 +274,14 @@ class QuestionController extends SuperController
      * @return bool|string
      */
     public function createQuestion(){
-        if(!$this->checkLogin()){
+          if(!$this->checkLogin()){
             $aDataPost = array(
-                "sQuestionLibel" => $_POST['sQuestionLibel'],
-                "aQuestionChoix" => $_POST['aQuestionChoix'],
-                "iIdSub" => $_POST['iIdSub'],
-                self::ERROR => self::ERROR_LOGIN);
+              self::ERROR,
+              self::ERROR_LOGIN,
+              $_POST['sQuestionLibel'],
+              $_POST['aQuestionChoix'],
+              $_POST['iIdSub']
+            );
             echo json_encode($aDataPost);
             return;
         }
@@ -231,7 +319,7 @@ class QuestionController extends SuperController
                     }
                     else {
                         if($oChoixController->createChoix($_POST['aQuestionChoix'],$bLastQuestion)){
-                          $returnjson = array(self::SUCCESS,self::SUCCESS_CREATEQUESTION);
+                          $returnjson = array(self::SUCCESS,self::SUCCESS_CREATEQUESTION , $this->encrypt($bLastQuestion));
                           echo json_encode($returnjson);
                             return;
                         }
@@ -320,77 +408,133 @@ class QuestionController extends SuperController
      * Liste de questions paginées
      */
     public function listQuestions() {
-        $this->page = "admin/index";
-        $this->view(array("oPagination" =>$this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage())));
+        if(!$this->isAdmin()) return false;
+        $this->page = "admin/listQuestions";
+        $this->view(array("oPagination" => $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage()), "sUrlStartForm" => "./administration-filtre", "sUrlStartPagination" => "./administration", "sUrlEnd" => ".html"));
+    }
+    
+    public function searchQuestions() {
+        $this->page = "user/search";
+        $this->helperListQuestionsFilter("search", "search", "admin/errorFilterQuestions");
+    }
+
+    public function userListQuestionsFilter() {
+        $this->page = "user/listQuestions";
+        $this->helperListQuestionsFilter("mes-sondages-filtre", "mes-sondages-filtre", "user/errorFilterQuestions", $_SESSION["iIdUser"]);
+    }
+
+    public function listQuestionsFilter() {
+        if(!$this->isAdmin()) return false;
+        $this->page = "admin/listQuestions";
+        $this->helperListQuestionsFilter("administration-filtre", "administration-filtre", "admin/errorFilterQuestions");
+    }
+
+    /**
+     * Faire une recherche sur les questions
+     * @return bool
+     */
+    private function helperListQuestionsFilter($sUrlStartForm, $sUrlStartPagination, $sError, $iIdUser = null) {
+        if(!empty($_POST)) extract($_POST);
+        else if(!empty($_GET)) extract($_GET);
+
+        if(empty($sPseudo)) {
+            $sPseudo = "";
+        }
+        else {
+            $sPseudo = htmlspecialchars($sPseudo);
+        }
+        if(empty($sLibel)) {
+            $sLibel = "";
+        }
+        else {
+            $sLibel = htmlspecialchars($sLibel);
+        }
+        if(!empty($dDateAfter) && $this->checkDate($dDateAfter)) {
+            $dDateAfter = htmlspecialchars($dDateAfter);
+        }
+        else {
+            $dDateAfter = "";
+        }
+        if(!empty($dDateBefore)&& $this->checkDate($dDateBefore)) {
+            $dDateBefore = htmlspecialchars($dDateBefore);
+        }
+        else {
+            $dDateBefore = "";
+        }
+
+        $oPagination = $this->oEntity->getPaginatedFilteredQuestionList($this->iPagination, $this->checkPage(), $sPseudo, $sLibel, $dDateAfter, $dDateBefore, $iIdUser);
+        if(count($oPagination->getAData()) == 0) {
+            $this->page = $sError;
+            $this->view(
+                array(
+                    self::ERROR => self::ERROR_QUESTIONKO,
+                    "sPseudo" => $sPseudo,
+                    "sLibel" => $sLibel,
+                    "dDateAfer" => $dDateAfter,
+                    "dDateBefore" => $dDateBefore,
+                    "sUrlStartPagination" => "./".$sUrlStartPagination."/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."",
+                    "sUrlStartForm" => $sUrlStartForm
+                )
+            );
+            return false;
+        }
+        $aConfig = array(
+            "oPagination" => $oPagination,
+            "sPseudo" => $sPseudo,
+            "sLibel" => $sLibel,
+            "dDateAfer" => $dDateAfter,
+            "dDateBefore" => $dDateBefore,
+            "sUrlStartPagination" => "./".$sUrlStartPagination."/pseudo:".$sPseudo."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."",
+            "sUrlStartForm" => $sUrlStartForm
+        );
+        if(!empty($iIdUser)) {
+            $aConfig["sUrlStartPagination"] = "./".$sUrlStartPagination."/libel:".$sLibel."/dateAfter:".$dDateAfter."/dateBefore:".$dDateBefore."";
+            $aConfig["sUrlStartForm"] = $sUrlStartForm;
+        }
+        $this->view($aConfig);
+        return true;
+    }
+
+    public function adminListQuestionsByIdUser() {
+        $this->page = "admin/error";
+        if(!$this->isAdmin()) {
+            return false;
+        }
+        $iId = $this->checkGetId();
+        if($iId == 0) {
+            return null;
+        }
+        $oPagination = $this->listQuestionsByIdUser($iId);
+        if(empty($oPagination)) {
+            return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+        }
+        $this->page = "admin/listQuestions";
+        return $this->view(array("oPagination" => $oPagination, "sUrlStartForm" => "./administration-filtre", "sUrlStartPagination" => "./administration/".$_GET["id"], "sUrlEnd" => ".html"));
+    }
+
+    public function userListQuestionsByIdUser() {
+        $this->page = "user/error";
+        if(empty($_SESSION["iIdUser"])) {
+            return $this->view(array(self::ERROR => self::ERROR_DISCONNECTED));
+        }
+        $oPagination = $this->listQuestionsByIdUser($_SESSION["iIdUser"]);
+        if(empty($oPagination)) {
+            return $this->view(array(self::ERROR => self::ERROR_QUESTIONKO));
+        }
+        $this->page = "user/listQuestions";
+        return $this->view(array("oPagination" => $oPagination, "sUrlStartForm" => "./mes-sondages", "sUrlStartPagination" => "./mes-sondages"));
     }
 
     /**
      * Liste des questions d'un utilisateur en fonction de son id
      * @return bool
      */
-    public function listQuestionsByIdUser() {
-        $this->setJsonData();
-        $iId = $this->checkGetId();
-        if($iId == 0) return false;
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage(), $iId));
-    }
-
-    /**
-     * Liste des questions d'un utilisateur en fonction de son pseudo
-     * @return bool
-     */
-    public function listQuestionsByPseudoUser() {
-        if(empty($_GET["sPseudo"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
-            return false;
+    private function listQuestionsByIdUser($iId) {
+        $oPagination = $this->oEntity->getPaginatedQuestionList($this->iPagination, $this->checkPage(), $iId);
+        if(count($oPagination->getAData()) == 0) {
+            return null;
         }
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionListByPseudo($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sPseudo"])));
-        return true;
-    }
-
-    /**
-     * Liste des questions en fonction de leur libellé
-     * @return bool
-     */
-    public function listQuestionsByLibel() {
-        if(empty($_GET["sLibel"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_QUESTIONKO));
-            return false;
-        }
-        $this->setJsonData();
-        echo json_encode($this->oEntity->getPaginatedQuestionListByLibel($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["sLibel"])));
-        return true;
-    }
-
-    /**
-     * Liste des questions en fonction d'une intervalle de date
-     * @return bool
-     */
-    public function listQuestionsByDate() {
-        if(empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"])) {
-            echo json_encode(array(self::ERROR, self::ERROR_DATE));
-            return false;
-        }
-        $this->setJsonData();
-        // Rechercher les questions dont la date est supérieure à la date précisée
-        if(!empty($_GET["dDateAfter"]) && empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateAfter"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), ">="));
-        }
-        // Rechercher les questions dont la date est inférieure à la date précisée
-        else if(empty($_GET["dDateAfter"]) && !empty($_GET["dDateBefore"]) && $this->checkDate($_GET["dDateBefore"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDate($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateBefore"]), "<="));
-        }
-        // Rechercher les questions entre une intervalle de date
-        else if($this->checkDate($_GET["dDateAfter"]) && $this->checkDate($_GET["dDateBefore"])) {
-            echo json_encode($this->oEntity->getPaginatedQuestionListByDateInterval($this->iPagination, $this->checkPage(), htmlspecialchars($_GET["dDateAfter"]), htmlspecialchars($_GET["dDateBefore"])));
-        }
-        else {
-            echo json_encode(array(self::ERROR, self::ERROR_DATE));
-            return false;
-        }
-        return true;
+        return $oPagination;
     }
 
     private function checkDate($aDate) {
@@ -405,8 +549,13 @@ class QuestionController extends SuperController
      * @return bool
      */
     public function desactivateQuestion() {
+        if(!$this->isAdmin()) return false;
         $iId = $this->checkPostId();
-        if($iId == 0) return false;
-        return $this->oEntity->desactivateQuestion($iId);
+        if($iId == 0 || !$this->oEntity->desactivateQuestion($iId)) {
+            echo json_encode(array(self::ERROR, self::ERROR_DESACTIVATE));
+            return false;
+        }
+        echo json_encode(array(self::SUCCESS, self::SUCCESS_DESACTIVATE));
+        return true;
     }
 }

@@ -231,7 +231,7 @@ class User extends SQL implements JsonSerializable
     }
 
     public function loginUser(){
-        $requete = $this->db->prepare('select usr_id from User where usr_mail = :usr_mail and usr_password = :usr_password');
+        $requete = $this->db->prepare('select usr_id, role_id from User where usr_mail = :usr_mail and usr_password = :usr_password and usr_active = 1');
         $requete->execute (array(
             ':usr_mail'=>$this->getSUsrMail(),
             ':usr_password'=>$this->getSUsrPassword(),
@@ -242,6 +242,7 @@ class User extends SQL implements JsonSerializable
         }
         else {
           $this->setIUsrId($results['usr_id']);
+          $this->setIRoleId($results['role_id']);
           return true;
         }
     }
@@ -326,6 +327,24 @@ class User extends SQL implements JsonSerializable
     }
 
     /**
+     * Retourner l'id correspond à un mail
+     * @return array
+     */
+    public function getEmailById($iId) {
+        return parent::select(
+            array(
+                "columns" => "usr_mail",
+                "table" => $this->sTable,
+                "where" => "usr_id = :id",
+                "fetch" => true
+            ),
+            array(
+                "id" => $iId
+            )
+        )["usr_mail"];
+    }
+
+    /**
      * Retourne un objet User contenant le rôle
      * @param $iId
      * @return User
@@ -343,6 +362,14 @@ class User extends SQL implements JsonSerializable
             )
         )["role_id"];
     }
+    
+    private function getPaginatedConfig() {
+        return array(
+            "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
+            "table" => $this->sTable,
+            "where" => "usr_active = 1 and usr_id !=".$_SESSION['iIdUser']
+        );
+    }
 
     /**
      * Liste paginée des users
@@ -351,10 +378,16 @@ class User extends SQL implements JsonSerializable
      * @return array<User>
      */
     public function getPaginatedUserList($iMaxItems, $iCurrentPage) {
-        return parent::getPaginatedList($iMaxItems, $iCurrentPage, array(
-            "columns" => 'usr_id, usr_pseudo, usr_mail, usr_active',
-            "table" => $this->sTable
-        ));
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $this->getPaginatedConfig());
+    }
+
+    public function getPaginatedUserListByPseudo($iMaxItems, $iCurrentPage, $sPseudo) {
+        $aConfig = $this->getPaginatedConfig();
+        $aConfig["where"] .= " AND usr_pseudo LIKE :pseudo";
+        $aValues = array(
+            "pseudo" => !empty($sPseudo) ? "%" . $sPseudo . "%" : "%"
+        );
+        return parent::getPaginatedList($iMaxItems, $iCurrentPage, $aConfig, $aValues);
     }
 
     /**
@@ -385,9 +418,9 @@ class User extends SQL implements JsonSerializable
     {
         return [
             'iUsrId' => $this->iUsrId,
-            'sUsrPseudo' => utf8_encode($this->sUsrPseudo),
+            'sUsrPseudo' => $this->sUsrPseudo,
             'sUsrMail' => $this->sUsrMail,
-            'sUsrPassword' => utf8_encode($this->sUsrPassword),
+            'sUsrPassword' => $this->sUsrPassword,
             'sUsrToken' => $this->sUsrToken,
             'bUsrActive' => $this->bUsrActive,
             'iRoleId' => $this->iRoleId,

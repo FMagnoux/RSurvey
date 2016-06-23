@@ -17,13 +17,23 @@ class SuperController
     }
 
     public function home() {
+        require_once './Model/Question.php';
         $this->page = "commun/index";
-        $this->view();
+        $this->view(array("iId" => $this->encrypt((new Question())->getRandomIdQuestion())));
     }
 
     public function error() {
         $this->page = "commun/404";
         $this->view();
+    }
+
+    public function isAdmin() {
+        if(!empty($_SESSION["iIdRole"]) && $_SESSION["iIdRole"] < 2) {
+            return true;
+        }
+        $this->page = "commun/forbidden";
+        $this->view();
+        return false;
     }
 
     public function checkLogin()
@@ -34,6 +44,13 @@ class SuperController
         else {
             return false;
         }
+    }
+
+    public function disconnectUser(){
+        unset($_SESSION["iIdRole"]);
+        unset($_SESSION["iIdUser"]);
+        session_destroy();
+        header('Location: ./');
     }
 
     public function callController($ctrl, $action) {
@@ -67,6 +84,7 @@ class SuperController
     }
     
     public function checkId($id) {
+        $id = $this->decrypt($id);
         $id = intval($id);
         if($id > 0) return $id;
         return 0;

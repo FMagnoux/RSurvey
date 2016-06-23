@@ -13,6 +13,7 @@ class Choix extends SQL implements JsonSerializable
     private $iQuestionId;
     private $bChoixActive;
     private $aReponse;
+    private $sTable = "Choix";
 
     private static $bActive = 1;
 
@@ -107,6 +108,29 @@ class Choix extends SQL implements JsonSerializable
         return $this;
     }
 
+    public function getIQuestionByIChoixId($iChoixId)
+    {
+        require_once "./Model/Question.php";
+        $oQuestion = new Question();
+        $oQuestion = $oQuestion->toObject(parent::select(
+            array(
+                "columns" => $this->sTable . ".question_id, question_close",
+                "table" => $this->sTable,
+                "join" => array(
+                    "table" => "Question",
+                    "key" => "question_id",
+                    "foreignKey" => "question_id",
+                ),
+                "where" => "choix_id = :id",
+                "limit" => 1
+            ),
+            array(
+                "id" => $iChoixId
+            )
+        ));
+        return $oQuestion;
+    }
+
     public function createChoix(){
         $requete = $this->db->prepare('insert into Choix (choix_libel, question_id)values(:choix_libel, :question_id)') ;
         return $requete->execute (array(
@@ -141,7 +165,6 @@ class Choix extends SQL implements JsonSerializable
                 $oChoix->setIChoixId($result['choix_id']);
                 $oChoix->setSChoixLibel($result['choix_libel']);
                 $oChoix->setIQuestionId($result['question_id']);
-
                 array_push($aChoix,$oChoix);
             }
             return $aChoix;
@@ -151,7 +174,7 @@ class Choix extends SQL implements JsonSerializable
     public function updateChoix(){
         $requete = $this->db->prepare('update Choix set choix_libel = :choix_libel where choix_id = :choix_id and choix_active = :choix_active') ;
         return $requete->execute (array(
-            ':question_id'=>$this->getIQuestionId(),
+            ':choix_id'=>$this->getIChoixId(),
             ':choix_active'=>self::$bActive,
             ':choix_libel'=>$this->getSChoixLibel(),
         ));
@@ -161,7 +184,7 @@ class Choix extends SQL implements JsonSerializable
     {
         return [
             'iChoixId' => $this->iChoixId,
-            'sChoixLibel' => utf8_encode($this->sChoixLibel),
+            'sChoixLibel' => $this->sChoixLibel,
             'iQuestionId' => $this->iQuestionId,
             'bChoixActive' => $this->bChoixActive,
             'aReponse' => $this->aReponse
